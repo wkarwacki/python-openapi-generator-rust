@@ -1,0 +1,28 @@
+defs:
+  Type:
+    type: obj
+    vars:
+      dec:
+        type: dec
+      str:
+        type: str
+        opt: true
+  ParamType:
+    type: obj
+    vars:
+      bool0:
+        param: Bool
+        opt: true
+      type:
+        param: Type
+      bool1:
+        param: Bool
+  Subtype:
+    type: obj
+    ext:
+      path: 'defs.ParamType'
+      args:
+        Bool:
+          type: bool
+        Type:
+          path: 'defs.Type'

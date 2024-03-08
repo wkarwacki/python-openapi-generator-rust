@@ -1,0 +1,7 @@
+defs:
+  EnumInt:
+    type: enum
+    vals:
+      - 0
+      - 1
+      - 2

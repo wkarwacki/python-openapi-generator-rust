@@ -1,0 +1,105 @@
+components:
+  schemas:
+    ObjectWithBoolean:
+      type: object
+      properties:
+        boolean:
+          type: boolean
+      required:
+        - boolean
+    ObjectWithDouble:
+      type: object
+      properties:
+        double:
+          type: double
+      required:
+        - double
+    ObjectWithFloat:
+      type: object
+      properties:
+        float:
+          type: double
+      required:
+        - float
+    ObjectWithInteger:
+      type: object
+      properties:
+        integer:
+          type: integer
+          format: int64
+      required:
+        - integer
+    ObjectWithLong:
+      type: object
+      properties:
+        long:
+          type: integer
+          format: int64
+      required:
+        - long
+    ObjectWithString:
+      type: object
+      properties:
+        string:
+          type: string
+      required:
+        - string
+    ObjectWithObjectInlinedWithAnotherObjectInlined:
+      type: object
+      properties:
+        inlinedObj:
+          type: object
+          properties:
+            anotherInlinedObj:
+              type: object
+              properties:
+                str:
+                  type: string
+              required:
+                - str
+          required:
+            - anotherInlinedObj
+      required:
+        - inlinedObj
+    ObjectWithOptBoolean:
+      type: object
+      properties:
+        boolean:
+          type: boolean
+    ObjectWithOptDouble:
+      type: object
+      properties:
+        double:
+          type: double
+    ObjectWithOptFloat:
+      type: object
+      properties:
+        float:
+          type: double
+    ObjectWithOptInteger:
+      type: object
+      properties:
+        integer:
+          type: integer
+          format: int64
+    ObjectWithOptLong:
+      type: object
+      properties:
+        long:
+          type: integer
+          format: int64
+    ObjectWithOptString:
+      type: object
+      properties:
+        string:
+          type: string
+    ObjectWithOptObjectInlined:
+      type: object
+      properties:
+        inlinedObj:
+          type: object
+          properties:
+            str:
+              type: string
+          required:
+            - str

@@ -1,0 +1,4 @@
+
+
+
+IdDto = str

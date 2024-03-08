@@ -1,0 +1,87 @@
+defs:
+  ObjectWithBoolean:
+    type: obj
+    vars:
+      boolean:
+        type: bool
+  ObjectWithDouble:
+    type: obj
+    vars:
+      double:
+        type: dec
+  ObjectWithFloat:
+    type: obj
+    vars:
+      float:
+        type: dec
+  ObjectWithInteger:
+    type: obj
+    vars:
+      integer:
+        type: int
+  ObjectWithLong:
+    type: obj
+    vars:
+      long:
+        type: int
+  ObjectWithString:
+    type: obj
+    vars:
+      string:
+        type: str
+  ObjectWithObjectInlinedWithAnotherObjectInlined:
+    type: obj
+    vars:
+      inlinedObj:
+        type: obj
+        vars:
+          anotherInlinedObj:
+            type: obj
+            vars:
+              str:
+                type: str
+  ObjectWithOptBoolean:
+    type: obj
+    vars:
+      boolean:
+        type: bool
+        opt: true
+  ObjectWithOptDouble:
+    type: obj
+    vars:
+      double:
+        type: dec
+        opt: true
+  ObjectWithOptFloat:
+    type: obj
+    vars:
+      float:
+        type: dec
+        opt: true
+  ObjectWithOptInteger:
+    type: obj
+    vars:
+      integer:
+        type: int
+        opt: true
+  ObjectWithOptLong:
+    type: obj
+    vars:
+      long:
+        type: int
+        opt: true
+  ObjectWithOptString:
+    type: obj
+    vars:
+      string:
+        type: str
+        opt: true
+  ObjectWithOptObjectInlined:
+    type: obj
+    vars:
+      inlinedObj:
+        type: obj
+        vars:
+          str:
+            type: str
+        opt: true

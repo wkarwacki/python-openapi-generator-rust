@@ -1,0 +1,23 @@
+components:
+  schemas:
+    Type:
+      type: object
+      properties:
+        dec:
+          type: double
+        str:
+          type: string
+      required:
+        - dec
+    Subtype:
+      type: object
+      properties:
+        bool0:
+          type: boolean
+        type:
+          $ref: '#/components/schemas/Type'
+        bool1:
+          type: boolean
+      required:
+        - bool1
+        - type

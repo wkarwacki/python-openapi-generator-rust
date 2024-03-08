@@ -1,0 +1,24 @@
+{{#*inline "_companion"}}
+{{#if (and (eq val.type "obj") (not (typeParams val)))}}object {{key}} {
+final case class Impl({{#each val.vars}}
+    {{>var prefix=(add ../key ".") suffix=".Impl"}}{{#unless @last}}, {{/unless}}{{/each}}
+)
+given codec: JsonValueCodec[{{key}}.Impl] = JsonCodecMaker.make{{#each val.vars}}{{#if (eq this.type "obj")}}
+    {{>dto key=(fmtClass @key) val=this}}
+    {{/if}}{{/each}}
+{{#each val.adt.map}}trait {{fmtClass @key}} extends {{../key}}{
+{{#each this.vars}}val {{>var prefix=(add ../[0] ".")}}{{/each}}
+}
+{{/each}}
+}{{/if}}
+{{#if (eq val.item.type "obj")}}object {{key}} {
+trait Item {
+{{#each val.item.vars}}val {{>var}}{{/each}} }
+{{>_companion key="Item" val=val.item}}
+}{{elseif (eq val.val.type "obj")}}object {{key}} {
+trait Value {
+{{#each val.val.vars}}val {{>var}}{{/each}} }
+{{>_companion key="Value" val=val.val}}
+}{{elseif val.item}}{{>_companion val=val.item}}{{elseif val.val}}{{>_companion val=val.val}}{{/if}}
+{{/inline}}
+{{>_companion key=key val=val}}

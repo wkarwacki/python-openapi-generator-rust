@@ -1,0 +1,150 @@
+defs:
+  MapStrToRefObj:
+    type: map
+    key:
+      type: str
+    val:
+      path: defs.Obj
+  SeqInt:
+    type: seq
+    item:
+      type: int
+  EnumInt:
+    type: enum
+    vals:
+    - '0'
+    - '1'
+    - '2'
+  SeqDec:
+    type: seq
+    item:
+      type: dec
+  SeqSeqStruct:
+    type: seq
+    item:
+      type: seq
+      item:
+        type: struct
+  MapStrToInt:
+    type: map
+    key:
+      type: str
+    val:
+      type: int
+  SeqRefDec:
+    type: seq
+    item:
+      path: defs.Dec
+  SeqSeqBool:
+    type: seq
+    item:
+      type: seq
+      item:
+        type: bool
+  Dec:
+    type: dec
+  MapStrToStr:
+    type: map
+    key:
+      type: str
+    val:
+      type: str
+  SeqObj:
+    type: seq
+    item:
+      type: obj
+      vars:
+        var:
+          type: str
+  MapStrToRefInt:
+    type: map
+    key:
+      type: str
+    val:
+      path: defs.Int
+  MapStrToStruct:
+    type: map
+    key:
+      type: str
+    val:
+      type: struct
+  SeqMapStrToDec:
+    type: seq
+    item:
+      type: map
+      key:
+        type: str
+      val:
+        type: dec
+  SeqBool:
+    type: seq
+    item:
+      type: bool
+  Obj:
+    type: obj
+    vars:
+      var:
+        type: str
+  ObjWithSeq:
+    type: obj
+    vars:
+      var:
+        type: seq
+        item:
+          type: bool
+  SeqStr:
+    type: seq
+    item:
+      type: str
+  MapStrToDec:
+    type: map
+    key:
+      type: str
+    val:
+      type: dec
+  Str:
+    type: str
+  EnumStr:
+    type: enum
+    vals:
+    - a
+    - b
+    - c
+  MapStrToSeqInt:
+    type: map
+    key:
+      type: str
+    val:
+      type: seq
+      item:
+        type: int
+  SeqRefBool:
+    type: seq
+    item:
+      path: defs.Bool
+  Bool:
+    type: bool
+  MapStrToBool:
+    type: map
+    key:
+      type: str
+    val:
+      type: bool
+  MapStrToMapStrToObj:
+    type: map
+    key:
+      type: str
+    val:
+      type: map
+      key:
+        type: str
+      val:
+        type: obj
+        vars:
+          int:
+            type: int
+  Int:
+    type: int
+  Alias:
+    type: alias
+    path: defs.Str

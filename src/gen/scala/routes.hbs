@@ -1,0 +1,10 @@
+package {{toFlatCase this.[2]}}
+
+class {{to_pascal_case this.[0]}}Routes(service : {{to_pascal_case this.[0]}}Service) extends cask.Routes {
+{{#each this.[1]}}{{#each this}}
+    @cask.{{to_lower_case this.type}}("{{@../key}}")
+    def {{this.name}}({{#if this.req}}request: cask.Request{{/if}}{{#each this.params}}{{this.name}}: {{fmtOptIfNeeded (fmtType this) this.opt}}{{#unless @last}}, {{/unless}}{{/each}}): {{#if this.res}}{{fmtType this.res}}{{else}}Unit{{/if}} = {
+        service.{{this.name}}({{#if this.req}}{{fmtName (fmtType this.req)}}{{#if this.params}}, {{/if}}{{/if}}{{#each this.params}}{{#unless @first}}, {{/unless}}{{this.name}}{{/each}})
+    }
+{{/each}}{{/each}}
+}

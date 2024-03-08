@@ -1,0 +1,41 @@
+components:
+  schemas:
+    Parent0:
+      type: object
+      properties:
+        str:
+          type: string
+      required:
+        - str
+    Parent1:
+      type: object
+      properties:
+        dec:
+          type: double
+    Parent2:
+      type: object
+      properties:
+        int:
+          type: integer
+          format: int64
+    MixOfMix:
+      allOf:
+        - $ref: '#/components/schemas/Parent0'
+        - allOf:
+            - $ref: '#/components/schemas/Parent1'
+            - $ref: '#/components/schemas/Parent2'
+    MixOfMixInMix:
+      allOf:
+        - $ref: '#/components/schemas/Parent0'
+        - type: object
+          properties:
+            mix:
+              allOf:
+                - $ref: '#/components/schemas/Parent1'
+                - type: object
+                  properties:
+                    mixInMix:
+                      allOf:
+                        - $ref: '#/components/schemas/Parent2'
+                  required:
+                    - mixInMix

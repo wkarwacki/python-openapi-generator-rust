@@ -1,0 +1,99 @@
+components:
+  schemas:
+    SearchRequestFilter:
+      oneOf:
+        - $ref: '#/components/schemas/SearchRequestFilterDate'
+        - $ref: '#/components/schemas/SearchRequestFilterNumber'
+        - $ref: '#/components/schemas/SearchRequestFilterSet'
+        - $ref: '#/components/schemas/SearchRequestFilterText'
+      discriminator:
+        propertyName: filterType
+        mapping:
+          date: '#/components/schemas/SearchRequestFilterDate'
+          number: '#/components/schemas/SearchRequestFilterNumber'
+          set: '#/components/schemas/SearchRequestFilterSet'
+          text: '#/components/schemas/SearchRequestFilterText'
+    SearchRequestFilterAbstraction:
+      type: object
+      properties:
+        filterType:
+          type: string # for technical reasons this must be present, if you introduce another field, it may be removed
+      required:
+        - filterType
+    SearchRequestFilterDate:
+      allOf:
+        - $ref: '#/components/schemas/SearchRequestFilterAbstraction'
+        - type: object
+          properties:
+            type:
+              $ref: '#/components/schemas/SearchRequestFilterDateOperator'
+            filter: { }
+          required:
+            - operator
+            - type
+    SearchRequestFilterDateOperator:
+      type: string
+      enum:
+        - blank
+        - equals
+        - greaterThan
+        - inRange
+        - lessThan
+        - notBlank
+        - notEqual
+    SearchRequestFilterSet:
+      allOf:
+        - $ref: '#/components/schemas/SearchRequestFilterAbstraction'
+        - type: object
+          properties:
+            values:
+              type: array
+              uniqueItems: true
+              items: { }
+          required:
+            - values
+    SearchRequestFilterNumber:
+      allOf:
+        - $ref: '#/components/schemas/SearchRequestFilterAbstraction'
+        - type: object
+          properties:
+            type:
+              $ref: '#/components/schemas/SearchRequestFilterNumberOperator'
+            filter: { }
+            filterTo: { }
+          required:
+            - type
+    SearchRequestFilterNumberOperator:
+      type: string
+      enum:
+        - blank
+        - equals
+        - greaterThan
+        - greaterThanOrEqual
+        - inRange
+        - lessThan
+        - lessThanOrEqual
+        - notBlank
+        - notEqual
+    SearchRequestFilterText:
+      allOf:
+        - $ref: '#/components/schemas/SearchRequestFilterAbstraction'
+        - type: object
+          properties:
+            type:
+              $ref: '#/components/schemas/SearchRequestFilterTextOperator'
+            filter: { }
+          required:
+            - type
+    SearchRequestFilterTextOperator:
+      type: string
+      enum:
+        - blank
+        - contains
+        - empty
+        - endsWith
+        - equals
+        - notBlank
+        - notContains
+        - notEqual
+        - startsWith

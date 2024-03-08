@@ -1,0 +1,18 @@
+from abc import ABC, abstractmethod
+from pydantic import BaseModel
+from typing import Generator, Tuple
+
+class {{to_pascal_case feature}}Service(ABC):
+{{#each ops}}{{#each this}}    {{#if this.res.meta}}{{#if (filterNonconst this.res.meta)}}class {{to_pascal_case this.name}}Headers(BaseModel):
+        {{#each (filterNonconst this.res.meta)}}{{to_snake_case this.[0]}}: {{fmtType this.[1]}}
+        {{/each}}
+        def to_dict(self) -> dict[str, str]:
+            return {
+                {{#each (filterNonconst this.res.meta)}}"{{this.[0]}}": str(self.{{to_snake_case this.[0]}}){{#unless @last}},{{/unless}}
+                {{/each}}
+            }{{/if}}{{/if}}
+
+    @abstractmethod
+    def {{to_snake_case this.name}}(self{{#if this.req}}, {{#if (eq this.req.form "multipart/form-data")}}{{fmtName this.name}}_dto: {{fmtName this.name}}.{{>dtoName val=(fmtClass this.name)}}{{else}}{{fmtName (fmtType this.req)}}: {{fmtType this.req (to_pascal_case this.name)}}{{/if}}{{/if}}{{#each this.params}}, {{to_snake_case this.name}}: {{fmtOptIfNeeded (fmtType this) this.opt this.default}}{{/each}}) -> {{#if this.res}}{{#if this.res.meta}}{{#if (filterNonconst this.res.meta)}}Tuple[{{/if}}{{/if}}{{#if (eq this.res.carrier "stream")}}Generator[{{fmtType this.res}}, None, None]{{else}}{{fmtType this.res}}{{/if}}{{#if this.res.meta}}{{#if (filterNonconst this.res.meta)}}, {{to_pascal_case this.name}}Headers]{{/if}}{{/if}}{{else}}None{{/if}}:
+        raise NotImplementedError
+{{/each}}{{/each}}

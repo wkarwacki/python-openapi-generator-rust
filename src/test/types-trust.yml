@@ -1,0 +1,150 @@
+defs:
+  Alias:
+    type: alias
+    path: defs.Str
+  Bool:
+    type: bool
+  Dec:
+    type: dec
+  EnumStr:
+    type: enum
+    vals:
+      - a
+      - b
+      - c
+  EnumInt:
+    type: enum
+    vals:
+      - "0"
+      - "1"
+      - "2"
+  Int:
+    type: int
+  Obj:
+    type: obj
+    vars:
+      var:
+        type: str
+  ObjWithSeq:
+    type: obj
+    vars:
+      var:
+        type: seq
+        item:
+          type: bool
+  Str:
+    type: str
+  SeqBool:
+    type: seq
+    item:
+      type: bool
+  SeqDec:
+    type: seq
+    item:
+      type: dec
+  SeqInt:
+    type: seq
+    item:
+      type: int
+  SeqObj:
+    type: seq
+    item:
+      type: obj
+      vars:
+        var:
+          type: str
+  SeqStr:
+    type: seq
+    item:
+      type: str
+  SeqSeqBool:
+    type: seq
+    item:
+      type: seq
+      item:
+        type: bool
+  SeqMapStrToDec:
+    type: seq
+    item:
+      type: map
+      key:
+        type: str
+      val:
+        type: dec
+  SeqSeqStruct:
+    type: seq
+    item:
+      type: seq
+      item:
+        type: struct
+  SeqRefBool:
+    type: seq
+    item:
+      path: "defs.Bool"
+  SeqRefDec:
+    type: seq
+    item:
+      path: "defs.Dec"
+  MapStrToBool:
+    type: map
+    key:
+      type: str
+    val:
+      type: bool
+  MapStrToDec:
+    type: map
+    key:
+      type: str
+    val:
+      type: dec
+  MapStrToInt:
+    type: map
+    key:
+      type: str
+    val:
+      type: int
+  MapStrToStruct:
+    type: map
+    key:
+      type: str
+    val:
+      type: struct
+  MapStrToStr:
+    type: map
+    key:
+      type: str
+    val:
+      type: str
+  MapStrToSeqInt:
+    type: map
+    key:
+      type: str
+    val:
+      type: seq
+      item:
+        type: int
+  MapStrToMapStrToObj:
+    type: map
+    key:
+      type: str
+    val:
+      type: map
+      key:
+        type: str
+      val:
+        type: obj
+        vars:
+          int:
+            type: int
+  MapStrToRefInt:
+    type: map
+    key:
+      type: str
+    val:
+      path: "defs.Int"
+  MapStrToRefObj:
+    type: map
+    key:
+      type: str
+    val:
+      path: "defs.Obj"

@@ -1,0 +1,45 @@
+components:
+  schemas:
+    Adt:
+      type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          typeToken0: '#/components/schemas/AdtTypeToken0'
+          typeToken1: '#/components/schemas/AdtTypeToken1'
+    AdtTypeToken0:
+      allOf:
+        - $ref: '#/components/schemas/Adt'
+        - type: object
+          properties:
+            bool:
+              type: boolean
+            dec:
+              type: double
+          required:
+            - bool
+    AdtTypeToken1:
+      allOf:
+        - $ref: '#/components/schemas/Adt'
+        - type: object
+          properties:
+            str:
+              type: string
+            int:
+              type: integer
+              format: int64
+          required:
+            - int
+    AnotherAdt:
+      type: object
+      discriminator:
+        propertyName: type
+        mapping:
+          typeToken0: '#/components/schemas/AnotherAdtTypeToken0'
+          typeToken1: '#/components/schemas/AnotherAdtTypeToken1'
+    AnotherAdtTypeToken0:
+      allOf:
+        - $ref: '#/components/schemas/Adt'
+    AnotherAdtTypeToken1:
+      allOf:
+        - $ref: '#/components/schemas/Adt'

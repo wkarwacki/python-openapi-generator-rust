@@ -1,0 +1,29 @@
+{{#if val.item}}{{>dto key=(add key "Item") val=val.item tl=false}}
+
+{{else if val.val}}{{>dto key=(add key "Value") val=val.val tl=false}}
+
+{{/if}}{{#if val.adt}}class {{key}}Base(Dto):
+    {{indent}}{{#unless val.vars}}pass{{/unless}}{{#each val.vars}}{{#if (or (eq this.type "obj") this.item this.val)}}{{>dto key=(fmtClass @key) val=this indent=(add ../indent "    ")}}{{/if}}{{/each}}{{#each val.vars}}
+    {{indent}}{{#if (eq @key ../val.adt.var)}}{{fmtName @key}}: {{#each../val.adt.map}}Literal[{{json @key}}]{{#unless @last}} | {{/unless}}{{/each}}
+    {{else}}{{../indent}}{{>var}}{{/if}}{{/each}}
+{{#each val.adt.map}}
+{{>dto key=(fmtClass @key) val=this adtParent=../key}}
+
+    {{fmtName ../val.adt.var}}: Literal[{{json @key}}]
+
+
+{{/each}}
+
+{{key}} = {{>union}} {{else if (and (isAlias val) tl)}}{{key}} = {{fmtType val key}}{{else if (or val.vars adtParent)}}class {{adtParent}}{{fmtClass key}}({{#if (parents val)}}{{#each (parents val)}}{{fmtType this}}{{#unless @last}}, {{/unless}}{{/each}}{{else if adtParent}}{{adtParent}}Base{{else}}Dto{{/if}}){{>typeParams val=val}}:
+{{indent}}{{#unless val.vars}}    pass{{/unless}}{{#each val.vars}}{{#if (or (eq this.type "obj") this.item this.val)}}    {{>dto key=(fmtClass @key) val=this indent=(add ../indent "    ")}}{{/if}}{{/each}}{{#each val.vars}}
+    {{../indent}}{{>var}}{{/each}}{{else if (eq val.type "enum")}}class {{key}}({{#with (valueDef val.vars.[0])}}{{#if (eq type "int")}}IntEnum{{else}}str, Enum{{/if}}{{/with}}):{{#each val.vals}}
+    {{fmtEnum this}} = {{json this}}{{/each}}{{/if}}
+{{#if formLike}}    @classmethod
+    def of_form(
+        cls,{{#each val.vars}}
+        {{>varForm}}{{#unless @last}},{{/unless}}{{/each}}
+    ) -> '{{fmtClass key}}':
+            return {{fmtClass key}}(
+                {{#each val.vars}}{{fmtName @key}} = {{#if (eq this.type "seq")}}[json.loads(item) for item in {{fmtName @key}}]{{else}}{{fmtName @key}}{{/if}}{{#unless @last}},
+                {{/unless}}{{/each}}
+            ){{/if}}

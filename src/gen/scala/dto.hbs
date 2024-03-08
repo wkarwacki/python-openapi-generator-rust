@@ -1,0 +1,5 @@
+{{#if (isAlias val.type)}}opaque type {{key}} = {{fmtType val key}}{{else if (eq val.type "obj")}}trait {{key}}{{>type_params val=val}}{{#if (parents val)}} extends {{#each (parents val)}}{{fmtType this}}{{>type_args val=../val.ext}}{{#unless @last}}, {{/unless}}{{/each}}{{/if}} {
+{{#each val.vars}}val {{>var prefix=(add ../key ".")}}{{/each}}{{#each val.mix}}{{#with (resolve this)}}{{#each this.vars}}override val {{>var suffix=".Impl"}}{{/each}}{{/with}}{{/each}}
+}{{else if (eq val.type "enum")}}enum {{key}}(val value: {{fmtType (valueDef val.vars.[0])}}):{{#each val.vals}}
+    case {{fmtEnum this}} extends {{../key}}({{json this}}){{/each}}{{/if}}
+{{>companion key=key val=val}}

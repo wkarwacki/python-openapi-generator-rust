@@ -1,0 +1,1 @@
+{{fmtName @key}}: {{#if (eq this.type "obj")}}{{fmtOptIfNeeded (fmtClass @key this.origin) this.opt}}{{else}}{{#if (and this.path this.origin)}}{{fmtOptIfNeeded (add (add this.origin ".") (fmtType this)) this.opt}}{{else if (eq type "enum")}}{{fmtOptIfNeeded (fmtClass @key) this.opt}}{{else}}{{fmtOptIfNeeded (fmtType this (fmtClass @key)) this.opt}}{{/if}}{{/if}}

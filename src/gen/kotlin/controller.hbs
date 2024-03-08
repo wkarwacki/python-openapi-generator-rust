@@ -1,0 +1,17 @@
+package {{this.[2]}}
+
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+
+@RestController
+class {{to_pascal_case this.[0]}}Controller(private val service: {{to_pascal_case this.[0]}}Service) {
+{{#each this.[1]}}{{#each this}}
+    @RequestMapping(
+        "{{@../key}}",
+        method = [RequestMethod.{{this.type}}]
+    )
+    fun {{this.name}}({{#if this.req}}@RequestBody {{fmtName (fmtType this.req)}}: {{fmtType this.req}}{{#if this.params}}, {{/if}}{{/if}}{{#each this.params}}{{#unless @first}}, {{/unless}}{{#if (eq this.type "path")}}@PathVariable {{/if}}{{#if (eq this.type "query")}}@RequestParam {{/if}}{{this.name}}: {{fmtOptIfNeeded (fmtType this) this.opt}}{{/each}}): ResponseEntity<{{#if this.res}}{{fmtType this.res}}{{else}}Unit{{/if}}> {
+        return ResponseEntity.ok(service.{{this.name}}({{#if this.req}}{{fmtName (fmtType this.req)}}{{#if this.params}}, {{/if}}{{/if}}{{#each this.params}}{{#unless @first}}, {{/unless}}{{this.name}}{{/each}}))
+    }
+{{/each}}{{/each}}
+}

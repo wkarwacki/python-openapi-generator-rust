@@ -1,0 +1,17 @@
+{{#if val.item}}{{>dto key=(add key "Item") val=val.item tl=false}}
+
+{{else if val.val}}{{>dto key=(add key "Value") val=val.val tl=false}}
+
+{{/if}}{{#if val.adt}}export interface {{key}}Base(Dto):
+    {{indent}}{{#unless val.vars}}    pass{{/unless}}{{#each val.vars}}{{#if (or (eq this.type "obj") this.item this.val)}}{{>dto key=(fmtClass @key) val=this indent=(add ../indent "    ")}}{{/if}}{{/each}}{{#each val.vars}}
+    {{../indent}}{{>var}}{{/each}}
+{{#each val.adt.map}}
+{{>dto key=(fmtClass @key) val=this adtParent=../key}}
+
+
+{{/each}}
+
+{{key}} = {{>union}}{{else if (and (isAlias val.type) tl)}}{{key}} = {{fmtType val key}}{{else if (or val.vars adtParent)}}export interface {{adtParent}}{{key}}({{#if (parents val)}}{{#each (parents val)}}{{fmtType this}}{{#unless @last}}, {{/unless}}{{/each}}{{else if adtParent}}{{adtParent}}Base{{else}}Dto{{/if}}){{>type_params val=val}}:
+{{indent}}{{#unless val.vars}}    pass{{/unless}}{{#each val.vars}}{{#if (or (eq this.type "obj") this.item this.val)}}    {{>dto key=(fmtClass @key) val=this indent=(add ../indent "    ")}}{{/if}}{{/each}}{{#each val.vars}}
+    {{../indent}}{{>var}}{{/each}}{{else if (eq val.type "enum")}}export interface {{key}}({{#with (valueDef val.vars.[0])}}{{#if (eq type "int")}}IntEnum{{else}}str, Enum{{/if}}{{/with}}):{{#each val.vals}}
+    {{fmtEnum this}} = {{json this}}{{/each}}{{/if}}

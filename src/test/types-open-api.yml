@@ -1,0 +1,139 @@
+components:
+  schemas:
+    Alias:
+      $ref: '#/components/schemas/Str'
+    SeqSeqBool:
+      type: array
+      items:
+        type: array
+        items:
+          type: boolean
+    SeqObj:
+      type: array
+      items:
+        type: object
+        properties:
+          var:
+            type: string
+        required:
+          - var
+    Int:
+      type: integer
+      format: int64
+    SeqStr:
+      type: array
+      items:
+        type: string
+    MapStrToBool:
+      type: object
+      additionalProperties:
+        type: boolean
+    Str:
+      type: string
+    MapStrToStr:
+      type: object
+      additionalProperties:
+        type: string
+    SeqBool:
+      type: array
+      items:
+        type: boolean
+    SeqDec:
+      type: array
+      items:
+        type: double
+    MapStrToInt:
+      type: object
+      additionalProperties:
+        type: integer
+        format: int64
+    MapStrToMapStrToObj:
+      type: object
+      additionalProperties:
+        type: object
+        additionalProperties:
+          type: object
+          properties:
+            int:
+              type: integer
+              format: int64
+          required:
+            - int
+    Obj:
+      type: object
+      properties:
+        var:
+          type: string
+      required:
+        - var
+    SeqMapStrToDec:
+      type: array
+      items:
+        type: object
+        additionalProperties:
+          type: double
+    Dec:
+      type: double
+    EnumStr:
+      type: string
+      enum:
+        - a
+        - b
+        - c
+    EnumInt:
+      type: string
+      enum:
+        - "0"
+        - "1"
+        - "2"
+    MapStrToDec:
+      type: object
+      additionalProperties:
+        type: double
+    MapStrToStruct:
+      type: object
+      additionalProperties: {}
+    MapStrToSeqInt:
+      type: object
+      additionalProperties:
+        type: array
+        items:
+          type: integer
+          format: int64
+    SeqInt:
+      type: array
+      items:
+        type: integer
+        format: int64
+    Bool:
+      type: boolean
+    SeqRefBool:
+      type: array
+      items:
+        $ref: '#/components/schemas/Bool'
+    SeqRefDec:
+      type: array
+      items:
+        $ref: '#/components/schemas/Dec'
+    MapStrToRefInt:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Int'
+    MapStrToRefObj:
+      type: object
+      additionalProperties:
+        $ref: '#/components/schemas/Obj'
+    ObjWithSeq:
+      type: object
+      properties:
+        var:
+          type: array
+          items:
+            type: boolean
+      required:
+        - var
+    SeqSeqStruct:
+      type: array
+      items:
+        type: array
+        items: {}

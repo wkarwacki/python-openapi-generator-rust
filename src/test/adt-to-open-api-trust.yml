@@ -1,0 +1,27 @@
+defs:
+  Adt:
+    type: obj
+    vars:
+      bool:
+        type: bool
+      dec:
+        type: dec
+        opt: true
+    adt:
+      var: type
+      map:
+        typeToken0:
+          type: obj
+          vars:
+            str:
+              type: str
+        typeToken1:
+          type: obj
+          vars:
+            str:
+              type: str
+              opt: true
+            int:
+              type: int
+        typeToken2:
+          type: obj

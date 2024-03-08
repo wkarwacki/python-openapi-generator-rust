@@ -1,0 +1,35 @@
+components:
+  schemas:
+    Progress:
+      type: number
+      minimum: 0
+      maximum: 1
+    Task:
+      allOf:
+        - $ref: 'task.yml#/components/schemas/TaskSummary'
+        - type: object
+          properties:
+            errors:
+              type: array
+              items:
+                type: string
+    TaskStatus:
+      type: string
+      enum:
+        - failed
+        - running
+        - succeeded
+        - unknown
+    TaskSummary:
+      type: object
+      properties:
+        name:
+          type: string
+        progress:
+          $ref: 'task.yml#/components/schemas/Progress'
+        status:
+          $ref: 'task.yml#/components/schemas/TaskStatus'
+      required:
+        - name
+        - progress
+        - status

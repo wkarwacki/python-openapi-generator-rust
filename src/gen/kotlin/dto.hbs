@@ -1,0 +1,102 @@
+{{#*inline "var"}}val {{fmtName @key}}: {{#if (eq this.type "obj")}}{{prefix}}{{fmtOptIfNeeded (fmtClass @key this.origin.src) this.opt}}{{else}}{{#if (and this.path this.origin)}}{{fmtOptIfNeeded (add (add this.origin ".") (fmtType this)) this.opt}}{{else if (eq type "enum")}}{{fmtOptIfNeeded (add prefix (fmtClass @key)) this.opt}}{{else}}{{fmtOptIfNeeded (fmtType this (add (add prefix (fmtClass @key)) ".Companion")) this.opt}}{{/if}}{{/if}}{{/inline}}
+{{#*inline "anon"}}{{#if (and (or (or this.vars (or ../[1].adt (or (and this.item (not this.item.path)) this.mix))) (eq this.type "enum")) (not this.path))}}{{#if ../[1].adt}}sealed {{/if}}{{#if (or (or (eq this.type "obj") ../[1].adt) (eq this.item.type "obj"))}}interface {{fmtClass @key}} {{#if (or ../[1].mix ../[1].adt)}} : {{#each ../[1].mix}}{{fmtClass this.path this.src}}{{#unless @last}}, {{/unless}}{{/each}}{{../[0]}}{{/if}} {
+{{#if (not (eq this.type "seq"))}}{{#if (or ../[1].adt ../[1].mix)}}{{#each ../[1].vars}}
+    override {{>var}}
+
+{{/each}}{{/if}}
+{{#each ../[1].mix}}{{#with (resolve this)}}{{#each this.vars}}
+    override {{#if ../parent}}{{>var prefix=(add (fmtClass ../parent) ".Companion.") origin=(fmtSrcIfPresent ../origin.src)}}{{else}}{{>var origin=(fmtSrcIfPresent ../origin.src)}}{{/if}}
+{{/each}}{{/with}}{{/each}}
+{{#each vars}}
+    {{>var}}
+
+{{/each}}{{/if}}
+companion object {
+{{#if (eq this.type "seq")}}{{#if (eq this.item.type "obj")}}
+    @Serializable
+    data class Item(
+    {{#each this.item.vars}}
+        {{>var}}{{#unless @last}},{{/unless}}{{/each}}
+    ) {
+        companion object {
+            {{#each this.item.vars}}{{#if (eq type "enum")}}@Serializable
+            enum class {{fmtClass @key}} {
+                {{#each vals}}@SerialName("{{this}}") {{fmtEnum this}},{{/each}}
+            }{{/if}}{{/each}}
+        }
+    }
+{{/if}}{{/if}} {{#each this.vars}}
+    {{>anon}} {{/each}}
+} }{{/if}}{{#unless (or this.path (or this.item (eq this.type "enum")))}}@Serializable
+data class {{fmtClass @key}}Impl ( {{#if ../[1].adt}} {{#each ../[1].vars}}
+    override {{>var}}{{#if (or (not @last) ../vars)}},{{/if}}
+{{/each}} {{/if}} {{#each this.vars}}
+    override {{>var prefix=(add (fmtClass @../key) ".Companion.")}}{{#unless @last}},{{else}}{{#if ../vars}},{{/if}}{{/unless}}
+{{/each}}
+{{#each this.mix}}{{#with (resolve this)}}{{#each this.vars}}
+    {{>var}}{{#unless @last}},
+{{/unless}}
+{{/each}}{{/with}}{{#unless @last}},
+{{/unless}}{{/each}}
+
+){{#if ../[1].adt}} : {{../[0]}}.Companion.{{fmtClass @key}}{{/if}}{{/unless}}
+{{/if}}{{#if (eq this.type "enum")}}@Serializable
+enum class {{fmtClass @key}} {
+{{#each vals}}@SerialName("{{this}}") {{fmtEnum this}},{{/each}}
+}{{/if}}{{/inline}}
+{{#*inline "maybeSeqCompanion"}}{{#if (eq item.type "seq")}}{{>maybeSeqCompanion name=name item=item.item}}{{/if}}{{#if (or (eq item.type "obj") (eq item.type "enum"))}}object {{name}}Companion {
+{{#if (eq item.type "obj")}}@Serializable
+data class Item(
+{{#each item.vars}}
+    {{>var}}{{#unless @last}},{{/unless}}{{/each}}
+){{/if}}{{#if (eq item.type "enum")}}@Serializable
+enum class Item {
+{{#each item.vals}}@SerialName("{{this}}") {{fmtEnum this}},{{/each}}
+}{{/if}}
+}{{/if}}{{/inline}}
+{{#*inline "maybeMapCompanion"}}{{#if (eq val.type "map")}}{{>maybeMapCompanion name=name val=val.val}}{{/if}}{{#if (eq val.type "obj")}}object {{name}}Companion {
+@Serializable
+data class Value(
+{{#each val.vars}}
+    {{>var}}{{#unless @last}},{{/unless}}{{/each}}
+)
+}{{/if}}{{/inline}}
+package {{this.[2]}};
+
+import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+
+{{#if (eq this.[1].type "obj")}}{{#if this.[1].adt}}sealed {{/if}}interface {{this.[0]}}{{#each (typeParams this.[1])}}{{#if @first}}<{{else}}, {{/if}}{{this}}{{#if @last}}>{{/if}}{{/each}}{{#if (or this.[1].ext this.[1].mix)}}: {{/if}} {{#if this.[1].ext}}{{fmtClass this.[1].ext.path}}{{#each (typeArgs this.[1].ext)}}{{#if @first}}<{{else}}, {{/if}}{{fmtType this}}{{#if @last}}>{{#if this.[1].mix}}, {{/if}}{{/if}}{{/each}}{{/if}}{{#each this.[1].mix}}{{fmtClass this.path this.src}}{{#unless @last}}, {{/unless}}{{/each}} {
+{{#each this.[1].vars}}
+    {{>var}}
+
+{{/each}}
+{{#each this.[1].mix}}{{#with (resolve this)}}{{#each this.vars}}
+    override {{#if ../parent}}{{>var prefix=(add (fmtClass ../parent) ".Companion.") origin=(fmtSrcIfPresent ../origin.src)}}{{else}}{{>var origin=(fmtSrcIfPresent ../origin.src)}}{{/if}}
+{{/each}}{{/with}}{{/each}}
+    companion object {
+{{#each this.[1].adt.map}}
+    {{>anon}}
+{{/each}}
+{{#each this.[1].vars}}
+    {{>anon}}
+{{/each}}
+}
+}{{#unless this.[1].adt}}@Serializable
+data class {{this.[0]}}Impl{{#each (typeParams this.[1])}}{{#if @first}}<{{else}}, {{/if}}{{this}}{{#if @last}}>{{/if}}{{/each}}(
+{{#each this.[1].vars}}
+    override {{>var prefix=(add ../[0] ".Companion.")}}{{#unless @last}},
+    {{/unless}}{{/each}}{{#if this.[1].vars}},
+{{/if}}{{#each this.[1].mix}}{{#with (resolve this)}}{{#each this.vars}}
+    override {{#if ../parent}}{{>var prefix=(add (fmtClass ../parent) ".Companion.") origin=(fmtSrcIfPresent ../origin.src)}}{{else}}{{>var origin=(fmtSrcIfPresent ../origin.src)}}{{/if}}{{#unless @last}},
+{{/unless}}{{/each}}{{/with}}{{#unless @last}},
+{{/unless}}{{/each}}{{#with this.[1].ext}}{{#with (resolve this)}}{{#each this.vars}}
+    override val {{fmtName @key}}: {{fmtOptIfNeeded (fmtType (lookup ../../args this.param)) this.opt}}{{#unless @last}},
+    {{/unless}}{{/each}}{{/with}}{{/with}}
+
+) : {{this.[0]}}{{#each (typeParams this.[1])}}{{#if @first}}<{{else}}, {{/if}}{{this}}{{#if @last}}>{{/if}}{{/each}}{{/unless}}{{else if (eq this.[1].type "enum")}}@Serializable
+enum class {{this.[0]}} {
+    {{#each this.[1].vals}}@SerialName("{{this}}") {{fmtEnum this}},{{/each}}
+}{{else}}typealias {{this.[0]}} = {{#if (eq this.[1].type "obj")}}{{fmtType this.[1] (add this.[0] "Companion")}}{{else if (eq this.[1].type "seq")}}{{fmtType this.[1] (add this.[0] "Companion")}}
+{{>maybeSeqCompanion name=this.[0] item=this.[1].item}}{{else if (eq this.[1].type "map")}}{{fmtType this.[1] (add this.[0] "Companion")}}
+{{>maybeMapCompanion name=this.[0] val=this.[1].val}}{{else}}{{fmtType this.[1] this.[0]}}{{/if}}{{/if}}

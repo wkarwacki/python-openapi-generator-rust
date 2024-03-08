@@ -1,0 +1,15 @@
+ops:
+  op0:
+    - name: op0Name
+      type: PUT
+      req:
+        type: str
+      res:
+        type: bool
+        meta:
+          header:
+            type: const
+            val:
+              - value0
+              - value1
+              - value2

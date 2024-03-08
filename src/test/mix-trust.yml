@@ -1,0 +1,61 @@
+defs:
+  Parent0:
+    type: obj
+    vars:
+      str:
+        type: str
+  Parent1:
+    type: obj
+    vars:
+      dec:
+        type: dec
+        opt: true
+  Parent2:
+    type: obj
+    vars:
+      int:
+        type: int
+        opt: true
+  Mix:
+    type: obj
+    mix:
+      - path: "defs.Parent0"
+      - path: "defs.Parent1"
+  MixVar:
+    type: obj
+    vars:
+      var:
+        type: obj
+        mix:
+          - path: "defs.Parent0"
+          - path: "defs.Parent1"
+          - path: "defs.Mix"
+  MixMix:
+    type: obj
+    vars:
+      mix:
+        type: obj
+        mix:
+          - path: "defs.Parent0"
+          - path: "defs.Parent1"
+  MixWithVars:
+    type: obj
+    vars:
+      bool:
+        type: bool
+      dec:
+        type: dec
+        opt: true
+    mix:
+      - path: "defs.Parent0"
+  MixOfMixVar:
+    type: obj
+    mix:
+      - path: "defs.Parent0"
+    vars:
+      mix:
+        type: obj
+        mix:
+          - path: "defs.Parent1"
+          - path: "defs.Parent2"
+        opt: true

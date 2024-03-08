@@ -1,0 +1,11 @@
+import trust
+
+from abc import ABC, abstractmethod
+from typing import Generator
+
+class {{to_pascal_case this.[0]}}Service(ABC):
+{{#each this.[1]}}{{#each this}}
+    @abstractmethod
+    def {{to_snake_case this.name}}(self{{#with this.req}}, {{fmtName (fmtType this)}}: {{fmtType this}}{{/with}}{{#each this.params}}, {{this.name}}: {{fmtOptIfNeeded (fmtType this) this.opt this.default}}{{/each}}) -> {{#if this.res}}{{#if (eq this.res.carrier "stream")}}Generator[{{fmtType this.res}}, None, None]{{else}}{{fmtType this.res}}{{/if}}{{else}}None{{/if}}:
+        raise NotImplementedError
+{{/each}}{{/each}}

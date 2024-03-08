@@ -1,0 +1,23 @@
+import trust
+
+from .service import {{to_pascal_case this.[0]}}Service
+
+from fastapi import APIRouter, Depends, Response
+from fastapi.encoders import jsonable_encoder
+from fastapi.responses import JSONResponse, StreamingResponse
+
+{{to_snake_case this.[0]}}_router = APIRouter()
+
+{{#each this.[1]}}{{#each this}}
+@{{to_snake_case ../../[0]}}_router.{{to_lower_case this.type}}(
+    "{{@../key}}"{{#if (not this.res)}}, status_code=204, response_class=Response{{/if}}{{#if this.res.meta}},
+responses={200: {"headers": { {{#each this.res.meta}}"{{@key}}": {"schema": {"type": "string"{{#if (eq this.type "const")}}, "const": "{{#each this.val}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}"{{/if}} }}{{/each}} }}}{{/if}}
+)
+def {{this.name}}({{#with this.req}}request: {{fmtType this}}, {{/with}}{{#each this.params}}{{this.name}}: {{fmtOptIfNeeded (fmtType this) this.opt this.default}}{{#with this.default}} = {{json this}}{{/with}}, {{/each}}service: {{to_pascal_case ../../[0]}}Service = Depends({{to_pascal_case ../../[0]}}Service)) -> {{#with this.res}}{{#if (eq this.carrier "stream")}}Streaming{{else}}JSON{{/if}}Response{{else}}None{{/with}}:
+    {{#if this.res}}content = {{/if}}service.{{to_snake_case this.name}}({{#if this.req}}request{{#if this.params}}, {{/if}}{{/if}}{{#each this.params}}{{this.name}}{{#unless @last}}, {{/unless}}{{/each}}){{#if this.res}}
+    {{#unless (eq this.res.carrier "stream")}}content = jsonable_encoder(content){{/unless}}
+    {{#with this.res}}response = {{#if (eq this.carrier "stream")}}Streaming{{else}}JSON{{/if}}Response(content=content{{#with this.form}}, media_type = "{{this}}"{{/with}}){{/with}}{{#each this.res.meta}}
+    response.headers["{{@key}}"] = "{{#each this.val}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}"{{/each}}
+    {{#if this.res}}return response{{/if}}
+{{/if}}
+{{/each}}{{/each}}

@@ -1,0 +1,1 @@
+{{#each (typeArgs val)}}{{#if @first}}[{{else}}, {{/if}}{{fmtType this}}{{#if @last}}]{{#if this.[1].mix}}, {{/if}}{{/if}}{{/each}}

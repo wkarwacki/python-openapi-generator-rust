@@ -1,0 +1,5 @@
+autoflake
+black
+httpx==0.27.0
+mypy
+pydantic==2.7.4

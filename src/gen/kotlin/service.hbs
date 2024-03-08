@@ -1,0 +1,8 @@
+package {{this.[2]}}
+
+interface {{this.[0]}}Service {
+{{#each this.[1]}}{{#each this}}
+    fun {{this.name}}({{#if this.req}}{{fmtName (fmtType this.req)}}: {{fmtType this.req}}{{#if this.params}}, {{/if}}{{/if}}{{#each this.params}}{{#unless @first}}, {{/unless}}{{this.name}}: {{fmtOptIfNeeded (fmtType this) this.opt}}{{/each}}){{#if this.res}}: {{fmtType this.res}}{{/if}}
+{{/each}}{{/each}}
+
+}

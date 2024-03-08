@@ -1,0 +1,23 @@
+=== features
+tuple(n) type
+add cli parameter to remove unused objects
+think about making adt var optional (similar to serde unnamed/untagged)
+implement unique items (set)
+custom types based on conversion for compile-time safety
+contract templating (use-case: auto implementation of content-disposition header based on some params)
+
+=== gen
+python: generate api implementation stub on cli param
+python: optional headers not handled, default headers not handled
+generate all referenced objects, not only from a given input
+handle package in type_mapping, loosen the necessity to type Dto as keys, alllow other types than str to be mapped
+
+=== validation
+validation that default value schema (or const schema) is compatible with declared type
+validation that adt's var references actual var
+
+=== test
+improve clinet-server tests
+
+=== other
+anonymize dd api

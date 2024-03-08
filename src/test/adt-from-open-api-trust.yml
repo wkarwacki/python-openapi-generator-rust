@@ -1,0 +1,59 @@
+defs:
+  Adt:
+    type: obj
+    adt:
+      var: type
+      map:
+        typeToken0:
+          vars:
+            bool:
+              type: bool
+            dec:
+              type: dec
+              opt: true
+        typeToken1:
+          vars:
+            str:
+              type: str
+              opt: true
+            int:
+              type: int
+  AdtTypeToken0:
+    type: obj
+    vars:
+      bool:
+        type: bool
+      dec:
+        type: dec
+        opt: true
+    mix:
+      - path: "defs.Adt"
+  AdtTypeToken1:
+    type: obj
+    vars:
+      str:
+        type: str
+        opt: true
+      int:
+        type: int
+    mix:
+      - path: "defs.Adt"
+  AnotherAdt:
+    type: obj
+    adt:
+      var: type
+      map:
+        typeToken0:
+          mix:
+            - path: defs.Adt
+        typeToken1:
+          mix:
+            - path: defs.Adt
+  AnotherAdtTypeToken0:
+    type: obj
+    mix:
+      - path: 'defs.Adt'
+  AnotherAdtTypeToken1:
+    type: obj
+    mix:
+      - path: 'defs.Adt'
