@@ -1,5 +1,6 @@
-.gradle/
-.idea/
+.bsp
+.gradle
+.idea
 .iml
 .venv
 
@@ -16,6 +17,7 @@ test_debug/gen/python/src
 !test_debug/gen/scala
 test_debug/gen/scala/src
 
+!test_debug/dd
 test_debug/dd/kotlin/src
 test_debug/dd/python/client/src
 test_debug/dd/python/server/src
