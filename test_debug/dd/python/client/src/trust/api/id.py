@@ -1,4 +1,0 @@
-
-
-
-IdDto = str
