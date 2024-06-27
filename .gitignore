@@ -6,7 +6,7 @@
 
 build/
 target/
-test_debug/*
+test_debug/*.yml
 
 !test_debug/gen/kotlin
 test_debug/gen/kotlin/src
