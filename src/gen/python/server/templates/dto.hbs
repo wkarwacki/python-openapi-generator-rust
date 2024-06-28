@@ -9,7 +9,7 @@
 {{#each val.adt.map}}
 {{>dto key=(fmtClass @key) val=this adtParent=../key}}
 
-    {{fmtName ../val.adt.var}}: Literal[{{json @key}}]
+    {{fmtName ../val.adt.var}}: Literal[{{json @key}}] = {{json @key}}
 
 
 {{/each}}
