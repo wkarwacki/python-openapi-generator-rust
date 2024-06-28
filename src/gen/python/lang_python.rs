@@ -106,7 +106,7 @@ impl Lang for LangPython {
                 "list[".to_string() + item.as_str() + "]"
             }
             Def::Str(_) => name.and_then(|n| self.gen_cfg.type_mapping.get(n.as_str())).unwrap_or(&"str".to_string()).clone(),
-            Def::Struct(_) => "dict[Any, Any]".to_string(),
+            Def::Struct(_) => "Any".to_string(),
         }
     }
 }
