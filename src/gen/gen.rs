@@ -71,18 +71,20 @@ impl HelperDef for FmtName {
 }
 
 #[derive(Clone)]
-struct FmtOpt {
+struct FmtOptIfNeeded {
     gen: Box<dyn Gen>,
 }
 
-impl HelperDef for FmtOpt {
+impl HelperDef for FmtOptIfNeeded {
     fn call<'reg: 'rc, 'rc>(&self, h: &Helper, _: &Handlebars, _: &HbContext, _: &mut RenderContext, out: &mut dyn Output) -> HelperResult {
         let string_param = h.param(0).unwrap();
         let opt_param = h.param(1).unwrap();
         let default_param = h.param(2);
 
-        if opt_param.value().as_bool().unwrap_or(false) && default_param.is_none() {
-            out.write(self.gen.lang().fmt_opt(string_param.value().render()).as_str())?;
+        let opt_param_value = opt_param.value().as_bool().unwrap_or(false);
+
+        if opt_param_value {
+            out.write(self.gen.lang().fmt_opt(string_param.value().render(), default_param.map(|d| d.value().clone())).as_str())?;
         } else {
             out.write(string_param.value().render().as_str())?;
         }
@@ -329,7 +331,7 @@ pub fn go(pkg: &Pkg, gen: Box<dyn Gen>, templates_path: Option<PathBuf>, context
     handlebars.register_helper("fmtClass", Box::new(FmtClass { gen: gen.clone() }.clone()));
     handlebars.register_helper("fmtEnum", Box::new(FmtEnum { gen: gen.clone() }.clone()));
     handlebars.register_helper("fmtName", Box::new(FmtName { gen: gen.clone() }.clone()));
-    handlebars.register_helper("fmtOptIfNeeded", Box::new(FmtOpt { gen: gen.clone() }.clone()));
+    handlebars.register_helper("fmtOptIfNeeded", Box::new(FmtOptIfNeeded { gen: gen.clone() }.clone()));
     handlebars.register_helper("fmtSrcIfPresent", Box::new(FmtSrcIfPresent { gen: gen.clone() }.clone()));
     handlebars.register_helper("fmtType", Box::new(FmtType { gen: gen.clone() }.clone()));
 
