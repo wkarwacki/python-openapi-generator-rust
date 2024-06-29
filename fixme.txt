@@ -1,6 +1,8 @@
 === must have
-make sure that adt and params are handled recursively
+required params first
 
 === gen
 python: type_mapping and subdir -> make it work for both client and server
-python-server: optional/default query/path/form params -> in service optional only if without default
+
+=== other
+make sure that adt and params are handled recursively
