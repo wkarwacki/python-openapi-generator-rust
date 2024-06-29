@@ -1,4 +1,4 @@
-use serde::{Deserialize, Serialize};
+use serde::{Deserialize, Deserializer, Serialize};
 use crate::desc::Desc;
 
 
@@ -10,6 +10,23 @@ pub struct OpParam {
     pub name: String,
     #[serde(flatten)]
     pub desc: Desc,
-    #[serde(skip_serializing_if = "Option::is_none")]
+    #[serde(skip_serializing_if = "Option::is_none", default, deserialize_with = "deserialize_default")]
     pub default: Option<Value>
+}
+
+fn deserialize_default<'de, D>(deserializer: D) -> Result<Option<Value>, D::Error>
+    where
+        D: Deserializer<'de>,
+{
+    #[derive(Deserialize)]
+    #[serde(untagged)]
+    enum DefaultValue {
+        Some(Value),
+        Null,
+    }
+
+    match DefaultValue::deserialize(deserializer)? {
+        DefaultValue::Some(value) => Ok(Some(value)),
+        DefaultValue::Null => Ok(Some(Value::Null))
+    }
 }

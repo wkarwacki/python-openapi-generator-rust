@@ -1,3 +1,4 @@
+use std::any::Any;
 use std::collections::{HashMap, HashSet};
 use std::fs;
 
@@ -331,6 +332,11 @@ pub fn go(pkg: &Pkg, gen: Box<dyn Gen>, templates_path: Option<PathBuf>, context
     }).map(|(name, def)| serde_json::to_value((name, def)).unwrap()).collect::<Vec<_>>()); // TIDY: make object (i.e. hashmap) out of it instead of Vec<Pair>, otherwise before and after filtering are different types | TIDY: make it handle nulls, otherwise double if is needed everywhere
     handlebars.register_helper("filterNonconst", Box::new(filter_nonconst));
     handlebars.register_helper("isAlias", Box::new(IsAlias { gen: gen.clone() }.clone()));
+    handlebars_helper!(has_key: |json_value: JsonValue, key: String| match json_value {
+        Value::Object(map) => map.contains_key(key.as_str()),
+        _ => false
+    });
+    handlebars.register_helper("hasKey", Box::new(has_key));
 
     handlebars.register_helper("parents", Box::new(Parents { context: context.clone() }.clone()));
     handlebars.register_helper("resolve", Box::new(Resolve { context: context.clone() }.clone()));
