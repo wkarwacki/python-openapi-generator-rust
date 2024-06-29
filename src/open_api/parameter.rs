@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use std::ops::Not;
+use serde_yaml::Value;
 
 use crate::context::Context;
 use crate::op_param::OpParam;
@@ -8,12 +9,51 @@ use crate::open_api::parameter::Parameter::{Cookie, Header, Path, Query};
 use crate::open_api::schema::Schema;
 use crate::open_api::context::Context as OpenApiContext;
 
+use crate::util;
+
+trait ParameterVal {
+    fn name(&self) -> String;
+    fn required(&self) -> bool;
+    fn schema(&self) -> Schema;
+}
+
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct ParameterVal {
+pub struct ParameterValDefault {
     pub name: String,
     #[serde(default, skip_serializing_if = "<&bool>::not")]
     pub required: bool,
     pub schema: Schema,
+}
+
+impl ParameterVal for ParameterValDefault {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+    fn required(&self) -> bool {
+        self.required.clone()
+    }
+    fn schema(&self) -> Schema {
+        self.schema.clone()
+    }
+}
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+pub struct ParameterValPath {
+    pub name: String,
+    #[serde(default = "util::r#true", skip_serializing_if = "util::val")]
+    pub required: bool,
+    pub schema: Schema,
+}
+
+impl ParameterVal for ParameterValPath {
+    fn name(&self) -> String {
+        self.name.clone()
+    }
+    fn required(&self) -> bool {
+        self.required.clone()
+    }
+    fn schema(&self) -> Schema {
+        self.schema.clone()
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -21,41 +61,41 @@ pub struct ParameterVal {
 pub enum Parameter {
     Cookie {
         #[serde(flatten)]
-        val: ParameterVal,
+        val: ParameterValDefault,
     },
     Header {
         #[serde(flatten)]
-        val: ParameterVal,
+        val: ParameterValDefault,
     },
     Path {
         #[serde(flatten)]
-        val: ParameterVal,
+        val: ParameterValPath,
     },
     Query {
         #[serde(flatten)]
-        val: ParameterVal,
+        val: ParameterValDefault,
     },
 }
 
 impl Parameter {
     pub fn of(op_param: &OpParam, context: &Context) -> Parameter {
         match op_param.clone().loc.unwrap_or("query".to_string()).as_str() {
-            "cookie" => Cookie{val: ParameterVal {
+            "cookie" => Cookie{val: ParameterValDefault {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
                 schema: Schema::of_desc(&op_param.desc, "CookieParam".to_string(), op_param.clone().default, context),
             }},
-            "header" => Header{val: ParameterVal {
+            "header" => Header{val: ParameterValDefault {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
                 schema: Schema::of_desc(&op_param.desc, "HeaderParam".to_string(), op_param.clone().default, context),
             }},
-            "path" => Path{val: ParameterVal {
+            "path" => Path{val: ParameterValPath {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
                 schema: Schema::of_desc(&op_param.desc, "PathParam".to_string(), op_param.clone().default, context),
             }},
-            "query" => Query{val: ParameterVal {
+            "query" => Query{val: ParameterValDefault {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
                 schema: Schema::of_desc(&op_param.desc, "QueryParam".to_string(), op_param.clone().default, context),
@@ -64,31 +104,32 @@ impl Parameter {
         }
     }
 
+    // TIDY: extract processing for all below methods
     pub fn op_param(&self, context: &OpenApiContext) -> OpParam {
         match self {
             Cookie{val} => OpParam {
                 name: val.name.clone(),
                 loc: Some("cookie".to_string()),
                 desc: val.clone().schema.desc("param".to_string(), context),
-                default: val.clone().schema.default
+                default: if val.required {None} else {Some(val.clone().schema.default.unwrap_or(Value::Null))}
             },
             Header{val} => OpParam {
                 name: val.name.clone(),
                 loc: Some("header".to_string()),
                 desc: val.clone().schema.desc("param".to_string(), context),
-                default: val.clone().schema.default
+                default: if val.required {None} else {Some(val.clone().schema.default.unwrap_or(Value::Null))}
             },
             Path{val} => OpParam {
                 name: val.name.clone(),
                 loc: Some("path".to_string()),
                 desc: val.clone().schema.desc("param".to_string(), context),
-                default: val.clone().schema.default
+                default: if val.required {None} else {Some(val.clone().schema.default.unwrap_or(Value::Null))}
             },
             Query{val} => OpParam {
                 name: val.name.clone(),
                 loc: Some("query".to_string()),
                 desc: val.clone().schema.desc("param".to_string(), context),
-                default: val.clone().schema.default
+                default: if val.required {None} else {Some(val.clone().schema.default.unwrap_or(Value::Null))}
             },
         }
     }

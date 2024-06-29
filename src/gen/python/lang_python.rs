@@ -69,15 +69,8 @@ impl Lang for LangPython {
         }
     }
 
-    fn fmt_opt(&self, string: String, default: Option<Value>) -> String {
-        string + " | None" + default.map(|d| " = ".to_string() + match d {
-            Value::Null => "None".to_string(),
-            Value::Bool(bool) => bool.to_string(),
-            Value::Number(number) => number.to_string(),
-            Value::String(string) => string,
-            Value::Array(_) => todo!(),
-            Value::Object(_) => todo!()
-        }.as_str()).unwrap_or("".to_string()).as_str()
+    fn fmt_opt(&self, string: String) -> String {
+        string + " | None"
     }
 
     fn fmt_ref(&self, r#ref: Ref) -> String { // FIXME_LATER: such implementation is strongly coupled with current python gens
