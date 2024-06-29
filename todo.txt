@@ -5,10 +5,12 @@ think about making adt var optional (similar to serde unnamed/untagged)
 implement unique items (set)
 custom types based on conversion for compile-time safety
 contract templating (use-case: auto implementation of content-disposition header based on some params)
+fail on unrecognized cfg option
 
 === gen
 python: generate api implementation stub on cli param
 python: optional headers not handled, default headers not handled
+client: generator config, explicit nulls when properties are optional
 generate all referenced objects, not only from a given input
 handle package in type_mapping, loosen the necessity to type Dto as keys, alllow other types than str to be mapped
 
