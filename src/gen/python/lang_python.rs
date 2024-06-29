@@ -110,4 +110,15 @@ impl Lang for LangPython {
             Def::Struct(_) => "Any".to_string(),
         }
     }
+
+    fn fmt_value(&self, json_value: Value) -> String {
+        match json_value {
+            Value::Bool(val) => val.to_string(),
+            Value::Number(val) => val.to_string(),
+            Value::String(val) => val,
+            Value::Array(val) => "[".to_string() + val.iter().map(|json_value| self.fmt_value(json_value.clone())).collect::<Vec<String>>().join(", ").as_str() + "]",
+            Value::Object(val) => val.iter().map(|(key, json_value)| key.clone() + ": " + self.fmt_value(json_value.clone()).as_str()).collect::<Vec<String>>().join(", "),
+            Value::Null => "None".to_string()
+        }
+    }
 }

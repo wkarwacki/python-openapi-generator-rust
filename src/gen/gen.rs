@@ -123,6 +123,18 @@ impl HelperDef for FmtType {
 }
 
 #[derive(Clone)]
+struct FmtValue {
+    gen: Box<dyn Gen>,
+}
+
+impl HelperDef for FmtValue {
+    fn call<'reg: 'rc, 'rc>(&self, h: &Helper, _: &Handlebars, _: &HbContext, _: &mut RenderContext, out: &mut dyn Output) -> HelperResult {
+        let json_value: JsonValue = h.param(0).unwrap().value().clone();
+        Ok(out.write(self.gen.lang().fmt_value(json_value).as_str())?)
+    }
+}
+
+#[derive(Clone)]
 struct IsAlias {
     gen: Box<dyn Gen>,
 }
@@ -325,6 +337,7 @@ pub fn go(pkg: &Pkg, gen: Box<dyn Gen>, templates_path: Option<PathBuf>, context
     handlebars.register_helper("fmtOpt", Box::new(FmtOpt { gen: gen.clone() }.clone()));
     handlebars.register_helper("fmtSrcIfPresent", Box::new(FmtSrcIfPresent { gen: gen.clone() }.clone()));
     handlebars.register_helper("fmtType", Box::new(FmtType { gen: gen.clone() }.clone()));
+    handlebars.register_helper("fmtValue", Box::new(FmtValue { gen: gen.clone() }.clone()));
 
     handlebars_helper!(filter_nonconst: |defs: HashMap<String, Def>| defs.iter().filter(|(name, def)| match def{
         Def::Const(_) => false,

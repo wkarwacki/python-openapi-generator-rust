@@ -56,6 +56,7 @@ paths:
             type: array
             items:
               $ref: '#/components/schemas/ColumnId'
+            default: []
           name: columnIds
           in: query
       responses:

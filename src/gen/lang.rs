@@ -1,5 +1,5 @@
 use std::path::PathBuf;
-use handlebars::Handlebars;
+use handlebars::{Handlebars, JsonValue};
 use serde_json::Value;
 
 use crate::def::Def;
@@ -18,6 +18,7 @@ pub trait Lang {
     fn fmt_ref(&self, r#ref: Ref) -> String;
     fn fmt_src(&self, src: String) -> String;
     fn fmt_type(&self, def: Def, name: Option<String>) -> String;
+    fn fmt_value(&self, json_value: JsonValue) -> String;
 }
 
 pub static DTO_NAME_TEMPLATE_NAME: &str = "dtoName";
