@@ -1,14 +1,14 @@
 #[cfg(test)]
 mod mix {
     
-    use std::io::{Write};
+    
 
-    use crate::{from_open_api, Generator, Role};
-    use crate::open_api::open_api::OpenApi;
-    use crate::pkg::Pkg;
+    use crate::{Generator, Role};
+    
+    
     use crate::test::util::{from_open_api_test_fn, gen_test, to_open_api_test_fn};
-    use crate::to_open_api;
-    use crate::util::read_t;
+    
+    
 
     #[test]
     fn to_open_api_test() {

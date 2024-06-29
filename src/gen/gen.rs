@@ -1,4 +1,4 @@
-use std::any::Any;
+
 use std::collections::{HashMap, HashSet};
 use std::fs;
 
@@ -8,7 +8,7 @@ use std::path::PathBuf;
 use convert_case::{Case, Casing};
 use dyn_clone::DynClone;
 use handlebars::{Context as HbContext, Handlebars, handlebars_helper, Helper, HelperDef, HelperResult, JsonRender, JsonValue, Output, RenderContext, RenderError, ScopedJson};
-use serde_json::{Error, json, Value};
+use serde_json::{json, Value};
 
 use crate::context::Context;
 use crate::def::{Def, Int, Obj, Str};
@@ -339,7 +339,7 @@ pub fn go(pkg: &Pkg, gen: Box<dyn Gen>, templates_path: Option<PathBuf>, context
     handlebars.register_helper("fmtType", Box::new(FmtType { gen: gen.clone() }.clone()));
     handlebars.register_helper("fmtValue", Box::new(FmtValue { gen: gen.clone() }.clone()));
 
-    handlebars_helper!(filter_nonconst: |defs: HashMap<String, Def>| defs.iter().filter(|(name, def)| match def{
+    handlebars_helper!(filter_nonconst: |defs: HashMap<String, Def>| defs.iter().filter(|(_name, def)| match def{
         Def::Const(_) => false,
         _ => true
     }).map(|(name, def)| serde_json::to_value((name, def)).unwrap()).collect::<Vec<_>>()); // TIDY: make object (i.e. hashmap) out of it instead of Vec<Pair>, otherwise before and after filtering are different types | TIDY: make it handle nulls, otherwise double if is needed everywhere
