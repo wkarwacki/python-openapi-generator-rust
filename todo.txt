@@ -6,6 +6,7 @@ implement unique items (set)
 custom types based on conversion for compile-time safety
 contract templating (use-case: auto implementation of content-disposition header based on some params)
 fail on unrecognized cfg option
+from-open-api should organize apis by tags
 
 === gen
 python: generate api implementation stub on cli param
