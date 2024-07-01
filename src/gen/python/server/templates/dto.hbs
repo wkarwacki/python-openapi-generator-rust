@@ -20,10 +20,10 @@
     {{fmtEnum this}} = {{json this}}{{/each}}{{/if}}
 {{#if formLike}}    @classmethod
     def of_form(
-        cls,{{#each val.vars}}
+        cls,{{#each (sortOptionalsLast val.vars)}}
         {{>varForm}}{{#unless @last}},{{/unless}}{{/each}}
     ) -> '{{fmtClass key}}':
             return {{fmtClass key}}(
-                {{#each val.vars}}{{fmtName @key}} = {{#if (eq this.type "seq")}}[json.loads(item) for item in {{fmtName @key}}]{{else}}{{fmtName @key}}{{/if}}{{#unless @last}},
+                {{#each (sortOptionalsLast val.vars)}}{{fmtName @key}} = {{#if (eq this.type "seq")}}[json.loads(item) for item in {{fmtName @key}}]{{else}}{{fmtName @key}}{{/if}}{{#unless @last}},
                 {{/unless}}{{/each}}
             ){{/if}}

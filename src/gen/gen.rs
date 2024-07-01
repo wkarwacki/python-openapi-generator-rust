@@ -1,5 +1,5 @@
 
-use std::collections::{HashMap, HashSet};
+use std::collections::{BTreeMap, HashMap, HashSet};
 use std::fs;
 
 
@@ -8,7 +8,7 @@ use std::path::PathBuf;
 use convert_case::{Case, Casing};
 use dyn_clone::DynClone;
 use handlebars::{Context as HbContext, Handlebars, handlebars_helper, Helper, HelperDef, HelperResult, JsonRender, JsonValue, Output, RenderContext, RenderError, ScopedJson};
-use serde_json::{json, Value};
+use serde_json::{json, Map, Value};
 
 use crate::context::Context;
 use crate::def::{Def, Int, Obj, Str};
@@ -18,6 +18,7 @@ use crate::gen::lang::{DTO_NAME_TEMPLATE_NAME, Lang};
 use crate::pkg::Pkg;
 use crate::r#ref::Ref;
 use crate::util::read;
+use crate::var::Var;
 
 pub trait Gen: DynClone + Send + Sync {
     fn lang(&self) -> Box<dyn Lang>;
@@ -213,6 +214,34 @@ impl HelperDef for Resolve {
 }
 
 #[derive(Clone)]
+struct SortOptionalsLast {
+    context: Context,
+}
+
+impl HelperDef for SortOptionalsLast {
+    fn call_inner<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper<'rc>,
+        _: &'reg Handlebars<'reg>,
+        _: &'rc handlebars::Context,
+        _: &mut RenderContext<'reg, 'rc>,
+    ) -> Result<ScopedJson<'rc>, RenderError> {
+        let vars: HashMap<String, Box<Var>> = serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
+        let mut vec = vars.iter().collect::<Vec<_>>();
+        vec.sort_by(|(name0, var0), (name1, var1)| {
+            if var0.opt && !var1.opt {
+                std::cmp::Ordering::Greater
+            } else if !var0.opt && var1.opt {
+                std::cmp::Ordering::Less
+            } else {
+                name0.cmp(name1)
+            }
+        });
+        Ok(ScopedJson::from(Value::Object(vec.iter().map(|(name, var)| (name.clone().clone(), serde_json::to_value(var).unwrap())).collect::<Map<_, _>>())))
+    }
+}
+
+#[derive(Clone)]
 struct TypeArgs {
     context: Context,
 }
@@ -353,6 +382,7 @@ pub fn go(pkg: &Pkg, gen: Box<dyn Gen>, templates_path: Option<PathBuf>, context
 
     handlebars.register_helper("parents", Box::new(Parents { context: context.clone() }.clone()));
     handlebars.register_helper("resolve", Box::new(Resolve { context: context.clone() }.clone()));
+    handlebars.register_helper("sortOptionalsLast", Box::new(SortOptionalsLast { context: context.clone() }.clone()));
     handlebars.register_helper("typeArgs", Box::new(TypeArgs { context: context.clone() }.clone()));
     handlebars_helper!(to_flat_case: |string: String| string.to_case(Case::Flat));
     handlebars.register_helper("toFlatCase", Box::new(to_flat_case));

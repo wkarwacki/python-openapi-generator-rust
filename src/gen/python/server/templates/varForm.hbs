@@ -1,1 +1,1 @@
-{{fmtName @key}}: {{#if (eq this.type "seq")}}list[str]{{else}}Annotated[{{#if (eq @key "file")}}UploadFile, File(){{else}}{{>type}}, Form(){{/if}}]{{#if this.opt}} = None{{/if}}{{/if}}
+{{fmtName @key}}: {{#if (eq this.type "seq")}}list[str]{{else}}Annotated[{{#if (eq @key "file")}}UploadFile, File(){{else}}{{>type}}, Form(){{/if}}]{{/if}}{{#if this.opt}} = None{{/if}}
