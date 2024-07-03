@@ -74,7 +74,7 @@ impl Lang for LangPython {
     }
 
     fn fmt_ref(&self, r#ref: Ref) -> String { // FIXME_LATER: such implementation is strongly coupled with current python gens
-        dto_name(r#ref.class_name().to_case(Case::Snake) + "." + r#ref.class_name().as_str(), Box::new(self.clone()))
+        dto_name(r#ref.class_name().to_case(Case::Snake) + "." + r#ref.class_name().to_case(Case::Pascal).as_str(), Box::new(self.clone()))
     }
 
     fn fmt_src(&self, src: String) -> String {

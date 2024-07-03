@@ -27,9 +27,12 @@ impl Gen for GenPythonHttpClient {
     fn dtos(&self, handlebars: Handlebars, pkg: &Pkg, context: Context, templates: HashMap<String, String>) -> HashMap<PathBuf, String> {
         let out_dir = self.lang.out_dir().to_string_lossy().to_string();
         let mut defs: Vec<(String, Def, bool)> = Vec::new();
-        defs.extend(pkg.defs.iter().map(|(def_name, def)| (def_name.clone(), def.clone(), false)));
-        defs.extend(pkg.ops.iter().flat_map(|(_, ops)| ops).filter(|op| op.req.clone().and_then(|req| req.form.map(|form| form == "multipart/form-data")).unwrap_or(false))
-            .flat_map(|op| op.req.iter().collect::<Vec<_>>().iter().flat_map(|req| req.desc.def().map(|def| (op.name.clone(), def.clone(), true))).collect::<Vec<_>>()));
+        let form_ops = pkg.ops.iter().flat_map(|(_, ops)| ops).filter(|op| op.req.clone().and_then(|req| req.form.map(|form| form == "multipart/form-data")).unwrap_or(false)).collect::<Vec<_>>();
+        defs.extend(form_ops.iter().flat_map(|op| op.req.iter().collect::<Vec<_>>().iter().flat_map(|req| req.desc.def().map(|def| (op.name.clone(), def.clone(), true))).collect::<Vec<_>>()));
+        defs.extend(pkg.defs.iter().map(|(def_name, def)| (def_name.clone(), def.clone(), {
+            let form_refs = form_ops.iter().flat_map(|op| op.req.clone().and_then(|req| req.desc.r#ref().map(|r#ref| r#ref.path.clone().rsplit_once('.').unwrap().1.to_string()))).collect::<Vec<_>>();
+            form_refs.contains(def_name) // FIXME: take src into account as well
+        })));
         let dtos: HashMap<PathBuf, _> = defs.iter().map(|(def_name, def, form_like)| {
             let dto_template = templates.get("dtoFile").unwrap();
             let dto_path = def_name.to_case(Case::Snake).to_string() + ".py";

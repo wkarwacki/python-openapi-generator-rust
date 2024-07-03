@@ -482,7 +482,7 @@ impl Schema {
                                     }) // FIXME_LATER: src is not taken
                                     .map(|_ref| _ref.clone())
                                     .collect::<Vec<_>>(),
-                                vars: obj.clone().vars,
+                                vars: obj.clone().vars.iter().filter(|(name, _)| name.clone().clone() != discriminator.property_name).map(|(name, var)| (name.clone(), var.clone())).collect::<HashMap<_, _>>(),
                                 adt: obj.clone().adt,
                                 null: self.nullable
                             }).unwrap()

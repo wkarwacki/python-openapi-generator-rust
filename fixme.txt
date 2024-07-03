@@ -3,6 +3,7 @@ required params first
 
 === gen
 python: type_mapping and subdir -> make it work for both client and server
+python-client: handle ref to separate def (with inner ref to def) in multipart/form-data case
 
 === other
 make sure that adt and params are handled recursively
