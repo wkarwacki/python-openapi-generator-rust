@@ -59,6 +59,7 @@ impl Components {
                                                 required: Vec::new(),
                                                 nullable: false,
                                                 all_of: Vec::new(),
+                                                one_of: Vec::new(),
                                                 discriminator: None,
                                                 items: None,
                                                 r#enum: Vec::new(),
@@ -79,6 +80,7 @@ impl Components {
                                             ));
                                             vec
                                         },
+                                        one_of: Vec::new(),
                                         discriminator: None,
                                         items: None,
                                         r#enum: Vec::new(),
@@ -112,6 +114,7 @@ impl Components {
                         vars_for_args.iter().map(|(var_name, var)| (var_name.to_string(), Schema::of_var(&Box::new(var.clone()), var_name.to_string(), context))).collect()
                     },
                     all_of: Vec::new(),
+                    one_of: Vec::new(),
                     additional_properties: None,
                     required: required,
                     nullable: false,

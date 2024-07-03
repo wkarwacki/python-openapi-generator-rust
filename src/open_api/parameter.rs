@@ -59,47 +59,45 @@ impl ParameterVal for ParameterValPath {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(tag = "in", rename_all = "camelCase")]
 pub enum Parameter {
-    Cookie {
-        #[serde(flatten)]
-        val: ParameterValDefault,
-    },
-    Header {
-        #[serde(flatten)]
-        val: ParameterValDefault,
-    },
-    Path {
-        #[serde(flatten)]
-        val: ParameterValPath,
-    },
-    Query {
-        #[serde(flatten)]
-        val: ParameterValDefault,
-    },
+    Cookie(ParameterValDefault),
+    Header(ParameterValDefault),
+    Path(ParameterValPath),
+    Query(ParameterValDefault),
 }
 
 impl Parameter {
+
+    pub fn schema(&self) -> Schema {
+        match self {
+            Cookie(val) => val.clone().schema,
+            Header(val) => val.clone().schema,
+            Path(val) => val.clone().schema,
+            Query(val) => val.clone().schema
+        }
+    }
+
     pub fn of(op_param: &OpParam, context: &Context) -> Parameter {
         match op_param.clone().loc.unwrap_or("query".to_string()).as_str() {
-            "cookie" => Cookie{val: ParameterValDefault {
+            "cookie" => Cookie(ParameterValDefault {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
                 schema: Schema::of_desc(&op_param.desc, "CookieParam".to_string(), op_param.clone().default, context),
-            }},
-            "header" => Header{val: ParameterValDefault {
+            }),
+            "header" => Header(ParameterValDefault {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
                 schema: Schema::of_desc(&op_param.desc, "HeaderParam".to_string(), op_param.clone().default, context),
-            }},
-            "path" => Path{val: ParameterValPath {
+            }),
+            "path" => Path(ParameterValPath {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
                 schema: Schema::of_desc(&op_param.desc, "PathParam".to_string(), op_param.clone().default, context),
-            }},
-            "query" => Query{val: ParameterValDefault {
+            }),
+            "query" => Query(ParameterValDefault {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
                 schema: Schema::of_desc(&op_param.desc, "QueryParam".to_string(), op_param.clone().default, context),
-            }},
+            }),
             _ => unimplemented!()
         }
     }
@@ -107,25 +105,25 @@ impl Parameter {
     // TIDY: extract processing for all below methods
     pub fn op_param(&self, context: &OpenApiContext) -> OpParam {
         match self {
-            Cookie{val} => OpParam {
+            Cookie(val) => OpParam {
                 name: val.name.clone(),
                 loc: Some("cookie".to_string()),
                 desc: val.clone().schema.desc("param".to_string(), context),
                 default: if val.required {None} else {Some(val.clone().schema.default.unwrap_or(Value::Null))}
             },
-            Header{val} => OpParam {
+            Header(val) => OpParam {
                 name: val.name.clone(),
                 loc: Some("header".to_string()),
                 desc: val.clone().schema.desc("param".to_string(), context),
                 default: if val.required {None} else {Some(val.clone().schema.default.unwrap_or(Value::Null))}
             },
-            Path{val} => OpParam {
+            Path(val) => OpParam {
                 name: val.name.clone(),
                 loc: Some("path".to_string()),
                 desc: val.clone().schema.desc("param".to_string(), context),
                 default: if val.required {None} else {Some(val.clone().schema.default.unwrap_or(Value::Null))}
             },
-            Query{val} => OpParam {
+            Query(val) => OpParam {
                 name: val.name.clone(),
                 loc: Some("query".to_string()),
                 desc: val.clone().schema.desc("param".to_string(), context),

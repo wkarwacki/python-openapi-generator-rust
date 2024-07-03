@@ -41,6 +41,9 @@ pub struct Schema {
     #[serde(skip_serializing_if = "Vec::is_empty")]
     #[serde(default)]
     pub all_of: Vec<Schema>,
+    #[serde(skip_serializing_if = "Vec::is_empty")]
+    #[serde(default)]
+    pub one_of: Vec<Schema>,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub discriminator: Option<Discriminator>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -73,6 +76,7 @@ impl Schema {
                     required: Vec::new(),
                     nullable: false,
                     all_of: Vec::new(),
+                    one_of: Vec::new(),
                     discriminator: None,
                     items: None,
                     r#enum: Vec::new(),
@@ -97,6 +101,7 @@ impl Schema {
                 required: Vec::new(),
                 nullable: false,
                 all_of: Vec::new(),
+                one_of: Vec::new(),
                 discriminator: None,
                 items: match _const.val.clone() {
                     Value::Sequence(_) => Some(Box::new(Schema {
@@ -106,6 +111,7 @@ impl Schema {
                         required: Vec::new(),
                         nullable: false,
                         all_of: Vec::new(),
+                        one_of: Vec::new(),
                         discriminator: None,
                         items: None,
                         r#enum: Vec::new(),
@@ -130,6 +136,7 @@ impl Schema {
                     required: Vec::new(),
                     nullable: false,
                     all_of: Vec::new(),
+                    one_of: Vec::new(),
                     discriminator: None,
                     items: None,
                     r#enum: Vec::new(),
@@ -147,6 +154,7 @@ impl Schema {
                     required: Vec::new(),
                     nullable: false,
                     all_of: Vec::new(),
+                    one_of: Vec::new(),
                     discriminator: None,
                     items: None,
                     r#enum: match vals {
@@ -167,6 +175,7 @@ impl Schema {
                     required: Vec::new(),
                     nullable: false,
                     all_of: Vec::new(),
+                    one_of: Vec::new(),
                     discriminator: None,
                     items: None,
                     r#enum: Vec::new(),
@@ -184,6 +193,7 @@ impl Schema {
                     required: Vec::new(),
                     nullable: false,
                     all_of: Vec::new(),
+                    one_of: Vec::new(),
                     discriminator: None,
                     items: None,
                     r#enum: Vec::new(),
@@ -212,6 +222,7 @@ impl Schema {
                                 required: obj.vars.iter().filter(|(_, var)| !var.opt).map(|(name, _)| name.clone()).collect::<Vec<_>>(),
                                 nullable: false,
                                 all_of: Vec::new(),
+                                one_of: Vec::new(),
                                 discriminator: None,
                                 items: None,
                                 r#enum: Vec::new(),
@@ -223,6 +234,7 @@ impl Schema {
                         }
                         all_of
                     },
+                    one_of: Vec::new(),
                     discriminator: obj.adt.as_ref().map(|adt| Discriminator {
                         property_name: adt.var.clone(),
                         mapping: adt.map.iter()
@@ -249,6 +261,7 @@ impl Schema {
                     required: Vec::new(),
                     nullable: false,
                     all_of: Vec::new(),
+                    one_of: Vec::new(),
                     discriminator: None,
                     items: Some(Box::new(Schema::of_desc(&seq.item, "items".to_string(), None, context))),
                     r#enum: Vec::new(),
@@ -266,6 +279,7 @@ impl Schema {
                     required: Vec::new(),
                     nullable: false,
                     all_of: Vec::new(),
+                    one_of: Vec::new(),
                     discriminator: None,
                     items: None,
                     r#enum: Vec::new(),
@@ -283,6 +297,7 @@ impl Schema {
                     required: Vec::new(),
                     nullable: false,
                     all_of: Vec::new(),
+                    one_of: Vec::new(),
                     discriminator: None,
                     items: None,
                     r#enum: Vec::new(),
@@ -315,6 +330,7 @@ impl Schema {
             required: Vec::new(),
             nullable: false,
             all_of: Vec::new(),
+            one_of: Vec::new(),
             discriminator: None,
             items: None,
             r#enum: Vec::new(),
@@ -531,6 +547,7 @@ impl Schema {
                 all_of.append(&mut all_of.iter().flat_map(|ss| ss.all_of.clone()).collect());
                 all_of
             },
+            one_of: Vec::new(),
             discriminator: schema.discriminator,
             items: schema.items,
             r#enum: schema.r#enum,

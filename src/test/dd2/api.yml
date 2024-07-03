@@ -1,0 +1,605 @@
+openapi: 3.0.1
+info:
+  version: 0.1.0
+  title: FastAPI
+paths:
+  /experiment/{experiment_id}/confusion-matrix:
+    get:
+      tags:
+      - insight
+      summary: Get Time Series Chart
+      operationId: getConfusionMatrices
+      parameters:
+      - name: experiment_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfusionMatrices'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /health:
+    get:
+      tags:
+      - dev
+      summary: Get Health
+      operationId: getHealth
+      responses:
+        '204':
+          description: Successful Response
+  /experiment/{experiment_id}/scatter-plot:
+    get:
+      tags:
+      - insight
+      summary: Get Scatterplot
+      operationId: getScatterPlot
+      parameters:
+      - name: experiment_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: limit
+        in: query
+        required: false
+        schema:
+          type: integer
+          default: 100000
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /experiment/{experiment_id}/time-series-chart:
+    get:
+      tags:
+      - insight
+      summary: Get Time Series Chart
+      operationId: getTimeSeriesChart
+      parameters:
+      - name: experiment_id
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: aggregation
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/TimeSeriesChartAggregation'
+      - name: resolution
+        in: query
+        required: true
+        schema:
+          $ref: '#/components/schemas/TimeSeriesChartResolution'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TimeSeriesChart'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /experiment/{experiment_id}/lift:
+    get:
+      tags:
+      - insight
+      summary: Get Lift
+      operationId: getLift
+      parameters:
+      - name: experiment_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiftResponse'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /prediction/{prediction_id}/results/csv:
+    get:
+      tags:
+      - prediction
+      summary: Get Prediction Results Csv
+      operationId: getPredictionResults
+      parameters:
+      - name: prediction_id
+        in: path
+        required: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /table/{table_id}/preview:
+    post:
+      tags:
+      - table
+      summary: Get Table Preview
+      operationId: getTablePreview
+      parameters:
+      - name: table_id
+        in: path
+        required: true
+        schema:
+          type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TablePreviewRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TablePreviewResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /table/{tableId}/profile:
+    post:
+      tags:
+      - table
+      summary: Get Table Profile
+      operationId: getTableProfile
+      parameters:
+      - name: tableId
+        in: path
+        required: true
+        schema:
+          type: string
+      - name: binsResolution
+        in: query
+        required: true
+        schema:
+          type: integer
+      - name: columnIds
+        in: query
+        required: false
+        schema:
+          anyOf:
+          - type: array
+            items:
+              type: string
+          - type: 'null'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/ColumnProfile'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /table/file:
+    post:
+      tags:
+      - table
+      summary: Uploadtableasfile
+      operationId: uploadTableAsFile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_uploadTableAsFile'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    Body_uploadTableAsFile:
+      properties:
+        columns:
+          items:
+            type: string
+          type: array
+        file:
+          type: string
+          format: binary
+        id:
+          anyOf:
+          - type: string
+          - type: 'null'
+        table_name:
+          anyOf:
+          - type: string
+          - type: 'null'
+      type: object
+      required:
+      - columns
+      - file
+    ColumnChartCategoryItem:
+      properties:
+        value:
+          type: string
+        count:
+          type: integer
+      type: object
+      required:
+      - value
+      - count
+    ColumnChartNumericItem:
+      properties:
+        from:
+          type: number
+        to:
+          type: number
+        count:
+          type: integer
+      type: object
+      required:
+      - from
+      - to
+      - count
+    ColumnChartTimeItem:
+      properties:
+        from:
+          type: integer
+        to:
+          type: integer
+        count:
+          type: integer
+      type: object
+      required:
+      - from
+      - to
+      - count
+    ColumnProfile:
+      oneOf:
+      - $ref: '#/components/schemas/ColumnProfileCategory'
+      - $ref: '#/components/schemas/ColumnProfileNumeric'
+      - $ref: '#/components/schemas/ColumnProfileTime'
+      discriminator:
+        propertyName: type
+        mapping:
+          category: '#/components/schemas/ColumnProfileCategory'
+          numeric: '#/components/schemas/ColumnProfileNumeric'
+          time: '#/components/schemas/ColumnProfileTime'
+    ColumnProfileBase:
+      properties:
+        id:
+          title: Id
+          type: string
+      required:
+      - id
+      title: ColumnProfileBase
+      type: object
+    ColumnProfileCategory:
+      allOf:
+      - $ref: '#/components/schemas/ColumnProfileBase'
+      - properties:
+          type:
+            type: string
+            enum:
+            - category
+            default: category
+          frequentValues:
+            items:
+              $ref: '#/components/schemas/ColumnChartCategoryItem'
+            type: array
+          stats:
+            $ref: '#/components/schemas/ColumnStatsCategory'
+        type: object
+        required:
+        - frequentValues
+        - stats
+    ColumnProfileNumeric:
+      allOf:
+      - $ref: '#/components/schemas/ColumnProfileBase'
+      - properties:
+          type:
+            type: string
+            enum:
+            - numeric
+            default: numeric
+          histogram:
+            items:
+              $ref: '#/components/schemas/ColumnChartNumericItem'
+            type: array
+          frequentValues:
+            items:
+              $ref: '#/components/schemas/ColumnChartCategoryItem'
+            type: array
+          stats:
+            $ref: '#/components/schemas/ColumnStatsNumeric'
+        type: object
+        required:
+        - histogram
+        - frequentValues
+        - stats
+    ColumnProfileTime:
+      allOf:
+      - $ref: '#/components/schemas/ColumnProfileBase'
+      - properties:
+          type:
+            type: string
+            enum:
+            - time
+            default: time
+          histogram:
+            items:
+              $ref: '#/components/schemas/ColumnChartTimeItem'
+            type: array
+          stats:
+            $ref: '#/components/schemas/ColumnStatsTime'
+        type: object
+        required:
+        - histogram
+        - stats
+    ColumnStatsCategory:
+      properties:
+        nullCount:
+          type: integer
+        distinctCount:
+          type: integer
+      type: object
+      required:
+      - nullCount
+      - distinctCount
+    ColumnStatsNumeric:
+      properties:
+        nullCount:
+          type: integer
+        mean:
+          type: number
+        min:
+          type: number
+        max:
+          type: number
+        median:
+          type: number
+        stddev:
+          type: number
+        zeroCount:
+          type: integer
+      type: object
+      required:
+      - nullCount
+      - mean
+      - min
+      - max
+      - median
+      - stddev
+      - zeroCount
+    ColumnStatsTime:
+      properties:
+        nullCount:
+          type: integer
+        mean:
+          type: string
+        min:
+          type: string
+        max:
+          type: string
+        median:
+          type: string
+      type: object
+      required:
+      - nullCount
+      - mean
+      - min
+      - max
+      - median
+    ConfusionMatrices:
+      properties:
+        value:
+          items:
+            $ref: '#/components/schemas/ConfusionMatrix'
+          type: array
+      type: object
+      required:
+      - value
+    ConfusionMatrix:
+      properties:
+        threshold:
+          type: number
+        falseNeg:
+          type: integer
+        falsePos:
+          type: integer
+        trueNeg:
+          type: integer
+        truePos:
+          type: integer
+      type: object
+      required:
+      - threshold
+      - falseNeg
+      - falsePos
+      - trueNeg
+      - truePos
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+      type: object
+    LiftBucket:
+      properties:
+        population:
+          type: integer
+        positiveTargets:
+          type: integer
+      type: object
+      required:
+      - population
+      - positiveTargets
+    LiftResponse:
+      properties:
+        buckets:
+          items:
+            $ref: '#/components/schemas/LiftBucket'
+          type: array
+      type: object
+      required:
+      - buckets
+    TablePreviewRequest:
+      properties:
+        startRow:
+          type: integer
+          minimum: 0.0
+        endRow:
+          type: integer
+          minimum: 0.0
+      type: object
+      required:
+      - startRow
+      - endRow
+    TablePreviewResponse:
+      properties:
+        rowCount:
+          type: integer
+        rowData:
+          items:
+            additionalProperties:
+              type: string
+            type: object
+          type: array
+        lastRow:
+          type: integer
+      type: object
+      required:
+      - rowCount
+      - rowData
+      - lastRow
+    TimeSeriesChart:
+      properties:
+        samples:
+          items:
+            $ref: '#/components/schemas/TimeSeriesChartSample'
+          type: array
+      type: object
+      required:
+      - samples
+    TimeSeriesChartAggregation:
+      type: string
+      enum:
+      - avg
+      - sum
+    TimeSeriesChartResolution:
+      type: string
+      enum:
+      - millisecond
+      - second
+      - minute
+      - hour
+      - day
+      - week
+      - month
+      - quarter
+      - year
+    TimeSeriesChartSample:
+      properties:
+        time:
+          type: string
+        predicted:
+          type: number
+        actual:
+          type: number
+      type: object
+      required:
+      - time
+      - predicted
+      - actual
+    ValidationError:
+      properties:
+        loc:
+          items: {}
+          type: array
+        msg:
+          type: string
+        type:
+          type: string
+      type: object
+      required:
+      - loc
+      - msg
+      - type

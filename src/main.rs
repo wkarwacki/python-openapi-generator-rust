@@ -1,12 +1,13 @@
 use std::collections::HashMap;
 use std::fs;
 use std::fs::File;
-use std::io::{Write};
+use std::io::Write;
 use std::path::{Path, PathBuf};
 use std::str::FromStr;
 
 use clap::{Parser, Subcommand, ValueEnum};
 use handlebars::Handlebars;
+use itertools::Itertools;
 use serde::Deserialize;
 use strum_macros::IntoStaticStr;
 use typetag::serde;
@@ -19,6 +20,7 @@ use crate::gen::python::client::gen_python_http_client::GenPythonHttpClient;
 use crate::gen::python::lang_python::LangPython;
 use crate::gen::python::server::gen_python_http_server::GenPythonHttpServer;
 use crate::open_api::open_api::OpenApi;
+use crate::open_api::process::{refs, refs_rec};
 use crate::pkg::Pkg;
 use crate::util::{read_t, write};
 
@@ -56,6 +58,8 @@ enum Cmd {
     FromOpenApi {
         input: PathBuf,
         output: PathBuf,
+        #[clap(short, value_enum, default_value_t = Layout::Default)]
+        layout: Layout,
     },
     ToOpenApi {
         input: PathBuf,
@@ -88,6 +92,12 @@ pub enum Role {
     Server,
 }
 
+#[derive(Clone, PartialEq, ValueEnum)]
+enum Layout {
+    Default,
+    Tag,
+}
+
 impl Generator {
     fn gen(&self, gen_cfg: GenCfg, input: PathBuf, role: Role) -> Box<dyn Gen> {
         match self {
@@ -102,7 +112,7 @@ impl Generator {
                 let lang = LangPython {
                     gen_cfg,
                     feature: input.file_stem().unwrap().to_str().unwrap().to_string(),
-                    handlebars: handlebars
+                    handlebars: handlebars,
                 };
                 match role {
                     Role::Client => Box::new(GenPythonHttpClient {
@@ -131,7 +141,7 @@ struct GenCfg {
     #[serde(default)]
     type_mapping: HashMap<String, String>,
     subdir: Option<PathBuf>,
-    dto_name: Option<String>
+    dto_name: Option<String>,
 }
 
 fn main() {
@@ -141,8 +151,8 @@ fn main() {
 
 fn do_main(cli: Cli) {
     match cli.cmd {
-        Cmd::FromOpenApi { input, output } => {
-            let pkgs = from_open_api(input.clone());
+        Cmd::FromOpenApi { input, output, layout } => {
+            let pkgs = from_open_api(input.clone(), layout);
 
             pkgs.iter().for_each(|(src, pkg)| {
                 let p = output.to_string_lossy().to_string() + "/" + src.clone().unwrap_or(input.file_name().unwrap().to_str().unwrap().to_string()).as_str();
@@ -172,15 +182,47 @@ fn do_main(cli: Cli) {
     }
 }
 
-fn from_open_api(input: PathBuf) -> HashMap<Option<String>, Pkg> {
+fn from_open_api(input: PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg> {
     let context = open_api::context::Context::of(input.clone());
-    context.val.iter().map(|(src, value)| {
+    context.val.iter().flat_map(|(src, value)| {
+        // TIDY: hide processing behind trait
         let open_api: OpenApi = serde_yaml::from_value(value.clone()).unwrap();
-        let pkg = open_api.pkg(&context);
+        if layout == Layout::Tag {
+            let tag_and_path_with_its_name_and_used_refs_within = open_api.paths.iter().flat_map(|(name, ref_or_path)| {
+                let context = &context;
+                let path = ref_or_path.clone().unwrap(context);
+                path.operations().iter().map(move |operation| {
+                    let tag = operation.tags.first().cloned().map(|tag| tag.to_string() + ".yml")
+                        .or_else(|| src.clone()).unwrap_or_else(|| "default.yml".to_string());
 
-        (src.clone(), pkg)
+                    let operation_value = serde_yaml::to_value(operation.clone()).unwrap();
+
+                    let refs = refs(&operation_value);
+                    (tag, (name, ref_or_path, refs))
+                }).collect::<Vec<_>>()
+            }).collect::<Vec<_>>();
+
+            let open_api_value = serde_yaml::to_value(open_api.clone()).unwrap();
+            let tag_and_pkg = tag_and_path_with_its_name_and_used_refs_within.iter().into_group_map_by(|(src, _)| src).iter()
+                .map(|(src, vec)| ((src.clone(), vec.iter().flat_map(|(_, (_, _, refs))| refs).collect::<Vec<_>>()), vec.iter().map(|(_, (name, path, refs))| (name.clone().clone(), path.clone().clone())).collect::<HashMap<_, _>>()))
+                .map(|((src, refs), paths)| {
+                    let open_api_with_all_refs_rec_value = refs_rec(&open_api_value, refs.iter().map(|r#ref| r#ref.to_string()).collect::<Vec<_>>());
+                    let open_api_with_all_refs_rec: OpenApi = serde_yaml::from_value(open_api_with_all_refs_rec_value.clone()).unwrap();
+                    let open_api_for_tag = OpenApi {
+                        paths: paths,
+                        components: open_api_with_all_refs_rec.components,
+                    };
+                    let pkg = open_api_for_tag.pkg(&context);
+                    (Some(src.clone().clone()), pkg)
+                }).collect::<Vec<_>>();
+            tag_and_pkg
+        } else {
+            let pkg = open_api.pkg(&context);
+            vec![(src.clone(), pkg)]
+        }
     }).collect()
 }
+
 
 // TODO_LATER: make it work for multiple files
 fn to_open_api(input: PathBuf) -> OpenApi {

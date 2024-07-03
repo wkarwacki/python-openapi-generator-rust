@@ -23,3 +23,10 @@ test_debug/dd/python/client/src
 test_debug/dd/python/server/src
 test_debug/dd/scala/src
 test_debug/dd/trust
+
+!test_debug/dd2
+test_debug/dd2/kotlin/src
+test_debug/dd2/python/client/src
+test_debug/dd2/python/server/src
+test_debug/dd2/scala/src
+test_debug/dd2/trust

@@ -30,6 +30,19 @@ pub struct Path {
 }
 
 impl Path {
+
+    pub fn operations(&self) -> Vec<Operation> {
+        vec![
+            self.get.clone(),
+            self.put.clone(),
+            self.post.clone(),
+            self.delete.clone(),
+            self.patch.clone(),
+        ]
+            .into_iter()
+            .filter_map(|op| op)
+            .collect()
+    }
     pub fn of(ops: &Vec<Op>, context: &Context) -> Path {
         let common_op_params = ops.iter().fold(None as Option<Vec<OpParam>>, |vec, op| {
             match vec {

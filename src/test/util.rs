@@ -1,10 +1,10 @@
-use crate::{Cli, Cmd, do_main, from_open_api, Generator, Role, to_open_api};
+use crate::{Cli, Cmd, do_main, from_open_api, Generator, Layout, Role, to_open_api};
 use crate::open_api::open_api::OpenApi;
 use crate::pkg::Pkg;
 use crate::util::{read_t, write};
 
 pub fn from_open_api_test_fn(name: &str) {
-    let pkgs = from_open_api(("src/test/".to_string() + name + "-open-api.yml").into());
+    let pkgs = from_open_api(("src/test/".to_string() + name + "-open-api.yml").into(), Layout::Default);
     let pkg = pkgs.get(&None).unwrap();
 
     write(pkg, ("test_debug/".to_string() + name + "-from-open-api.yml").into());
