@@ -21,7 +21,7 @@
 
     {{../indent}}@model_validator(mode = "after")
     {{../indent}}def serialize(cls, {{fmtName key}}: '{{fmtClass key}}') -> str:
-        {{../indent}}return {{fmtName key}}.model_dump_json(){{/if}}{{#if formLike}}
+        {{../indent}}return {{fmtName key}}.model_dump_json(exclude_none=True){{/if}}{{#if formLike}}
 
     def form(self) -> dict[str, Any]:
         return self.model_dump(exclude_none=True){{/if}}
