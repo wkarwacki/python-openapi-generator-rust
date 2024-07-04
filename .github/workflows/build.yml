@@ -29,5 +29,5 @@ jobs:
       - name: Push Docker image to GitHub Container Registry
         run: |
           IMAGE_NAME=ghcr.io/ramencloud/trust:${GITHUB_SHA}
-          docker tag trust ghcr.io/ramencloud/$IMAGE_NAME
-          docker push trust ghcr.io/ramencloud/$IMAGE_NAME
+          docker tag trust $IMAGE_NAME
+          docker push $IMAGE_NAME
