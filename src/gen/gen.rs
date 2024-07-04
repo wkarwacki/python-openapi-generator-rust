@@ -8,13 +8,14 @@ use std::path::PathBuf;
 use convert_case::{Case, Casing};
 use dyn_clone::DynClone;
 use handlebars::{Context as HbContext, Handlebars, handlebars_helper, Helper, HelperDef, HelperResult, JsonRender, JsonValue, Output, RenderContext, RenderError, ScopedJson};
-use serde_json::{json, Map, Value};
+use serde_json::{Error, json, Map, Value};
 
 use crate::context::Context;
 use crate::def::{Def, Int, Obj, Str};
 use crate::desc::Desc;
 use crate::ext::Ext;
 use crate::gen::lang::{DTO_NAME_TEMPLATE_NAME, Lang};
+use crate::op_param::OpParam;
 use crate::pkg::Pkg;
 use crate::r#ref::Ref;
 use crate::util::read;
@@ -226,18 +227,38 @@ impl HelperDef for SortOptionalsLast {
         _: &'rc handlebars::Context,
         _: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
-        let vars: HashMap<String, Box<Var>> = serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
-        let mut vec = vars.iter().collect::<Vec<_>>();
-        vec.sort_by(|(name0, var0), (name1, var1)| {
-            if var0.opt && !var1.opt {
-                std::cmp::Ordering::Greater
-            } else if !var0.opt && var1.opt {
-                std::cmp::Ordering::Less
-            } else {
-                name0.cmp(name1)
+        let vars: Result<HashMap<String, Box<Var>>, _> = serde_json::from_value(h.param(0).unwrap().value().clone());
+        let value = match vars {
+            Ok(vars) => {
+                let mut vec = vars.iter().collect::<Vec<_>>();
+                vec.sort_by(|(name0, var0), (name1, var1)| {
+                    if var0.opt && !var1.opt {
+                        std::cmp::Ordering::Greater
+                    } else if !var0.opt && var1.opt {
+                        std::cmp::Ordering::Less
+                    } else {
+                        name0.cmp(name1)
+                    }
+                });
+                Value::Object(vec.iter().map(|(name, var)| (name.clone().clone(), serde_json::to_value(var).unwrap())).collect::<Map<_, _>>())
             }
-        });
-        Ok(ScopedJson::from(Value::Object(vec.iter().map(|(name, var)| (name.clone().clone(), serde_json::to_value(var).unwrap())).collect::<Map<_, _>>())))
+            _ => {
+                let mut op_params: Vec<OpParam> = serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
+                op_params.sort_by(|op_param0, op_param1| {
+                    if op_param0.default.is_some() && op_param1.default.is_none() {
+                        std::cmp::Ordering::Greater
+                    } else if op_param0.default.is_none() && op_param1.default.is_some() {
+                        std::cmp::Ordering::Less
+                    } else {
+                        op_param0.name.cmp(&op_param1.name.clone())
+                    }
+                });
+                Value::Array(op_params.iter().map(|op_param| serde_json::to_value(op_param).unwrap()).collect::<Vec<_>>())
+            }
+        };
+
+
+        Ok(ScopedJson::from(value))
     }
 }
 
@@ -373,6 +394,8 @@ pub fn go(pkg: &Pkg, gen: Box<dyn Gen>, templates_path: Option<PathBuf>, context
         _ => true
     }).map(|(name, def)| serde_json::to_value((name, def)).unwrap()).collect::<Vec<_>>()); // TIDY: make object (i.e. hashmap) out of it instead of Vec<Pair>, otherwise before and after filtering are different types | TIDY: make it handle nulls, otherwise double if is needed everywhere
     handlebars.register_helper("filterNonconst", Box::new(filter_nonconst));
+    handlebars_helper!(filter_op_params_by_loc: |op_params: Vec<OpParam>, loc: String| op_params.iter().filter(|(op_param)| op_param.clone().clone().loc.map(|l| l == loc).unwrap_or(false)).map(|op_param| serde_json::to_value(op_param).unwrap()).collect::<Vec<_>>());
+    handlebars.register_helper("filterOpParamsByLoc", Box::new(filter_op_params_by_loc));
     handlebars.register_helper("isAlias", Box::new(IsAlias { gen: gen.clone() }.clone()));
     handlebars_helper!(has_key: |json_value: JsonValue, key: String| match json_value {
         Value::Object(map) => map.contains_key(key.as_str()),

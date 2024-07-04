@@ -1,5 +1,4 @@
 === must have
-required params first
 
 === gen
 python: type_mapping and subdir -> make it work for both client and server

@@ -1,3 +1,4 @@
+use convert_case::{Case, Casing};
 use crate::{Cli, Cmd, do_main, from_open_api, Generator, Layout, Role, to_open_api};
 use crate::open_api::open_api::OpenApi;
 use crate::pkg::Pkg;
@@ -45,12 +46,13 @@ pub fn gen_test(generator: Generator, role: Role, input: String) {
 }
 
 fn do_gen_test(generator: Generator, role: Role, input: String) {
+    let role_str: &str = role.clone().into();
     let output = "test_debug/gen/".to_string() + match generator {
-        Generator::Kotlin => "kotlin/src/main/kotlin",
-        Generator::Python => "python/src/trust",
-        Generator::Scala => "scala/src/main/scala",
-        Generator::TypeScript => "typescript/src/trust",
-    };
+        Generator::Kotlin => "kotlin/src/main/kotlin".to_string(),
+        Generator::Python => "python/".to_string() + role_str.to_case(Case::Lower).as_str() + "/src",
+        Generator::Scala => "scala/src/main/scala".to_string(),
+        Generator::TypeScript => "typescript/src/trust".to_string(),
+    }.as_str();
     do_main(Cli{
         cmd: Cmd::Generate {
             generator,

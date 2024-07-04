@@ -14,22 +14,21 @@ ops:
         - name: commonQueryParam4
           loc: query
           type: str
-        - name: cookieParam0
+        - name: optCookieParam0
           loc: cookie
-          type: str
-          opt: true
-        - name: headerParam2
+          type: int
+          default: 4
+        - name: optHeaderParam2
           loc: header
           type: str
-          opt: true
-        - name: pathParam1
+          default: abc
+        - name: optPathParam1
           loc: path
           type: str
-          opt: true
-        - name: queryParam4
+          default: null
+        - name: optQueryParam4
           loc: query
           type: str
-          opt: true
           default: default
       type: GET
     - name: op1Postt

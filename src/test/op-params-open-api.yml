@@ -3,22 +3,23 @@ paths:
     get:
       parameters:
         - in: cookie
-          name: cookieParam0
+          name: optCookieParam0
           schema:
-            type: string
-          required: true
+            type: integer
+            format: int64
+            default: 4
         - in: header
-          name: headerParam2
+          name: optHeaderParam2
           schema:
             type: string
-          required: true
+            default: abc
         - in: path
-          name: pathParam1
+          name: optPathParam1
           schema:
             type: string
-          required: true
+          required: false
         - in: query
-          name: queryParam4
+          name: optQueryParam4
           schema:
             type: string
             default: default

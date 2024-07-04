@@ -91,7 +91,7 @@ impl Parameter {
             "path" => Path(ParameterValPath {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
-                schema: Schema::of_desc(&op_param.desc, "PathParam".to_string(), op_param.clone().default, context),
+                schema: Schema::of_desc(&op_param.desc, "PathParam".to_string(), if op_param.clone().default == Some(Value::Null) {None} else {op_param.clone().default}, context),
             }),
             "query" => Query(ParameterValDefault {
                 name: op_param.name.clone(),
