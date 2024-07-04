@@ -1,3 +1,6 @@
+=== build
+docker cache to GHA
+
 === features
 tuple(n) type
 add cli parameter to remove unused objects
@@ -11,6 +14,7 @@ from-open-api should organize apis by tags
 === gen
 python: generate api implementation stub on cli param
 python: optional headers not handled, default headers not handled
+python: everything including formatting and imports should be covered within the generator
 client: generator config, explicit nulls when properties are optional
 generate all referenced objects, not only from a given input
 handle package in type_mapping, loosen the necessity to type Dto as keys, alllow other types than str to be mapped
