@@ -1,6 +1,4 @@
-use crate::lib::op_param::OpParam;
-use crate::lib::req::Req;
-use crate::lib::res::Res;
+use crate::lib::{op_param::OpParam, req::Req, res::Res};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]

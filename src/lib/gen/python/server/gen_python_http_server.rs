@@ -1,16 +1,17 @@
-use std::collections::HashMap;
-use std::path::PathBuf;
-
+use crate::lib::{
+    context::Context,
+    def::Def,
+    gen::{
+        gen::{dto_name, Gen},
+        lang::Lang,
+        python::lang_python::LangPython,
+    },
+    pkg::Pkg,
+};
 use convert_case::{Case, Casing};
 use handlebars::Handlebars;
 use serde_json::json;
-
-use crate::lib::context::Context;
-use crate::lib::def::Def;
-use crate::lib::gen::gen::{dto_name, Gen};
-use crate::lib::gen::lang::Lang;
-use crate::lib::gen::python::lang_python::LangPython;
-use crate::lib::pkg::Pkg;
+use std::{collections::HashMap, path::PathBuf};
 
 #[derive(Clone)]
 pub struct GenPythonHttpServer {

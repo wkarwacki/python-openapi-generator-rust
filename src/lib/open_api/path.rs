@@ -1,10 +1,12 @@
-use crate::lib::context::Context;
-use crate::lib::op::Op;
-use crate::lib::op_param::OpParam;
-use crate::lib::open_api::context::Context as OpenApiContext;
-use crate::lib::open_api::operation::Operation;
-use crate::lib::open_api::parameter::Parameter;
-use crate::lib::open_api::ref_or::RefOr;
+use crate::lib::{
+    context::Context,
+    op::Op,
+    op_param::OpParam,
+    open_api::{
+        context::Context as OpenApiContext, operation::Operation, parameter::Parameter,
+        ref_or::RefOr,
+    },
+};
 use http::method::Method;
 use serde::{Deserialize, Serialize};
 

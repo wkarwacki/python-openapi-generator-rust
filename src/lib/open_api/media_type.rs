@@ -1,7 +1,8 @@
-use crate::lib::context::Context;
-use crate::lib::desc::Desc;
-use crate::lib::open_api::ref_or::RefOr;
-use crate::lib::open_api::schema::Schema;
+use crate::lib::{
+    context::Context,
+    desc::Desc,
+    open_api::{ref_or::RefOr, schema::Schema},
+};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

@@ -1,11 +1,6 @@
-use std::collections::HashMap;
-use std::fmt::Debug;
-
+use crate::lib::{def::Def, op::Op};
 use serde::{Deserialize, Serialize};
-
-use crate::lib::def::Def;
-
-use crate::lib::op::Op;
+use std::{collections::HashMap, fmt::Debug};
 
 #[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Pkg {

@@ -1,15 +1,15 @@
+use crate::lib::{
+    context::Context,
+    desc::Desc,
+    open_api::{
+        content::Content, context::Context as OpenApiContext, open_api::OpenApi, ref_or::RefOr,
+    },
+    req::Req,
+    util,
+    validation::ensure,
+};
 use mime;
 use serde::{Deserialize, Serialize};
-
-use crate::lib::context::Context;
-use crate::lib::desc::Desc;
-use crate::lib::open_api::content::Content;
-use crate::lib::open_api::context::Context as OpenApiContext;
-use crate::lib::open_api::open_api::OpenApi;
-use crate::lib::open_api::ref_or::RefOr;
-use crate::lib::req::Req;
-use crate::lib::util;
-use crate::lib::validation::ensure;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct RequestBody {

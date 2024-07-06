@@ -1,8 +1,7 @@
 use http::Method;
-use std::str::FromStr;
-
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_yaml::Value;
+use std::str::FromStr;
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct StatusCode {

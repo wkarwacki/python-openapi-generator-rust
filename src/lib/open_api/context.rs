@@ -1,11 +1,7 @@
-use std::collections::HashMap;
-use std::fs;
-
-use crate::lib::open_api::open_api::OpenApi;
-use crate::lib::util::read_t;
+use crate::lib::{open_api::open_api::OpenApi, util::read_t};
 use serde::de;
 use serde_yaml::Value;
-use std::path::PathBuf;
+use std::{collections::HashMap, fs, path::PathBuf};
 
 #[derive(Debug)]
 pub struct Context {

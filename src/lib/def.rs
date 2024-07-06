@@ -1,15 +1,8 @@
+use crate::lib::{adt::Adt, desc::Desc, ext::Ext, r#ref::Ref, var::Var};
 use core::fmt::Debug;
-use std::collections::HashMap;
-use std::ops::Not;
-
 use serde::{Deserialize, Serialize};
 use serde_yaml::Value;
-
-use crate::lib::adt::Adt;
-use crate::lib::desc::Desc;
-use crate::lib::ext::Ext;
-use crate::lib::r#ref::Ref;
-use crate::lib::var::Var;
+use std::{collections::HashMap, ops::Not};
 
 pub static DEFS: &str = "defs";
 

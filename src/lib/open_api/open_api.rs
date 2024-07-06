@@ -1,18 +1,17 @@
-use std::collections::HashMap;
-
+use crate::lib::{
+    context::Context,
+    def,
+    open_api::{
+        components::Components, context::Context as OpenApiContext, path::Path, ref_or::RefOr,
+        schema::schemas_path,
+    },
+    pkg::Pkg,
+    r#ref::Ref,
+};
 use def::DEFS;
 use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 use typetag::serde;
-
-use crate::lib::context::Context;
-use crate::lib::def;
-use crate::lib::open_api::components::Components;
-use crate::lib::open_api::context::Context as OpenApiContext;
-use crate::lib::open_api::path::Path;
-use crate::lib::open_api::ref_or::RefOr;
-use crate::lib::open_api::schema::schemas_path;
-use crate::lib::pkg::Pkg;
-use crate::lib::r#ref::Ref;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct OpenApi {

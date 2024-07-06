@@ -1,20 +1,17 @@
-use crate::lib::carrier::Carrier;
+use crate::lib::{
+    carrier::Carrier,
+    context::Context,
+    desc::Desc,
+    meta::Meta,
+    open_api::{
+        content::Content, context::Context as OpenApiContext, header::Header, open_api::OpenApi,
+        ref_or::RefOr, schema::Schema, status_code::StatusCode,
+    },
+    res::Res,
+    validation::ensure,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-
-use crate::lib::context::Context;
-use crate::lib::desc::Desc;
-use crate::lib::meta::Meta;
-use crate::lib::open_api::content::Content;
-use crate::lib::open_api::context::Context as OpenApiContext;
-use crate::lib::open_api::header::Header;
-use crate::lib::open_api::open_api::OpenApi;
-use crate::lib::open_api::ref_or::RefOr;
-use crate::lib::open_api::schema::Schema;
-use crate::lib::open_api::status_code::StatusCode;
-
-use crate::lib::res::Res;
-use crate::lib::validation::ensure;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Response {

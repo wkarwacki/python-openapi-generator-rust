@@ -1,28 +1,31 @@
-use std::collections::HashMap;
-use std::fs;
-use std::fs::File;
-use std::io::Write;
-use std::path::{Path, PathBuf};
-use std::str::FromStr;
-
+use crate::lib::{
+    context::Context,
+    gen::python::{
+        client::gen_python_http_client::GenPythonHttpClient, lang_python::LangPython,
+        server::gen_python_http_server::GenPythonHttpServer,
+    },
+    open_api::{
+        open_api::OpenApi,
+        process::{refs, refs_rec},
+    },
+    pkg::Pkg,
+    util::{read_t, write},
+};
 use clap::{Parser, Subcommand, ValueEnum};
+use gen::{gen::Gen, lang::DTO_NAME_TEMPLATE_NAME};
 use handlebars::Handlebars;
 use itertools::Itertools;
 use serde::Deserialize;
+use std::{
+    collections::HashMap,
+    fs,
+    fs::File,
+    io::Write,
+    path::{Path, PathBuf},
+    str::FromStr,
+};
 use strum_macros::IntoStaticStr;
 use typetag::serde;
-
-use gen::gen::Gen;
-use gen::lang::DTO_NAME_TEMPLATE_NAME;
-
-use crate::lib::context::Context;
-use crate::lib::gen::python::client::gen_python_http_client::GenPythonHttpClient;
-use crate::lib::gen::python::lang_python::LangPython;
-use crate::lib::gen::python::server::gen_python_http_server::GenPythonHttpServer;
-use crate::lib::open_api::open_api::OpenApi;
-use crate::lib::open_api::process::{refs, refs_rec};
-use crate::lib::pkg::Pkg;
-use crate::lib::util::{read_t, write};
 
 pub mod adt {
     pub use crate::lib::adt::*;

@@ -1,8 +1,15 @@
-use std::collections::{HashMap, HashSet};
-use std::fs;
-
-use std::path::PathBuf;
-
+use crate::lib::{
+    context::Context,
+    def::{Def, Int, Obj, Str},
+    desc::Desc,
+    ext::Ext,
+    gen::lang::{Lang, DTO_NAME_TEMPLATE_NAME},
+    op_param::OpParam,
+    pkg::Pkg,
+    r#ref::Ref,
+    util::read,
+    var::Var,
+};
 use convert_case::{Case, Casing};
 use dyn_clone::DynClone;
 use handlebars::{
@@ -10,17 +17,11 @@ use handlebars::{
     JsonRender, JsonValue, Output, RenderContext, RenderError, ScopedJson,
 };
 use serde_json::{json, Map, Value};
-
-use crate::lib::context::Context;
-use crate::lib::def::{Def, Int, Obj, Str};
-use crate::lib::desc::Desc;
-use crate::lib::ext::Ext;
-use crate::lib::gen::lang::{Lang, DTO_NAME_TEMPLATE_NAME};
-use crate::lib::op_param::OpParam;
-use crate::lib::pkg::Pkg;
-use crate::lib::r#ref::Ref;
-use crate::lib::util::read;
-use crate::lib::var::Var;
+use std::{
+    collections::{HashMap, HashSet},
+    fs,
+    path::PathBuf,
+};
 
 pub trait Gen: DynClone + Send + Sync {
     fn lang(&self) -> Box<dyn Lang>;
@@ -636,7 +637,7 @@ pub fn go(
 
 pub fn dto_name(string: String, lang: Box<dyn Lang>) -> String {
     lang.handlebars()
-        .render(DTO_NAME_TEMPLATE_NAME, &json!({"val": string}))
+        .render(DTO_NAME_TEMPLATE_NAME, &json!({ "val": string }))
         .unwrap()
 }
 

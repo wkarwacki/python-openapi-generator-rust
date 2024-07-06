@@ -1,8 +1,9 @@
-use serde::de::DeserializeOwned;
-use serde::Serialize;
-use std::fs::File;
-use std::io::{Read, Write};
-use std::path::PathBuf;
+use serde::{de::DeserializeOwned, Serialize};
+use std::{
+    fs::File,
+    io::{Read, Write},
+    path::PathBuf,
+};
 
 pub fn read(path: PathBuf) -> String {
     let mut file = File::open(&path).unwrap();

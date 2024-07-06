@@ -1,17 +1,16 @@
+use crate::lib::{
+    context::Context,
+    op::Op,
+    op_param::OpParam,
+    open_api::{
+        context::Context as OpenApiContext, parameter::Parameter, ref_or::RefOr,
+        request_body::RequestBody, response::Response, status_code::StatusCode,
+    },
+};
 use http::Method;
 use indexmap::IndexMap;
 use serde::{Deserialize, Serialize};
 use typetag::serde;
-
-use crate::lib::context::Context;
-use crate::lib::op::Op;
-use crate::lib::op_param::OpParam;
-use crate::lib::open_api::context::Context as OpenApiContext;
-use crate::lib::open_api::parameter::Parameter;
-use crate::lib::open_api::ref_or::RefOr;
-use crate::lib::open_api::request_body::RequestBody;
-use crate::lib::open_api::response::Response;
-use crate::lib::open_api::status_code::StatusCode;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]

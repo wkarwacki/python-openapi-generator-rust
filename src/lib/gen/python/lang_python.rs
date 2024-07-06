@@ -1,15 +1,19 @@
-use std::path::PathBuf;
-
+use crate::{
+    lib::{
+        def::{Def, Enum, EnumVals},
+        desc::Desc,
+        gen::{
+            gen::dto_name,
+            lang::{inner, Lang},
+        },
+        r#ref::Ref,
+    },
+    GenCfg,
+};
 use convert_case::{Case, Casing};
 use handlebars::Handlebars;
 use serde_json::Value;
-
-use crate::lib::def::{Def, Enum, EnumVals};
-use crate::lib::desc::Desc;
-use crate::lib::gen::gen::dto_name;
-use crate::lib::gen::lang::{inner, Lang};
-use crate::lib::r#ref::Ref;
-use crate::GenCfg;
+use std::path::PathBuf;
 
 #[derive(Clone)]
 pub struct LangPython {

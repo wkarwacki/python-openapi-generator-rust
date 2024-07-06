@@ -1,24 +1,23 @@
+use crate::lib::{
+    adt::Adt,
+    context::Context,
+    def,
+    def::{Alias, Bool, Const, Dec, Def, Enum, EnumVals, Int, Map, Obj, Seq, Str, Struct},
+    desc::Desc,
+    open_api::{
+        components::COMPONENTS,
+        context::Context as OpenApiContext,
+        open_api::{Discriminator, OpenApi},
+    },
+    r#ref::Ref,
+    var::Var,
+};
 use convert_case::{Case, Casing};
-use std::collections::HashMap;
-
 use def::DEFS;
 use serde::{Deserialize, Serialize};
 use serde_yaml::Value;
-use std::ops::Not;
+use std::{collections::HashMap, ops::Not};
 use typetag::serde;
-
-use crate::lib::adt::Adt;
-use crate::lib::context::Context;
-use crate::lib::def;
-use crate::lib::def::{
-    Alias, Bool, Const, Dec, Def, Enum, EnumVals, Int, Map, Obj, Seq, Str, Struct,
-};
-use crate::lib::desc::Desc;
-use crate::lib::open_api::components::COMPONENTS;
-use crate::lib::open_api::context::Context as OpenApiContext;
-use crate::lib::open_api::open_api::{Discriminator, OpenApi};
-use crate::lib::r#ref::Ref;
-use crate::lib::var::Var;
 
 pub static SCHEMAS: &str = "schemas";
 pub fn schemas_path() -> String {

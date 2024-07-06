@@ -1,14 +1,6 @@
-use std::collections::HashMap;
-use std::fs;
-
-use std::path::PathBuf;
-
+use crate::lib::{def::Def, pkg::Pkg, r#ref::Ref, util::read_t};
 use serde_yaml::Value;
-
-use crate::lib::def::Def;
-use crate::lib::pkg::Pkg;
-use crate::lib::r#ref::Ref;
-use crate::lib::util::read_t;
+use std::{collections::HashMap, fs, path::PathBuf};
 
 #[derive(Clone, Debug)]
 pub struct Context {

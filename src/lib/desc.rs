@@ -1,7 +1,5 @@
+use crate::lib::{def::Def, r#ref::Ref};
 use serde::{Deserialize, Serialize};
-
-use crate::lib::def::Def;
-use crate::lib::r#ref::Ref;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(untagged)]

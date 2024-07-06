@@ -1,15 +1,14 @@
-use std::collections::HashMap;
-
+use crate::lib::{
+    context::Context,
+    def,
+    def::{Def, Def::Obj},
+    open_api::schema::{schemas_path, Schema},
+    var::Var,
+};
 use convert_case::{Case, Casing};
 use def::DEFS;
 use serde::{Deserialize, Serialize};
-
-use crate::lib::context::Context;
-use crate::lib::def;
-use crate::lib::def::Def;
-use crate::lib::def::Def::Obj;
-use crate::lib::open_api::schema::{schemas_path, Schema};
-use crate::lib::var::Var;
+use std::collections::HashMap;
 
 pub static COMPONENTS: &str = "components";
 

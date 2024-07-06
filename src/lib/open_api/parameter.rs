@@ -1,15 +1,16 @@
+use crate::lib::{
+    context::Context,
+    op_param::OpParam,
+    open_api::{
+        context::Context as OpenApiContext,
+        parameter::Parameter::{Cookie, Header, Path, Query},
+        schema::Schema,
+    },
+    util,
+};
 use serde::{Deserialize, Serialize};
 use serde_yaml::Value;
 use std::ops::Not;
-
-use crate::lib::context::Context;
-use crate::lib::op_param::OpParam;
-use crate::lib::open_api::parameter::Parameter::{Cookie, Header, Path, Query};
-
-use crate::lib::open_api::context::Context as OpenApiContext;
-use crate::lib::open_api::schema::Schema;
-
-use crate::lib::util;
 
 trait ParameterVal {
     fn name(&self) -> String;

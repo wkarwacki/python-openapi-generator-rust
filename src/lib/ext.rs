@@ -1,9 +1,6 @@
+use crate::lib::{desc::Desc, r#ref::Ref};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
-
-use crate::lib::desc::Desc;
-
-use crate::lib::r#ref::Ref;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Ext {

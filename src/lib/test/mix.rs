@@ -1,9 +1,10 @@
 #[cfg(test)]
 mod mix {
 
-    use crate::{Generator, Role};
-
-    use crate::test::util::{from_open_api_test_fn, gen_test, to_open_api_test_fn};
+    use crate::{
+        test::util::{from_open_api_test_fn, gen_test, to_open_api_test_fn},
+        Generator, Role,
+    };
 
     #[test]
     fn to_open_api_test() {

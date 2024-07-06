@@ -1,7 +1,6 @@
-use std::collections::HashMap;
-
 use itertools::Itertools;
 use serde_yaml::{Mapping, Value};
+use std::collections::HashMap;
 
 pub fn refs(value: &Value) -> Vec<String> {
     match value {

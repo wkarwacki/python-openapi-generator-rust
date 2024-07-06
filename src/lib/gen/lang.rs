@@ -1,10 +1,6 @@
+use crate::lib::{def::Def, desc::Desc, r#ref::Ref};
 use handlebars::{Handlebars, JsonValue};
 use std::path::PathBuf;
-
-use crate::lib::def::Def;
-use crate::lib::desc::Desc;
-
-use crate::lib::r#ref::Ref;
 
 pub trait Lang {
     fn handlebars(&self) -> Handlebars;

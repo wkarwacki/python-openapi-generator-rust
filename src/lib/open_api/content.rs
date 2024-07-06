@@ -1,8 +1,9 @@
-use crate::lib::context::Context;
-use crate::lib::open_api::media_type::MediaType;
-use crate::lib::open_api::mime::Mime;
-use crate::lib::req::Req;
-use crate::lib::res::Res;
+use crate::lib::{
+    context::Context,
+    open_api::{media_type::MediaType, mime::Mime},
+    req::Req,
+    res::Res,
+};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 

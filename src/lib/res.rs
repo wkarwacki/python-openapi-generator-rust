@@ -1,6 +1,4 @@
-use crate::lib::carrier::Carrier;
-use crate::lib::desc::Desc;
-use crate::lib::meta::Meta;
+use crate::lib::{carrier::Carrier, desc::Desc, meta::Meta};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]

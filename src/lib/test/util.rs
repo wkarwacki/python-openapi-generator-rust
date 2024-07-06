@@ -1,7 +1,11 @@
-use crate::open_api::open_api::OpenApi;
-use crate::pkg::Pkg;
-use crate::util::{read_t, write};
-use crate::{do_main, from_open_api, to_open_api, Cli, Cmd, Generator, Layout, Role};
+use crate::{
+    do_main, from_open_api,
+    open_api::open_api::OpenApi,
+    pkg::Pkg,
+    to_open_api,
+    util::{read_t, write},
+    Cli, Cmd, Generator, Layout, Role,
+};
 use convert_case::{Case, Casing};
 
 pub fn from_open_api_test_fn(name: &str) {
