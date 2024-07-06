@@ -1,5 +1,5 @@
 
-use std::collections::{BTreeMap, HashMap, HashSet};
+use std::collections::{HashMap, HashSet};
 use std::fs;
 
 
@@ -8,7 +8,7 @@ use std::path::PathBuf;
 use convert_case::{Case, Casing};
 use dyn_clone::DynClone;
 use handlebars::{Context as HbContext, Handlebars, handlebars_helper, Helper, HelperDef, HelperResult, JsonRender, JsonValue, Output, RenderContext, RenderError, ScopedJson};
-use serde_json::{Error, json, Map, Value};
+use serde_json::{json, Map, Value};
 
 use crate::lib::context::Context;
 use crate::lib::def::{Def, Int, Obj, Str};
@@ -394,7 +394,7 @@ pub fn go(pkg: &Pkg, gen: Box<dyn Gen>, templates_path: Option<PathBuf>, context
         _ => true
     }).map(|(name, def)| serde_json::to_value((name, def)).unwrap()).collect::<Vec<_>>()); // TIDY: make object (i.e. hashmap) out of it instead of Vec<Pair>, otherwise before and after filtering are different types | TIDY: make it handle nulls, otherwise double if is needed everywhere
     handlebars.register_helper("filterNonconst", Box::new(filter_nonconst));
-    handlebars_helper!(filter_op_params_by_loc: |op_params: Vec<OpParam>, loc: String| op_params.iter().filter(|(op_param)| op_param.clone().clone().loc.map(|l| l == loc).unwrap_or(false)).map(|op_param| serde_json::to_value(op_param).unwrap()).collect::<Vec<_>>());
+    handlebars_helper!(filter_op_params_by_loc: |op_params: Vec<OpParam>, loc: String| op_params.iter().filter(|op_param| op_param.clone().clone().loc.map(|l| l == loc).unwrap_or(false)).map(|op_param| serde_json::to_value(op_param).unwrap()).collect::<Vec<_>>());
     handlebars.register_helper("filterOpParamsByLoc", Box::new(filter_op_params_by_loc));
     handlebars.register_helper("isAlias", Box::new(IsAlias { gen: gen.clone() }.clone()));
     handlebars_helper!(has_key: |json_value: JsonValue, key: String| match json_value {

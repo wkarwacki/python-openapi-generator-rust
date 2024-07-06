@@ -278,7 +278,7 @@ fn from_open_api(input: PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg>
 
             let open_api_value = serde_yaml::to_value(open_api.clone()).unwrap();
             let tag_and_pkg = tag_and_path_with_its_name_and_used_refs_within.iter().into_group_map_by(|(src, _)| src).iter()
-                .map(|(src, vec)| ((src.clone(), vec.iter().flat_map(|(_, (_, _, refs))| refs).collect::<Vec<_>>()), vec.iter().map(|(_, (name, path, refs))| (name.clone().clone(), path.clone().clone())).collect::<HashMap<_, _>>()))
+                .map(|(src, vec)| ((src.clone(), vec.iter().flat_map(|(_, (_, _, refs))| refs).collect::<Vec<_>>()), vec.iter().map(|(_, (name, path, _refs))| (name.clone().clone(), path.clone().clone())).collect::<HashMap<_, _>>()))
                 .map(|((src, refs), paths)| {
                     let open_api_with_all_refs_rec_value = refs_rec(&open_api_value, refs.iter().map(|r#ref| r#ref.to_string()).collect::<Vec<_>>());
                     let open_api_with_all_refs_rec: OpenApi = serde_yaml::from_value(open_api_with_all_refs_rec_value.clone()).unwrap();
