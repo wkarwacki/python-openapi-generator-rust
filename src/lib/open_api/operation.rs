@@ -28,20 +28,40 @@ pub struct Operation {
 }
 
 impl Operation {
-    pub fn of(ops: &Vec<Op>, method: Method, common_op_params: &Vec<OpParam>, context: &Context) -> Option<Operation> {
-        ops.iter().find(|op| op.r#type.iter().any(|r#type| r#type == method.as_str()))
+    pub fn of(
+        ops: &Vec<Op>,
+        method: Method,
+        common_op_params: &Vec<OpParam>,
+        context: &Context,
+    ) -> Option<Operation> {
+        ops.iter()
+            .find(|op| op.r#type.iter().any(|r#type| r#type == method.as_str()))
             .map(|op| {
                 let mut op_params: Vec<OpParam> = op.params.clone();
-                op_params.retain(|op_param|!common_op_params.contains(op_param));
+                op_params.retain(|op_param| !common_op_params.contains(op_param));
                 Operation {
                     tags: vec![],
                     operation_id: op.name.clone(),
-                    parameters: op_params.iter().map(|param| RefOr::Item(Parameter::of(param, context))).collect(),
-                    request_body: op.req.as_ref().map(|req| RefOr::Item(RequestBody::of(req, context))),
-                    responses: op.res.as_ref().iter().map(|res| {
-                        let status_code = StatusCode::of(method.clone());
-                        (status_code.clone(), RefOr::Item(Response::of(res, status_code, context)))
-                    }).collect()
+                    parameters: op_params
+                        .iter()
+                        .map(|param| RefOr::Item(Parameter::of(param, context)))
+                        .collect(),
+                    request_body: op
+                        .req
+                        .as_ref()
+                        .map(|req| RefOr::Item(RequestBody::of(req, context))),
+                    responses: op
+                        .res
+                        .as_ref()
+                        .iter()
+                        .map(|res| {
+                            let status_code = StatusCode::of(method.clone());
+                            (
+                                status_code.clone(),
+                                RefOr::Item(Response::of(res, status_code, context)),
+                            )
+                        })
+                        .collect(),
                 }
             })
     }
@@ -50,14 +70,30 @@ impl Operation {
         Op {
             name: self.operation_id.clone(),
             r#type: Some(method.to_string()),
-            req: self.request_body.as_ref().map(|request_body| request_body.map_item(|request_body| request_body.req(context)).unwrap(context)),
-            res: self.responses.first().as_ref().and_then(|(_, response)| response.map_item(|r| r.res(context)).unwrap(context)),
+            req: self.request_body.as_ref().map(|request_body| {
+                request_body
+                    .map_item(|request_body| request_body.req(context))
+                    .unwrap(context)
+            }),
+            res: self
+                .responses
+                .first()
+                .as_ref()
+                .and_then(|(_, response)| response.map_item(|r| r.res(context)).unwrap(context)),
             params: {
-                let mut params: Vec<_> = self.parameters.iter().map(|parameter| parameter.map_item(|item| item.op_param(context)).unwrap(context)).collect();
+                let mut params: Vec<_> = self
+                    .parameters
+                    .iter()
+                    .map(|parameter| {
+                        parameter
+                            .map_item(|item| item.op_param(context))
+                            .unwrap(context)
+                    })
+                    .collect();
                 let mut op_params = path_op_params;
                 op_params.append(&mut params);
                 op_params
-            }
+            },
         }
     }
 }

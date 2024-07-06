@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod op_params {
-    use crate::{Generator, Role};
     use crate::test::util::{from_open_api_test_fn, gen_test, to_open_api_test_fn};
+    use crate::{Generator, Role};
 
     #[test]
     fn to_open_api_test() {
@@ -15,11 +15,19 @@ mod op_params {
 
     #[test]
     fn gen_python_client_test() {
-        gen_test(Generator::Python, Role::Client, "op-params-trust.yml".to_string());
+        gen_test(
+            Generator::Python,
+            Role::Client,
+            "op-params-trust.yml".to_string(),
+        );
     }
 
     #[test]
     fn gen_python_server_test() {
-        gen_test(Generator::Python, Role::Server, "op-params-trust.yml".to_string());
+        gen_test(
+            Generator::Python,
+            Role::Server,
+            "op-params-trust.yml".to_string(),
+        );
     }
 }

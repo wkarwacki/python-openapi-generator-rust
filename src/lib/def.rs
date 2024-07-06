@@ -34,7 +34,7 @@ impl Def {
     pub fn obj(&self) -> Option<&Obj> {
         match self {
             Def::Obj(obj) => Some(obj),
-            _ => None
+            _ => None,
         }
     }
 }
@@ -42,35 +42,35 @@ impl Def {
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Alias {
     #[serde(flatten)]
-    pub r#ref: Ref
+    pub r#ref: Ref,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Bool {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
-    pub null: bool
+    pub null: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Const {
     pub val: Value,
     #[serde(default, skip_serializing_if = "Option::is_none")]
-    pub desc: Option<Box<Desc>>
+    pub desc: Option<Box<Desc>>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Dec {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
-    pub null: bool
+    pub null: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Enum {
     pub vals: EnumVals,
     #[serde(default, skip_serializing_if = "<&bool>::not")]
-    pub null: bool
+    pub null: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -84,7 +84,7 @@ pub enum EnumVals {
 pub struct Int {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
-    pub null: bool
+    pub null: bool,
 }
 
 // TODO_LATER: for http gen, validation, whether a key is string-like
@@ -94,7 +94,7 @@ pub struct Map {
     pub val: Desc,
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
-    pub null: bool
+    pub null: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -112,8 +112,7 @@ pub struct Obj {
     pub adt: Option<Adt>,
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
-    pub null: bool
-
+    pub null: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
@@ -121,15 +120,14 @@ pub struct Seq {
     pub item: Desc,
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
-    pub null: bool
-
+    pub null: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Str {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
-    pub null: bool
+    pub null: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

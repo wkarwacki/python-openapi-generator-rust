@@ -113,17 +113,16 @@ pub mod lib {
     pub mod op;
     pub mod r#ref;
 
-    pub mod test;
-    pub mod util;
-    pub mod var;
-    pub mod op_param;
-    pub mod res;
-    pub mod req;
     pub mod gen;
     pub mod meta;
+    pub mod op_param;
+    pub mod req;
+    pub mod res;
+    pub mod test;
+    pub mod util;
     pub mod validation;
+    pub mod var;
 }
-
 
 /// Search for a pattern in a file and display the lines that contain it.
 #[derive(Parser)]
@@ -225,11 +224,20 @@ pub struct GenCfg {
 
 pub fn do_main(cli: Cli) {
     match cli.cmd {
-        Cmd::FromOpenApi { input, output, layout } => {
+        Cmd::FromOpenApi {
+            input,
+            output,
+            layout,
+        } => {
             let pkgs = from_open_api(input.clone(), layout);
 
             pkgs.iter().for_each(|(src, pkg)| {
-                let p = output.to_string_lossy().to_string() + "/" + src.clone().unwrap_or(input.file_name().unwrap().to_str().unwrap().to_string()).as_str();
+                let p = output.to_string_lossy().to_string()
+                    + "/"
+                    + src
+                        .clone()
+                        .unwrap_or(input.file_name().unwrap().to_str().unwrap().to_string())
+                        .as_str();
                 let path = Path::new(p.as_str());
                 fs::create_dir_all(path.parent().unwrap());
                 write(pkg, path.into());
@@ -240,11 +248,40 @@ pub fn do_main(cli: Cli) {
 
             write(open_api, "out.yml".into())
         }
-        Cmd::Generate { generator, role, input, output, config, templates_path } => {
-            let generator_config = config.map(|c| serde_yaml::from_reader::<File, GenCfg>(File::open(c).unwrap()).unwrap()).unwrap_or(GenCfg { type_mapping: HashMap::new(), subdir: None, dto_name: None });
-            gen(input.clone(), generator, role, generator_config, templates_path).iter().for_each(|(path, content)| {
-                let full_path = output.to_string_lossy().to_string() + "/" + path.to_string_lossy().to_string().as_str();
-                fs::create_dir_all(PathBuf::from_str(full_path.as_str()).unwrap().parent().unwrap()).unwrap();
+        Cmd::Generate {
+            generator,
+            role,
+            input,
+            output,
+            config,
+            templates_path,
+        } => {
+            let generator_config = config
+                .map(|c| serde_yaml::from_reader::<File, GenCfg>(File::open(c).unwrap()).unwrap())
+                .unwrap_or(GenCfg {
+                    type_mapping: HashMap::new(),
+                    subdir: None,
+                    dto_name: None,
+                });
+            gen(
+                input.clone(),
+                generator,
+                role,
+                generator_config,
+                templates_path,
+            )
+            .iter()
+            .for_each(|(path, content)| {
+                let full_path = output.to_string_lossy().to_string()
+                    + "/"
+                    + path.to_string_lossy().to_string().as_str();
+                fs::create_dir_all(
+                    PathBuf::from_str(full_path.as_str())
+                        .unwrap()
+                        .parent()
+                        .unwrap(),
+                )
+                .unwrap();
                 let mut out = std::fs::OpenOptions::new()
                     .write(true)
                     .create(true)
@@ -258,45 +295,86 @@ pub fn do_main(cli: Cli) {
 
 fn from_open_api(input: PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg> {
     let context = open_api::context::Context::of(input.clone());
-    context.val.iter().flat_map(|(src, value)| {
-        // TIDY: hide processing behind trait
-        let open_api: OpenApi = serde_yaml::from_value(value.clone()).unwrap();
-        if layout == Layout::Tag {
-            let tag_and_path_with_its_name_and_used_refs_within = open_api.paths.iter().flat_map(|(name, ref_or_path)| {
-                let context = &context;
-                let path = ref_or_path.clone().unwrap(context);
-                path.operations().iter().map(move |operation| {
-                    let tag = operation.tags.first().cloned().map(|tag| tag.to_string() + ".yml")
-                        .or_else(|| src.clone()).unwrap_or_else(|| "default.yml".to_string());
+    context
+        .val
+        .iter()
+        .flat_map(|(src, value)| {
+            // TIDY: hide processing behind trait
+            let open_api: OpenApi = serde_yaml::from_value(value.clone()).unwrap();
+            if layout == Layout::Tag {
+                let tag_and_path_with_its_name_and_used_refs_within = open_api
+                    .paths
+                    .iter()
+                    .flat_map(|(name, ref_or_path)| {
+                        let context = &context;
+                        let path = ref_or_path.clone().unwrap(context);
+                        path.operations()
+                            .iter()
+                            .map(move |operation| {
+                                let tag = operation
+                                    .tags
+                                    .first()
+                                    .cloned()
+                                    .map(|tag| tag.to_string() + ".yml")
+                                    .or_else(|| src.clone())
+                                    .unwrap_or_else(|| "default.yml".to_string());
 
-                    let operation_value = serde_yaml::to_value(operation.clone()).unwrap();
+                                let operation_value =
+                                    serde_yaml::to_value(operation.clone()).unwrap();
 
-                    let refs = refs(&operation_value);
-                    (tag, (name, ref_or_path, refs))
-                }).collect::<Vec<_>>()
-            }).collect::<Vec<_>>();
+                                let refs = refs(&operation_value);
+                                (tag, (name, ref_or_path, refs))
+                            })
+                            .collect::<Vec<_>>()
+                    })
+                    .collect::<Vec<_>>();
 
-            let open_api_value = serde_yaml::to_value(open_api.clone()).unwrap();
-            let tag_and_pkg = tag_and_path_with_its_name_and_used_refs_within.iter().into_group_map_by(|(src, _)| src).iter()
-                .map(|(src, vec)| ((src.clone(), vec.iter().flat_map(|(_, (_, _, refs))| refs).collect::<Vec<_>>()), vec.iter().map(|(_, (name, path, _refs))| (name.clone().clone(), path.clone().clone())).collect::<HashMap<_, _>>()))
-                .map(|((src, refs), paths)| {
-                    let open_api_with_all_refs_rec_value = refs_rec(&open_api_value, refs.iter().map(|r#ref| r#ref.to_string()).collect::<Vec<_>>());
-                    let open_api_with_all_refs_rec: OpenApi = serde_yaml::from_value(open_api_with_all_refs_rec_value.clone()).unwrap();
-                    let open_api_for_tag = OpenApi {
-                        paths: paths,
-                        components: open_api_with_all_refs_rec.components,
-                    };
-                    let pkg = open_api_for_tag.pkg(&context);
-                    (Some(src.clone().clone()), pkg)
-                }).collect::<Vec<_>>();
-            tag_and_pkg
-        } else {
-            let pkg = open_api.pkg(&context);
-            vec![(src.clone(), pkg)]
-        }
-    }).collect()
+                let open_api_value = serde_yaml::to_value(open_api.clone()).unwrap();
+                let tag_and_pkg = tag_and_path_with_its_name_and_used_refs_within
+                    .iter()
+                    .into_group_map_by(|(src, _)| src)
+                    .iter()
+                    .map(|(src, vec)| {
+                        (
+                            (
+                                src.clone(),
+                                vec.iter()
+                                    .flat_map(|(_, (_, _, refs))| refs)
+                                    .collect::<Vec<_>>(),
+                            ),
+                            vec.iter()
+                                .map(|(_, (name, path, _refs))| {
+                                    (name.clone().clone(), path.clone().clone())
+                                })
+                                .collect::<HashMap<_, _>>(),
+                        )
+                    })
+                    .map(|((src, refs), paths)| {
+                        let open_api_with_all_refs_rec_value = refs_rec(
+                            &open_api_value,
+                            refs.iter()
+                                .map(|r#ref| r#ref.to_string())
+                                .collect::<Vec<_>>(),
+                        );
+                        let open_api_with_all_refs_rec: OpenApi =
+                            serde_yaml::from_value(open_api_with_all_refs_rec_value.clone())
+                                .unwrap();
+                        let open_api_for_tag = OpenApi {
+                            paths: paths,
+                            components: open_api_with_all_refs_rec.components,
+                        };
+                        let pkg = open_api_for_tag.pkg(&context);
+                        (Some(src.clone().clone()), pkg)
+                    })
+                    .collect::<Vec<_>>();
+                tag_and_pkg
+            } else {
+                let pkg = open_api.pkg(&context);
+                vec![(src.clone(), pkg)]
+            }
+        })
+        .collect()
 }
-
 
 // TODO_LATER: make it work for multiple files
 fn to_open_api(input: PathBuf) -> OpenApi {
@@ -304,9 +382,20 @@ fn to_open_api(input: PathBuf) -> OpenApi {
     OpenApi::of(pkg, &Context::of(input))
 }
 
-fn gen(input: PathBuf, generator: Generator, role: Role, gen_cfg: GenCfg, templates_path: Option<PathBuf>) -> HashMap<PathBuf, String> {
+fn gen(
+    input: PathBuf,
+    generator: Generator,
+    role: Role,
+    gen_cfg: GenCfg,
+    templates_path: Option<PathBuf>,
+) -> HashMap<PathBuf, String> {
     let pkg: Pkg = read_t(input.clone());
     let context = Context::of(input.clone());
 
-    gen::gen::go(&pkg, generator.gen(gen_cfg, input, role), templates_path, context)
+    gen::gen::go(
+        &pkg,
+        generator.gen(gen_cfg, input, role),
+        templates_path,
+        context,
+    )
 }

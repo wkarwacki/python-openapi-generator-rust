@@ -1,6 +1,6 @@
-use std::collections::HashMap;
-use serde::{Deserialize, Serialize};
 use crate::lib::carrier::Carrier;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 use crate::lib::context::Context;
 use crate::lib::desc::Desc;
@@ -29,11 +29,30 @@ impl Response {
         Response {
             description: status_code.val.to_string(),
             content: Some(Content::of_res(res, context)),
-            headers: res.meta.value.iter().map(|(name, meta)| (name.clone(), match meta {
-                Desc::Def(def) => RefOr::Item(Header{schema: Schema::of_def(def.clone(), name.to_string(), None, context)}),
-                Desc::Ref(r#ref) => RefOr::Ref {r#ref: Schema::openapi_path(r#ref)},
-                Desc::Param { .. } => unimplemented!()
-            })).collect()
+            headers: res
+                .meta
+                .value
+                .iter()
+                .map(|(name, meta)| {
+                    (
+                        name.clone(),
+                        match meta {
+                            Desc::Def(def) => RefOr::Item(Header {
+                                schema: Schema::of_def(
+                                    def.clone(),
+                                    name.to_string(),
+                                    None,
+                                    context,
+                                ),
+                            }),
+                            Desc::Ref(r#ref) => RefOr::Ref {
+                                r#ref: Schema::openapi_path(r#ref),
+                            },
+                            Desc::Param { .. } => unimplemented!(),
+                        },
+                    )
+                })
+                .collect(),
         }
     }
     pub fn res(&self, context: &OpenApiContext) -> Option<Res> {
@@ -44,18 +63,49 @@ impl Response {
             Res {
                 form: {
                     let mime = entry.0.clone().val;
-                    if mime == mime::APPLICATION_JSON { None } else { Some(mime.to_string()) }
+                    if mime == mime::APPLICATION_JSON {
+                        None
+                    } else {
+                        Some(mime.to_string())
+                    }
                 },
                 desc: match entry.1.clone().schema {
                     RefOr::Ref { r#ref } => Desc::Ref(OpenApi::trust_ref(r#ref)),
-                    RefOr::Item(schema) => schema.clone().desc("res".to_string(), context)
+                    RefOr::Item(schema) => schema.clone().desc("res".to_string(), context),
                 },
-                carrier: if entry.1.clone().schema.map_item(|schema| schema.clone().format.map(|format| format == "binary").unwrap_or(false)).unwrap_or(false) { Carrier::Stream } else { Carrier::Batch },
+                carrier: if entry
+                    .1
+                    .clone()
+                    .schema
+                    .map_item(|schema| {
+                        schema
+                            .clone()
+                            .format
+                            .map(|format| format == "binary")
+                            .unwrap_or(false)
+                    })
+                    .unwrap_or(false)
+                {
+                    Carrier::Stream
+                } else {
+                    Carrier::Batch
+                },
                 meta: Meta {
-                    value: self.headers.iter().map(|(name, ref_or_header)| (name.clone(), match ref_or_header.clone() {
-                        RefOr::Ref { r#ref } => Desc::Ref(OpenApi::trust_ref(r#ref)),
-                        RefOr::Item(header) => Desc::Def(header.schema.def(name.clone(), context))
-                    })).collect()
+                    value: self
+                        .headers
+                        .iter()
+                        .map(|(name, ref_or_header)| {
+                            (
+                                name.clone(),
+                                match ref_or_header.clone() {
+                                    RefOr::Ref { r#ref } => Desc::Ref(OpenApi::trust_ref(r#ref)),
+                                    RefOr::Item(header) => {
+                                        Desc::Def(header.schema.def(name.clone(), context))
+                                    }
+                                },
+                            )
+                        })
+                        .collect(),
                 },
             }
         })

@@ -1,14 +1,9 @@
 #[cfg(test)]
 mod mix {
-    
-    
 
     use crate::{Generator, Role};
-    
-    
+
     use crate::test::util::{from_open_api_test_fn, gen_test, to_open_api_test_fn};
-    
-    
 
     #[test]
     fn to_open_api_test() {
@@ -37,6 +32,10 @@ mod mix {
 
     #[test]
     fn gen_typescript_test() {
-        gen_test(Generator::TypeScript, Role::Server, "mix-trust.yml".to_string());
+        gen_test(
+            Generator::TypeScript,
+            Role::Server,
+            "mix-trust.yml".to_string(),
+        );
     }
 }

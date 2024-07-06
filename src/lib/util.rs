@@ -1,8 +1,8 @@
+use serde::de::DeserializeOwned;
+use serde::Serialize;
 use std::fs::File;
 use std::io::{Read, Write};
 use std::path::PathBuf;
-use serde::de::DeserializeOwned;
-use serde::Serialize;
 
 pub fn read(path: PathBuf) -> String {
     let mut file = File::open(&path).unwrap();
@@ -12,16 +12,16 @@ pub fn read(path: PathBuf) -> String {
 }
 
 pub fn read_t<T>(path: PathBuf) -> T
-    where
-        T: DeserializeOwned,
+where
+    T: DeserializeOwned,
 {
     let content = read(path);
     serde_yaml::from_str(&content).unwrap()
 }
 
 pub fn write<T>(t: T, path: PathBuf)
-    where
-        T: Serialize,
+where
+    T: Serialize,
 {
     let out = std::fs::OpenOptions::new()
         .write(true)

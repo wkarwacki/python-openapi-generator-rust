@@ -4,7 +4,6 @@ use crate::lib::desc::Desc;
 
 use std::ops::Not;
 
-
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Var {
     #[serde(flatten)]
@@ -14,5 +13,4 @@ pub struct Var {
     pub opt: bool,
 }
 
-impl Var {
-}
+impl Var {}

@@ -8,30 +8,28 @@ use crate::lib::r#ref::Ref;
 pub enum Desc {
     Def(Def),
     Ref(Ref),
-    Param {
-        param: String
-    },
+    Param { param: String },
 }
 
 impl Desc {
     pub fn def(&self) -> Option<&Def> {
         match self {
             Desc::Def(def) => Some(def),
-            _ => None
+            _ => None,
         }
     }
 
     pub fn r#ref(&self) -> Option<&Ref> {
         match self {
             Desc::Ref(r#ref) => Some(r#ref),
-            _ => None
+            _ => None,
         }
     }
 
     pub fn param(&self) -> Option<&str> {
         match self {
-            Desc::Param{param} => Some(param),
-            _ => None
+            Desc::Param { param } => Some(param),
+            _ => None,
         }
     }
 }

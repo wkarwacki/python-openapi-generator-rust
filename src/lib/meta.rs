@@ -1,17 +1,17 @@
-use std::collections::HashMap;
-use serde::{Deserialize, Serialize};
 use crate::lib::desc::Desc;
+use serde::{Deserialize, Serialize};
+use std::collections::HashMap;
 
 #[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Meta {
     #[serde(flatten)]
-    pub value: HashMap<String, Desc>
+    pub value: HashMap<String, Desc>,
 }
 
-impl Default for Meta{
+impl Default for Meta {
     fn default() -> Self {
         Meta {
-            value: HashMap::default()
+            value: HashMap::default(),
         }
     }
 }

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 pub struct Ref {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub src: Option<String>,
-    pub path: String
+    pub path: String,
 }
 
 impl Ref {
@@ -17,6 +17,8 @@ impl Ref {
     }
 
     pub fn to_string(self) -> String {
-        self.src.map(|src| src + "#" + self.path.as_str()).unwrap_or(self.path)
+        self.src
+            .map(|src| src + "#" + self.path.as_str())
+            .unwrap_or(self.path)
     }
 }

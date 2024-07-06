@@ -1,21 +1,23 @@
-use std::str::FromStr;
 use mime;
 use serde::{Deserialize, Deserializer, Serialize};
 use serde_yaml::Value;
+use std::str::FromStr;
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
 pub struct Mime {
-    pub val: mime::Mime
+    pub val: mime::Mime,
 }
 
 impl<'de> Deserialize<'de> for Mime {
     fn deserialize<D>(deserializer: D) -> Result<Mime, D::Error>
-        where
-            D: Deserializer<'de>,
+    where
+        D: Deserializer<'de>,
     {
         let value: Value = Deserialize::deserialize(deserializer)?;
         match value {
-            Value::String(string) => Ok(Mime{ val: mime::Mime::from_str(string.as_str()).unwrap()}),
+            Value::String(string) => Ok(Mime {
+                val: mime::Mime::from_str(string.as_str()).unwrap(),
+            }),
             _ => panic!("Illegal mime type."),
         }
     }
@@ -23,8 +25,8 @@ impl<'de> Deserialize<'de> for Mime {
 
 impl Serialize for Mime {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-        where
-            S: serde::Serializer,
+    where
+        S: serde::Serializer,
     {
         self.val.to_string().serialize(serializer)
     }
@@ -33,7 +35,9 @@ impl Serialize for Mime {
 impl Mime {
     pub fn of(string: Option<String>) -> Mime {
         Mime {
-            val: string.map(|s| mime::Mime::from_str(s.as_str()).unwrap() ).unwrap_or(mime::APPLICATION_JSON)
+            val: string
+                .map(|s| mime::Mime::from_str(s.as_str()).unwrap())
+                .unwrap_or(mime::APPLICATION_JSON),
         }
     }
 }

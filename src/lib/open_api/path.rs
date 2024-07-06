@@ -1,6 +1,3 @@
-
-use http::method::Method;
-use serde::{Deserialize, Serialize};
 use crate::lib::context::Context;
 use crate::lib::op::Op;
 use crate::lib::op_param::OpParam;
@@ -8,6 +5,8 @@ use crate::lib::open_api::context::Context as OpenApiContext;
 use crate::lib::open_api::operation::Operation;
 use crate::lib::open_api::parameter::Parameter;
 use crate::lib::open_api::ref_or::RefOr;
+use http::method::Method;
+use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Path {
@@ -30,7 +29,6 @@ pub struct Path {
 }
 
 impl Path {
-
     pub fn operations(&self) -> Vec<Operation> {
         vec![
             self.get.clone(),
@@ -39,17 +37,26 @@ impl Path {
             self.delete.clone(),
             self.patch.clone(),
         ]
-            .into_iter()
-            .filter_map(|op| op)
-            .collect()
+        .into_iter()
+        .filter_map(|op| op)
+        .collect()
     }
     pub fn of(ops: &Vec<Op>, context: &Context) -> Path {
-        let common_op_params = ops.iter().fold(None as Option<Vec<OpParam>>, |vec, op| {
-            match vec {
-                Some(vec) => Some(vec.iter().cloned().filter(|param: &OpParam| op.params.iter().any(|p| p == param)).collect()),
-                None => Some(op.params.clone())
-            }
-        }).iter().flatten().cloned().collect::<Vec<OpParam>>();
+        let common_op_params = ops
+            .iter()
+            .fold(None as Option<Vec<OpParam>>, |vec, op| match vec {
+                Some(vec) => Some(
+                    vec.iter()
+                        .cloned()
+                        .filter(|param: &OpParam| op.params.iter().any(|p| p == param))
+                        .collect(),
+                ),
+                None => Some(op.params.clone()),
+            })
+            .iter()
+            .flatten()
+            .cloned()
+            .collect::<Vec<OpParam>>();
         Path {
             summary: None,
             description: None,
@@ -58,13 +65,24 @@ impl Path {
             post: Operation::of(ops, Method::POST, &common_op_params, context),
             delete: Operation::of(ops, Method::DELETE, &common_op_params, context),
             patch: Operation::of(ops, Method::PATCH, &common_op_params, context),
-            parameters: common_op_params.iter().map(|op_param| RefOr::Item(Parameter::of(op_param, context))).collect(),
+            parameters: common_op_params
+                .iter()
+                .map(|op_param| RefOr::Item(Parameter::of(op_param, context)))
+                .collect(),
         }
     }
 
     pub fn ops(&self, context: &OpenApiContext) -> Vec<Op> {
         let mut ops = vec![];
-        let path_op_params: Vec<_> = self.parameters.iter().map(|parameter| parameter.map_item(|item| item.op_param(context)).unwrap(context)).collect();
+        let path_op_params: Vec<_> = self
+            .parameters
+            .iter()
+            .map(|parameter| {
+                parameter
+                    .map_item(|item| item.op_param(context))
+                    .unwrap(context)
+            })
+            .collect();
         if let Some(get) = &self.get {
             ops.push(get.op(Method::GET, path_op_params.clone(), context));
         }

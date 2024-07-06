@@ -1,16 +1,18 @@
-use std::collections::HashMap;
 use convert_case::{Case, Casing};
+use std::collections::HashMap;
 
-use serde::{Deserialize, Serialize};
-use std::ops::Not;
-use serde_yaml::Value;
-use typetag::serde;
 use def::DEFS;
+use serde::{Deserialize, Serialize};
+use serde_yaml::Value;
+use std::ops::Not;
+use typetag::serde;
 
 use crate::lib::adt::Adt;
 use crate::lib::context::Context;
 use crate::lib::def;
-use crate::lib::def::{Alias, Bool, Const, Dec, Def, Enum, EnumVals, Int, Map, Obj, Seq, Str, Struct};
+use crate::lib::def::{
+    Alias, Bool, Const, Dec, Def, Enum, EnumVals, Int, Map, Obj, Seq, Str, Struct,
+};
 use crate::lib::desc::Desc;
 use crate::lib::open_api::components::COMPONENTS;
 use crate::lib::open_api::context::Context as OpenApiContext;
@@ -63,39 +65,43 @@ pub struct Schema {
 }
 
 impl Schema {
-    pub(crate) fn of_def(def: Def, name: String, default: Option<Value>, context: &Context) -> Schema {
+    pub(crate) fn of_def(
+        def: Def,
+        name: String,
+        default: Option<Value>,
+        context: &Context,
+    ) -> Schema {
         match def {
-            Def::Alias(alias) => {
-                Schema::of_ref(&alias.r#ref)
-            },
-            Def::Bool(_) => {
-                Schema {
-                    r#type: Some("boolean".to_string()),
-                    properties: HashMap::new(),
-                    additional_properties: None,
-                    required: Vec::new(),
-                    nullable: false,
-                    all_of: Vec::new(),
-                    one_of: Vec::new(),
-                    discriminator: None,
-                    items: None,
-                    r#enum: Vec::new(),
-                    format: None,
-                    r#const: None,
-                    default: default,
-                    _ref: None,
-                }
+            Def::Alias(alias) => Schema::of_ref(&alias.r#ref),
+            Def::Bool(_) => Schema {
+                r#type: Some("boolean".to_string()),
+                properties: HashMap::new(),
+                additional_properties: None,
+                required: Vec::new(),
+                nullable: false,
+                all_of: Vec::new(),
+                one_of: Vec::new(),
+                discriminator: None,
+                items: None,
+                r#enum: Vec::new(),
+                format: None,
+                r#const: None,
+                default: default,
+                _ref: None,
             },
             Def::Const(_const) => Schema {
-                r#type: Some(match _const.val {
-                    Value::Null => unreachable!("null value is not allowed in const"),
-                    Value::Bool(_) => "boolean",
-                    Value::Number(_) => "double",
-                    Value::String(_) => "string",
-                    Value::Sequence(_) => "array",
-                    Value::Mapping(_) => "object",
-                    Value::Tagged(_) => "object"
-                }.to_string()),
+                r#type: Some(
+                    match _const.val {
+                        Value::Null => unreachable!("null value is not allowed in const"),
+                        Value::Bool(_) => "boolean",
+                        Value::Number(_) => "double",
+                        Value::String(_) => "string",
+                        Value::Sequence(_) => "array",
+                        Value::Mapping(_) => "object",
+                        Value::Tagged(_) => "object",
+                    }
+                    .to_string(),
+                ),
                 properties: HashMap::new(),
                 additional_properties: None,
                 required: Vec::new(),
@@ -120,7 +126,7 @@ impl Schema {
                         default: None,
                         _ref: None,
                     })),
-                    _ => None
+                    _ => None,
                 },
                 r#enum: Vec::new(),
                 format: None,
@@ -128,98 +134,131 @@ impl Schema {
                 default: default,
                 _ref: None,
             },
-            Def::Dec(_) => {
-                Schema {
-                    r#type: Some("double".to_string()),
-                    properties: HashMap::new(),
-                    additional_properties: None,
-                    required: Vec::new(),
-                    nullable: false,
-                    all_of: Vec::new(),
-                    one_of: Vec::new(),
-                    discriminator: None,
-                    items: None,
-                    r#enum: Vec::new(),
-                    format: None,
-                    r#const: None,
-                    default: default,
-                    _ref: None,
-                }
-            }
-            Def::Enum(Enum{vals, null: _}) => {
-                Schema {
-                    r#type: Some("string".to_string()),
-                    properties: HashMap::new(),
-                    additional_properties: None,
-                    required: Vec::new(),
-                    nullable: false,
-                    all_of: Vec::new(),
-                    one_of: Vec::new(),
-                    discriminator: None,
-                    items: None,
-                    r#enum: match vals {
-                        EnumVals::Int(vec) => vec.iter().map(|i| i.to_string()).collect(),
-                        EnumVals::Str(vec) => vec.clone(),
-                      },
-                    format: None,
-                    r#const: None,
-                    default: default,
-                    _ref: None,
-                }
-            }
-            Def::Int(_) => {
-                Schema {
-                    r#type: Some("integer".to_string()),
-                    properties: HashMap::new(),
-                    additional_properties: None,
-                    required: Vec::new(),
-                    nullable: false,
-                    all_of: Vec::new(),
-                    one_of: Vec::new(),
-                    discriminator: None,
-                    items: None,
-                    r#enum: Vec::new(),
-                    format: Some("int64".to_string()),
-                    r#const: None,
-                    default: default,
-                    _ref: None,
-                }
-            }
-            Def::Map(map) => {
-                Schema {
-                    r#type: Some("object".to_string()),
-                    properties: HashMap::new(),
-                    additional_properties: Some(Box::new(Schema::of_desc(&map.val, "additionalProperties".to_string(), None, context))),
-                    required: Vec::new(),
-                    nullable: false,
-                    all_of: Vec::new(),
-                    one_of: Vec::new(),
-                    discriminator: None,
-                    items: None,
-                    r#enum: Vec::new(),
-                    format: None,
-                    r#const: None,
-                    default: default,
-                    _ref: None,
-                }
-            }
+            Def::Dec(_) => Schema {
+                r#type: Some("double".to_string()),
+                properties: HashMap::new(),
+                additional_properties: None,
+                required: Vec::new(),
+                nullable: false,
+                all_of: Vec::new(),
+                one_of: Vec::new(),
+                discriminator: None,
+                items: None,
+                r#enum: Vec::new(),
+                format: None,
+                r#const: None,
+                default: default,
+                _ref: None,
+            },
+            Def::Enum(Enum { vals, null: _ }) => Schema {
+                r#type: Some("string".to_string()),
+                properties: HashMap::new(),
+                additional_properties: None,
+                required: Vec::new(),
+                nullable: false,
+                all_of: Vec::new(),
+                one_of: Vec::new(),
+                discriminator: None,
+                items: None,
+                r#enum: match vals {
+                    EnumVals::Int(vec) => vec.iter().map(|i| i.to_string()).collect(),
+                    EnumVals::Str(vec) => vec.clone(),
+                },
+                format: None,
+                r#const: None,
+                default: default,
+                _ref: None,
+            },
+            Def::Int(_) => Schema {
+                r#type: Some("integer".to_string()),
+                properties: HashMap::new(),
+                additional_properties: None,
+                required: Vec::new(),
+                nullable: false,
+                all_of: Vec::new(),
+                one_of: Vec::new(),
+                discriminator: None,
+                items: None,
+                r#enum: Vec::new(),
+                format: Some("int64".to_string()),
+                r#const: None,
+                default: default,
+                _ref: None,
+            },
+            Def::Map(map) => Schema {
+                r#type: Some("object".to_string()),
+                properties: HashMap::new(),
+                additional_properties: Some(Box::new(Schema::of_desc(
+                    &map.val,
+                    "additionalProperties".to_string(),
+                    None,
+                    context,
+                ))),
+                required: Vec::new(),
+                nullable: false,
+                all_of: Vec::new(),
+                one_of: Vec::new(),
+                discriminator: None,
+                items: None,
+                r#enum: Vec::new(),
+                format: None,
+                r#const: None,
+                default: default,
+                _ref: None,
+            },
             Def::Obj(obj) => {
                 Schema {
-                    r#type: if obj.mix.is_empty() { Some("object".to_string()) } else { None },
-                    properties: if obj.mix.is_empty() { obj.vars.iter().map(|(name, var)| (name.clone(), Schema::of_var(var, name.clone(), context))).collect::<HashMap<_, _>>() } else { HashMap::new() },
+                    r#type: if obj.mix.is_empty() {
+                        Some("object".to_string())
+                    } else {
+                        None
+                    },
+                    properties: if obj.mix.is_empty() {
+                        obj.vars
+                            .iter()
+                            .map(|(name, var)| {
+                                (name.clone(), Schema::of_var(var, name.clone(), context))
+                            })
+                            .collect::<HashMap<_, _>>()
+                    } else {
+                        HashMap::new()
+                    },
                     additional_properties: None,
                     required: {
-                        if obj.mix.is_empty() { obj.vars.iter().filter(|(_, var)| !var.opt).map(|(name, _)| name.clone()).collect::<Vec<_>>() } else { Vec::new() }
+                        if obj.mix.is_empty() {
+                            obj.vars
+                                .iter()
+                                .filter(|(_, var)| !var.opt)
+                                .map(|(name, _)| name.clone())
+                                .collect::<Vec<_>>()
+                        } else {
+                            Vec::new()
+                        }
                     },
                     nullable: false,
                     all_of: {
-                        let mut all_of = obj.mix.iter().map(|r#ref| Schema::of_ref(&r#ref)).collect::<Vec<_>>();
+                        let mut all_of = obj
+                            .mix
+                            .iter()
+                            .map(|r#ref| Schema::of_ref(&r#ref))
+                            .collect::<Vec<_>>();
                         if !all_of.is_empty() && !obj.vars.is_empty() {
                             all_of.push(Schema {
                                 r#type: Some("object".to_string()),
-                                properties: obj.vars.iter().map(|(name, var)| (name.clone(), Schema::of_var(var, name.clone(), context))).collect::<HashMap<_, _>>(),
+                                properties: obj
+                                    .vars
+                                    .iter()
+                                    .map(|(name, var)| {
+                                        (name.clone(), Schema::of_var(var, name.clone(), context))
+                                    })
+                                    .collect::<HashMap<_, _>>(),
                                 additional_properties: None,
-                                required: obj.vars.iter().filter(|(_, var)| !var.opt).map(|(name, _)| name.clone()).collect::<Vec<_>>(),
+                                required: obj
+                                    .vars
+                                    .iter()
+                                    .filter(|(_, var)| !var.opt)
+                                    .map(|(name, _)| name.clone())
+                                    .collect::<Vec<_>>(),
                                 nullable: false,
                                 all_of: Vec::new(),
                                 one_of: Vec::new(),
@@ -237,12 +276,16 @@ impl Schema {
                     one_of: Vec::new(),
                     discriminator: obj.adt.as_ref().map(|adt| Discriminator {
                         property_name: adt.var.clone(),
-                        mapping: adt.map.iter()
-                            .map(|(n, _)| (n.clone(), {
-                                let subname = n.to_case(Case::UpperCamel);
-                                let schemas_path = schemas_path();
-                                format!("#{schemas_path}/{name}{subname}") // FIXME_LATER: src is not taken
-                            }))
+                        mapping: adt
+                            .map
+                            .iter()
+                            .map(|(n, _)| {
+                                (n.clone(), {
+                                    let subname = n.to_case(Case::UpperCamel);
+                                    let schemas_path = schemas_path();
+                                    format!("#{schemas_path}/{name}{subname}") // FIXME_LATER: src is not taken
+                                })
+                            })
                             .collect::<HashMap<_, _>>(),
                     }),
                     items: None,
@@ -253,60 +296,59 @@ impl Schema {
                     _ref: None,
                 }
             }
-            Def::Seq(seq) => {
-                Schema {
-                    r#type: Some("array".to_string()),
-                    properties: HashMap::new(),
-                    additional_properties: None,
-                    required: Vec::new(),
-                    nullable: false,
-                    all_of: Vec::new(),
-                    one_of: Vec::new(),
-                    discriminator: None,
-                    items: Some(Box::new(Schema::of_desc(&seq.item, "items".to_string(), None, context))),
-                    r#enum: Vec::new(),
-                    format: None,
-                    r#const: None,
-                    default: default,
-                    _ref: None,
-                }
-            }
-            Def::Str(_) => {
-                Schema {
-                    r#type: Some("string".to_string()),
-                    properties: HashMap::new(),
-                    additional_properties: None,
-                    required: Vec::new(),
-                    nullable: false,
-                    all_of: Vec::new(),
-                    one_of: Vec::new(),
-                    discriminator: None,
-                    items: None,
-                    r#enum: Vec::new(),
-                    format: None,
-                    r#const: None,
-                    default: default,
-                    _ref: None,
-                }
-            }
-            Def::Struct(_) => {
-                Schema {
-                    r#type: None,
-                    properties: HashMap::new(),
-                    additional_properties: None,
-                    required: Vec::new(),
-                    nullable: false,
-                    all_of: Vec::new(),
-                    one_of: Vec::new(),
-                    discriminator: None,
-                    items: None,
-                    r#enum: Vec::new(),
-                    format: None,
-                    r#const: None,
-                    default: default,
-                    _ref: None,
-                }
-            }
+            Def::Seq(seq) => Schema {
+                r#type: Some("array".to_string()),
+                properties: HashMap::new(),
+                additional_properties: None,
+                required: Vec::new(),
+                nullable: false,
+                all_of: Vec::new(),
+                one_of: Vec::new(),
+                discriminator: None,
+                items: Some(Box::new(Schema::of_desc(
+                    &seq.item,
+                    "items".to_string(),
+                    None,
+                    context,
+                ))),
+                r#enum: Vec::new(),
+                format: None,
+                r#const: None,
+                default: default,
+                _ref: None,
+            },
+            Def::Str(_) => Schema {
+                r#type: Some("string".to_string()),
+                properties: HashMap::new(),
+                additional_properties: None,
+                required: Vec::new(),
+                nullable: false,
+                all_of: Vec::new(),
+                one_of: Vec::new(),
+                discriminator: None,
+                items: None,
+                r#enum: Vec::new(),
+                format: None,
+                r#const: None,
+                default: default,
+                _ref: None,
+            },
+            Def::Struct(_) => Schema {
+                r#type: None,
+                properties: HashMap::new(),
+                additional_properties: None,
+                required: Vec::new(),
+                nullable: false,
+                all_of: Vec::new(),
+                one_of: Vec::new(),
+                discriminator: None,
+                items: None,
+                r#enum: Vec::new(),
+                format: None,
+                r#const: None,
+                default: default,
+                _ref: None,
+            },
         }
     }
 
@@ -318,7 +360,11 @@ impl Schema {
         desc.r#ref()
             .as_ref()
             .map(|r#ref| Schema::of_ref(&r#ref))
-            .or_else(|| desc.def().as_ref().map(|def| Schema::of_def(def.clone().clone(), name, default, context)))
+            .or_else(|| {
+                desc.def()
+                    .as_ref()
+                    .map(|def| Schema::of_def(def.clone().clone(), name, default, context))
+            })
             .unwrap()
     }
 
@@ -353,26 +399,36 @@ impl Schema {
     }
 
     fn empty(&self) -> bool {
-        self.all_of.is_empty() && self.properties.is_empty() && self.discriminator.is_none() && self.additional_properties.is_none() && self._ref.is_none()
+        self.all_of.is_empty()
+            && self.properties.is_empty()
+            && self.discriminator.is_none()
+            && self.additional_properties.is_none()
+            && self._ref.is_none()
     }
 
     pub(crate) fn def(&self, name: String, context: &OpenApiContext) -> Def {
         match self.clone().r#const {
-            None => self.r#type
+            None => self
+                .r#type
                 .as_ref()
                 .map(|r#type| match r#type.as_str() {
                     "array" => Def::Seq(Box::new(Seq {
-                        item: self.items.as_ref().unwrap().clone().desc(name.clone(), context),
-                        null: self.nullable
+                        item: self
+                            .items
+                            .as_ref()
+                            .unwrap()
+                            .clone()
+                            .desc(name.clone(), context),
+                        null: self.nullable,
                     })),
                     "boolean" => Def::Bool(Bool {
-                        null: self.nullable
+                        null: self.nullable,
                     }),
                     "double" | "number" => Def::Dec(Dec {
-                        null: self.nullable
+                        null: self.nullable,
                     }),
                     "integer" => Def::Int(Int {
-                        null: self.nullable
+                        null: self.nullable,
                     }),
                     "object" => {
                         if self.empty() {
@@ -383,12 +439,11 @@ impl Schema {
                                 .map(|additional_properties| {
                                     Def::Map(Box::new(Map {
                                         key: Desc::Def(Def::Str(Str {
-                                            null: self.nullable
+                                            null: self.nullable,
                                         })),
                                         val: additional_properties.desc(name.clone(), context),
-                                        null: self.nullable
-                                    }
-                                    ))
+                                        null: self.nullable,
+                                    }))
                                 })
                                 .unwrap_or({
                                     let vars = self
@@ -409,50 +464,72 @@ impl Schema {
                                         mix: Vec::new(),
                                         vars: vars,
                                         adt: self.adt(name.clone(), context),
-                                        null: self.nullable
+                                        null: self.nullable,
                                     })
                                 })
                         }
                     }
-                    "string" => if self.r#enum.is_empty() {Def::Str(Str {
-                        null: self.nullable
-                    })} else {
-                        Def::Enum(Enum{vals: EnumVals::Str(self.r#enum.clone()), null: self.nullable})
-                    },
+                    "string" => {
+                        if self.r#enum.is_empty() {
+                            Def::Str(Str {
+                                null: self.nullable,
+                            })
+                        } else {
+                            Def::Enum(Enum {
+                                vals: EnumVals::Str(self.r#enum.clone()),
+                                null: self.nullable,
+                            })
+                        }
+                    }
                     _ => unreachable!(),
                 })
                 .unwrap_or_else(|| {
                     if self.empty() {
                         Def::Struct(Struct {})
                     } else {
-                        self.clone()._ref.map(|r#ref| Def::Alias(Alias{r#ref: OpenApi::trust_ref(r#ref)})).unwrap_or_else(|| Def::Obj(Obj {
-                            ext: None,
-                            mix: self
-                                .all_of
-                                .iter()
-                                .flat_map(|schema| schema.clone().desc(name.clone(), context).r#ref().cloned())
-                                .collect(),
-                            vars: self
-                                .properties
-                                .iter()
-                                .map(|(n, schema)| {
-                                    (
-                                        n.clone(),
-                                        Box::new(Var {
-                                            desc: schema.clone().desc(n.clone(), context),
-                                            opt: !self.required.contains(n),
-                                        }),
-                                    )
+                        self.clone()
+                            ._ref
+                            .map(|r#ref| {
+                                Def::Alias(Alias {
+                                    r#ref: OpenApi::trust_ref(r#ref),
                                 })
-                                .collect(),
-                            adt: self.adt(name, context),
-                            null: self.nullable
-                        }))
+                            })
+                            .unwrap_or_else(|| {
+                                Def::Obj(Obj {
+                                    ext: None,
+                                    mix: self
+                                        .all_of
+                                        .iter()
+                                        .flat_map(|schema| {
+                                            schema
+                                                .clone()
+                                                .desc(name.clone(), context)
+                                                .r#ref()
+                                                .cloned()
+                                        })
+                                        .collect(),
+                                    vars: self
+                                        .properties
+                                        .iter()
+                                        .map(|(n, schema)| {
+                                            (
+                                                n.clone(),
+                                                Box::new(Var {
+                                                    desc: schema.clone().desc(n.clone(), context),
+                                                    opt: !self.required.contains(n),
+                                                }),
+                                            )
+                                        })
+                                        .collect(),
+                                    adt: self.adt(name, context),
+                                    null: self.nullable,
+                                })
+                            })
                     }
                 }),
             Some(value) => Def::Const(Const {
                 val: value,
-                desc: None
+                desc: None,
             }),
         }
     }
@@ -466,10 +543,9 @@ impl Schema {
                 .map(|(n, path)| {
                     (n.clone(), {
                         let schema: Schema = context.resolve(path.clone());
-                        let sub_def = schema
-                            .with_mapped_all_of()
-                            .def(name.clone(), context);
-                        sub_def.obj()
+                        let sub_def = schema.with_mapped_all_of().def(name.clone(), context);
+                        sub_def
+                            .obj()
                             .map(|obj| Obj {
                                 ext: None,
                                 mix: obj
@@ -477,15 +553,23 @@ impl Schema {
                                     .iter()
                                     .filter(|&mix| {
                                         let defs = DEFS;
-                                        mix.path
-                                            != format!("{defs}.{name}")
+                                        mix.path != format!("{defs}.{name}")
                                     }) // FIXME_LATER: src is not taken
                                     .map(|_ref| _ref.clone())
                                     .collect::<Vec<_>>(),
-                                vars: obj.clone().vars.iter().filter(|(name, _)| name.clone().clone() != discriminator.property_name).map(|(name, var)| (name.clone(), var.clone())).collect::<HashMap<_, _>>(),
+                                vars: obj
+                                    .clone()
+                                    .vars
+                                    .iter()
+                                    .filter(|(name, _)| {
+                                        name.clone().clone() != discriminator.property_name
+                                    })
+                                    .map(|(name, var)| (name.clone(), var.clone()))
+                                    .collect::<HashMap<_, _>>(),
                                 adt: obj.clone().adt,
-                                null: self.nullable
-                            }).unwrap()
+                                null: self.nullable,
+                            })
+                            .unwrap()
                     })
                 })
                 .collect::<HashMap<_, _>>(),
@@ -496,9 +580,7 @@ impl Schema {
         self._ref
             .as_ref()
             .map(|r| Desc::Ref(OpenApi::trust_ref(r.clone())))
-            .unwrap_or_else(|| {
-                Desc::Def(self.def(name, context))
-            })
+            .unwrap_or_else(|| Desc::Def(self.def(name, context)))
     }
 
     pub(crate) fn with_mapped_all_of(&self) -> Schema {

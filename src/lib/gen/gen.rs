@@ -1,20 +1,21 @@
-
 use std::collections::{HashMap, HashSet};
 use std::fs;
-
 
 use std::path::PathBuf;
 
 use convert_case::{Case, Casing};
 use dyn_clone::DynClone;
-use handlebars::{Context as HbContext, Handlebars, handlebars_helper, Helper, HelperDef, HelperResult, JsonRender, JsonValue, Output, RenderContext, RenderError, ScopedJson};
+use handlebars::{
+    handlebars_helper, Context as HbContext, Handlebars, Helper, HelperDef, HelperResult,
+    JsonRender, JsonValue, Output, RenderContext, RenderError, ScopedJson,
+};
 use serde_json::{json, Map, Value};
 
 use crate::lib::context::Context;
 use crate::lib::def::{Def, Int, Obj, Str};
 use crate::lib::desc::Desc;
 use crate::lib::ext::Ext;
-use crate::lib::gen::lang::{DTO_NAME_TEMPLATE_NAME, Lang};
+use crate::lib::gen::lang::{Lang, DTO_NAME_TEMPLATE_NAME};
 use crate::lib::op_param::OpParam;
 use crate::lib::pkg::Pkg;
 use crate::lib::r#ref::Ref;
@@ -23,8 +24,20 @@ use crate::lib::var::Var;
 
 pub trait Gen: DynClone + Send + Sync {
     fn lang(&self) -> Box<dyn Lang>;
-    fn dtos(&self, handlebars: Handlebars, pkg: &Pkg, context: Context, templates: HashMap<String, String>) -> HashMap<PathBuf, String>;
-    fn ops(&self, handlebars: Handlebars, pkg: &Pkg, context: Context, templates: HashMap<String, String>) -> HashMap<PathBuf, String>;
+    fn dtos(
+        &self,
+        handlebars: Handlebars,
+        pkg: &Pkg,
+        context: Context,
+        templates: HashMap<String, String>,
+    ) -> HashMap<PathBuf, String>;
+    fn ops(
+        &self,
+        handlebars: Handlebars,
+        pkg: &Pkg,
+        context: Context,
+        templates: HashMap<String, String>,
+    ) -> HashMap<PathBuf, String>;
     fn src_dir(&self) -> PathBuf;
 }
 
@@ -36,11 +49,28 @@ struct FmtClass {
 }
 
 impl HelperDef for FmtClass {
-    fn call<'reg: 'rc, 'rc>(&self, h: &Helper, _: &Handlebars, _: &HbContext, _: &mut RenderContext, out: &mut dyn Output) -> HelperResult {
+    fn call<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper,
+        _: &Handlebars,
+        _: &HbContext,
+        _: &mut RenderContext,
+        out: &mut dyn Output,
+    ) -> HelperResult {
         let class = h.param(0).unwrap();
         let origin = h.param(1);
 
-        out.write(self.gen.lang().fmt_class(class.value().render(), origin.and_then(|param| param.value().as_str()).map(|str| str.to_string())).as_str())?;
+        out.write(
+            self.gen
+                .lang()
+                .fmt_class(
+                    class.value().render(),
+                    origin
+                        .and_then(|param| param.value().as_str())
+                        .map(|str| str.to_string()),
+                )
+                .as_str(),
+        )?;
         Ok(())
     }
 }
@@ -51,7 +81,14 @@ struct FmtEnum {
 }
 
 impl HelperDef for FmtEnum {
-    fn call<'reg: 'rc, 'rc>(&self, h: &Helper, _: &Handlebars, _: &HbContext, _: &mut RenderContext, out: &mut dyn Output) -> HelperResult {
+    fn call<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper,
+        _: &Handlebars,
+        _: &HbContext,
+        _: &mut RenderContext,
+        out: &mut dyn Output,
+    ) -> HelperResult {
         let param = h.param(0).unwrap();
 
         out.write(self.gen.lang().fmt_enum(param.value().render()).as_str())?;
@@ -65,7 +102,14 @@ struct FmtName {
 }
 
 impl HelperDef for FmtName {
-    fn call<'reg: 'rc, 'rc>(&self, h: &Helper, _: &Handlebars, _: &HbContext, _: &mut RenderContext, out: &mut dyn Output) -> HelperResult {
+    fn call<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper,
+        _: &Handlebars,
+        _: &HbContext,
+        _: &mut RenderContext,
+        out: &mut dyn Output,
+    ) -> HelperResult {
         let param = h.param(0).unwrap();
 
         out.write(self.gen.lang().fmt_name(param.value().render()).as_str())?;
@@ -79,9 +123,18 @@ struct FmtOpt {
 }
 
 impl HelperDef for FmtOpt {
-    fn call<'reg: 'rc, 'rc>(&self, h: &Helper, _: &Handlebars, _: &HbContext, _: &mut RenderContext, out: &mut dyn Output) -> HelperResult {
+    fn call<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper,
+        _: &Handlebars,
+        _: &HbContext,
+        _: &mut RenderContext,
+        out: &mut dyn Output,
+    ) -> HelperResult {
         let param = h.param(0).unwrap();
-        Ok(out.write(self.gen.lang().fmt_opt(param.value().render()).as_str()).unwrap())
+        Ok(out
+            .write(self.gen.lang().fmt_opt(param.value().render()).as_str())
+            .unwrap())
     }
 }
 
@@ -100,8 +153,10 @@ impl HelperDef for FmtSrcIfPresent {
     ) -> Result<ScopedJson<'rc>, RenderError> {
         let param = h.param(0).unwrap();
         match param.value().as_str() {
-            Some(str) => Ok(ScopedJson::from(serde_json::to_value(self.gen.lang().fmt_src(str.to_string())).unwrap())),
-            None => Ok(ScopedJson::from(Value::Null))
+            Some(str) => Ok(ScopedJson::from(
+                serde_json::to_value(self.gen.lang().fmt_src(str.to_string())).unwrap(),
+            )),
+            None => Ok(ScopedJson::from(Value::Null)),
         }
     }
 }
@@ -112,15 +167,27 @@ struct FmtType {
 }
 
 impl HelperDef for FmtType {
-    fn call<'reg: 'rc, 'rc>(&self, h: &Helper, _: &Handlebars, _: &HbContext, _: &mut RenderContext, out: &mut dyn Output) -> HelperResult {
+    fn call<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper,
+        _: &Handlebars,
+        _: &HbContext,
+        _: &mut RenderContext,
+        out: &mut dyn Output,
+    ) -> HelperResult {
         let desc: Desc = serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
-        let name: Option<String> = h.param(1).and_then(|param| param.value().clone().as_str().map(|str| str.to_string()));
+        let name: Option<String> = h
+            .param(1)
+            .and_then(|param| param.value().clone().as_str().map(|str| str.to_string()));
 
-        Ok(out.write(match desc {
-            Desc::Def(def) => self.gen.lang().fmt_type(def, name),
-            Desc::Ref(r#ref) => self.gen.lang().fmt_ref(r#ref),
-            Desc::Param { param } => param
-        }.as_str())?)
+        Ok(out.write(
+            match desc {
+                Desc::Def(def) => self.gen.lang().fmt_type(def, name),
+                Desc::Ref(r#ref) => self.gen.lang().fmt_ref(r#ref),
+                Desc::Param { param } => param,
+            }
+            .as_str(),
+        )?)
     }
 }
 
@@ -130,7 +197,14 @@ struct FmtValue {
 }
 
 impl HelperDef for FmtValue {
-    fn call<'reg: 'rc, 'rc>(&self, h: &Helper, _: &Handlebars, _: &HbContext, _: &mut RenderContext, out: &mut dyn Output) -> HelperResult {
+    fn call<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper,
+        _: &Handlebars,
+        _: &HbContext,
+        _: &mut RenderContext,
+        out: &mut dyn Output,
+    ) -> HelperResult {
         let json_value: JsonValue = h.param(0).unwrap().value().clone();
         Ok(out.write(self.gen.lang().fmt_value(json_value).as_str())?)
     }
@@ -149,18 +223,23 @@ impl HelperDef for IsAlias {
         _: &'rc handlebars::Context,
         _: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
-        Ok(ScopedJson::from(Value::Bool(if let Ok(Ref{path: _, src: _}) = serde_json::from_value(h.param(0).unwrap().value().clone()) {
-            true
-        } else {
-            let def: Result<Def, _> = serde_json::from_value(h.param(0).unwrap().value().clone());
-            match def {
-                Ok(def) => match def {
-                    Def::Enum(_) | Def::Obj(_) => false,
-                    _ => true
+        Ok(ScopedJson::from(Value::Bool(
+            if let Ok(Ref { path: _, src: _ }) =
+                serde_json::from_value(h.param(0).unwrap().value().clone())
+            {
+                true
+            } else {
+                let def: Result<Def, _> =
+                    serde_json::from_value(h.param(0).unwrap().value().clone());
+                match def {
+                    Ok(def) => match def {
+                        Def::Enum(_) | Def::Obj(_) => false,
+                        _ => true,
+                    },
+                    Err(_) => false,
                 }
-                Err(_) => false
-            }
-        })))
+            },
+        )))
     }
 }
 
@@ -205,8 +284,12 @@ impl HelperDef for Resolve {
         _: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
         if let Ok(Desc::Ref(r#ref)) = serde_json::from_value(h.param(0).unwrap().value().clone()) {
-            let mut value: Value = serde_json::to_value(self.context.resolve(r#ref.clone())).unwrap();
-            value.as_object_mut().unwrap().insert("origin".to_string(), serde_json::to_value(r#ref).unwrap());
+            let mut value: Value =
+                serde_json::to_value(self.context.resolve(r#ref.clone())).unwrap();
+            value
+                .as_object_mut()
+                .unwrap()
+                .insert("origin".to_string(), serde_json::to_value(r#ref).unwrap());
             Ok(ScopedJson::from(value))
         } else {
             Ok(ScopedJson::Missing)
@@ -227,7 +310,8 @@ impl HelperDef for SortOptionalsLast {
         _: &'rc handlebars::Context,
         _: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
-        let vars: Result<HashMap<String, Box<Var>>, _> = serde_json::from_value(h.param(0).unwrap().value().clone());
+        let vars: Result<HashMap<String, Box<Var>>, _> =
+            serde_json::from_value(h.param(0).unwrap().value().clone());
         let value = match vars {
             Ok(vars) => {
                 let mut vec = vars.iter().collect::<Vec<_>>();
@@ -240,10 +324,17 @@ impl HelperDef for SortOptionalsLast {
                         name0.cmp(name1)
                     }
                 });
-                Value::Object(vec.iter().map(|(name, var)| (name.clone().clone(), serde_json::to_value(var).unwrap())).collect::<Map<_, _>>())
+                Value::Object(
+                    vec.iter()
+                        .map(|(name, var)| {
+                            (name.clone().clone(), serde_json::to_value(var).unwrap())
+                        })
+                        .collect::<Map<_, _>>(),
+                )
             }
             _ => {
-                let mut op_params: Vec<OpParam> = serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
+                let mut op_params: Vec<OpParam> =
+                    serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
                 op_params.sort_by(|op_param0, op_param1| {
                     if op_param0.default.is_some() && op_param1.default.is_none() {
                         std::cmp::Ordering::Greater
@@ -253,10 +344,14 @@ impl HelperDef for SortOptionalsLast {
                         op_param0.name.cmp(&op_param1.name.clone())
                     }
                 });
-                Value::Array(op_params.iter().map(|op_param| serde_json::to_value(op_param).unwrap()).collect::<Vec<_>>())
+                Value::Array(
+                    op_params
+                        .iter()
+                        .map(|op_param| serde_json::to_value(op_param).unwrap())
+                        .collect::<Vec<_>>(),
+                )
             }
         };
-
 
         Ok(ScopedJson::from(value))
     }
@@ -279,8 +374,11 @@ impl HelperDef for TypeArgs {
         ext.map(|e| {
             let mut vec: Vec<_> = e.args.into_iter().collect();
             vec.sort_by(|(name0, _), (name1, _)| name0.cmp(name1));
-            Ok(ScopedJson::from(serde_json::to_value(vec.iter().map(|(_, desc)| desc).collect::<Vec<_>>()).unwrap()))
-        }).unwrap_or(Ok(ScopedJson::from(Value::Array(Vec::new()))))
+            Ok(ScopedJson::from(
+                serde_json::to_value(vec.iter().map(|(_, desc)| desc).collect::<Vec<_>>()).unwrap(),
+            ))
+        })
+        .unwrap_or(Ok(ScopedJson::from(Value::Array(Vec::new()))))
     }
 }
 
@@ -299,10 +397,17 @@ impl HelperDef for TypeParams {
     ) -> Result<ScopedJson<'rc>, RenderError> {
         let obj: Result<Obj, _> = serde_json::from_value(h.param(0).unwrap().value().clone());
         obj.map(|o| {
-            let mut vec: Vec<_> = o.vars.iter().flat_map(|(_, var)| var.desc.param().map(str::to_string)).collect::<HashSet<_>>().into_iter().collect();
+            let mut vec: Vec<_> = o
+                .vars
+                .iter()
+                .flat_map(|(_, var)| var.desc.param().map(str::to_string))
+                .collect::<HashSet<_>>()
+                .into_iter()
+                .collect();
             vec.sort();
             Ok(ScopedJson::from(serde_json::to_value(vec).unwrap()))
-        }).unwrap_or(Ok(ScopedJson::from(Value::Array(Vec::new()))))
+        })
+        .unwrap_or(Ok(ScopedJson::from(Value::Array(Vec::new()))))
     }
 }
 
@@ -320,10 +425,13 @@ impl HelperDef for ValueDef {
         _: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
         let val = h.param(0).unwrap().value().render();
-        Ok(ScopedJson::from(Value::from(serde_json::to_value(match val.parse::<i64>() {
-            Ok(_) => Def::Int(Int { null: false }),
-            _ => Def::Str(Str { null: false })
-        }).unwrap())))
+        Ok(ScopedJson::from(Value::from(
+            serde_json::to_value(match val.parse::<i64>() {
+                Ok(_) => Def::Int(Int { null: false }),
+                _ => Def::Str(Str { null: false }),
+            })
+            .unwrap(),
+        )))
     }
 }
 
@@ -331,7 +439,14 @@ impl HelperDef for ValueDef {
 struct Json;
 
 impl HelperDef for Json {
-    fn call<'reg: 'rc, 'rc>(&self, h: &Helper, _: &Handlebars, _: &HbContext, _: &mut RenderContext, out: &mut dyn Output) -> HelperResult {
+    fn call<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper,
+        _: &Handlebars,
+        _: &HbContext,
+        _: &mut RenderContext,
+        out: &mut dyn Output,
+    ) -> HelperResult {
         let param = h.param(0).unwrap();
 
         out.write(param.value().to_string().as_str())?;
@@ -354,28 +469,43 @@ impl HelperDef for Add {
         match param {
             Value::Null => {
                 let other = h.param(1).unwrap().value();
-                Ok(ScopedJson::from(other.as_array().map(|vec| vec.clone()).map(Value::from).or(other.as_str().map(Value::from)).unwrap()))
+                Ok(ScopedJson::from(
+                    other
+                        .as_array()
+                        .map(|vec| vec.clone())
+                        .map(Value::from)
+                        .or(other.as_str().map(Value::from))
+                        .unwrap(),
+                ))
             }
             _ => {
-                let result = param.as_array()
+                let result = param
+                    .as_array()
                     .map(|v| {
                         let mut vec = v.clone();
                         let other = h.param(1).unwrap().value().as_array().unwrap();
                         vec.append(&mut other.clone());
                         serde_json::to_value(vec)
-                    }).or(param.as_str().map(|str| {
-                    let mut string = str.to_string();
-                    let other = h.param(1).unwrap().value().as_str();
-                    other.iter().for_each(|o| string.push_str(o));
-                    serde_json::to_value(string)
-                })).unwrap();
+                    })
+                    .or(param.as_str().map(|str| {
+                        let mut string = str.to_string();
+                        let other = h.param(1).unwrap().value().as_str();
+                        other.iter().for_each(|o| string.push_str(o));
+                        serde_json::to_value(string)
+                    }))
+                    .unwrap();
                 Ok(ScopedJson::from(result.unwrap()))
             }
         }
     }
 }
 
-pub fn go(pkg: &Pkg, gen: Box<dyn Gen>, templates_path: Option<PathBuf>, context: Context) -> HashMap<PathBuf, String> {
+pub fn go(
+    pkg: &Pkg,
+    gen: Box<dyn Gen>,
+    templates_path: Option<PathBuf>,
+    context: Context,
+) -> HashMap<PathBuf, String> {
     let mut handlebars = Handlebars::new();
 
     handlebars.register_helper("json", Box::new(Json {}.clone()));
@@ -385,7 +515,10 @@ pub fn go(pkg: &Pkg, gen: Box<dyn Gen>, templates_path: Option<PathBuf>, context
     handlebars.register_helper("fmtEnum", Box::new(FmtEnum { gen: gen.clone() }.clone()));
     handlebars.register_helper("fmtName", Box::new(FmtName { gen: gen.clone() }.clone()));
     handlebars.register_helper("fmtOpt", Box::new(FmtOpt { gen: gen.clone() }.clone()));
-    handlebars.register_helper("fmtSrcIfPresent", Box::new(FmtSrcIfPresent { gen: gen.clone() }.clone()));
+    handlebars.register_helper(
+        "fmtSrcIfPresent",
+        Box::new(FmtSrcIfPresent { gen: gen.clone() }.clone()),
+    );
     handlebars.register_helper("fmtType", Box::new(FmtType { gen: gen.clone() }.clone()));
     handlebars.register_helper("fmtValue", Box::new(FmtValue { gen: gen.clone() }.clone()));
 
@@ -403,14 +536,62 @@ pub fn go(pkg: &Pkg, gen: Box<dyn Gen>, templates_path: Option<PathBuf>, context
     });
     handlebars.register_helper("hasKey", Box::new(has_key));
 
-    handlebars.register_helper("parents", Box::new(Parents { context: context.clone() }.clone()));
-    handlebars.register_helper("resolve", Box::new(Resolve { context: context.clone() }.clone()));
-    handlebars.register_helper("sortOptionalsLast", Box::new(SortOptionalsLast { context: context.clone() }.clone()));
-    handlebars.register_helper("typeArgs", Box::new(TypeArgs { context: context.clone() }.clone()));
+    handlebars.register_helper(
+        "parents",
+        Box::new(
+            Parents {
+                context: context.clone(),
+            }
+            .clone(),
+        ),
+    );
+    handlebars.register_helper(
+        "resolve",
+        Box::new(
+            Resolve {
+                context: context.clone(),
+            }
+            .clone(),
+        ),
+    );
+    handlebars.register_helper(
+        "sortOptionalsLast",
+        Box::new(
+            SortOptionalsLast {
+                context: context.clone(),
+            }
+            .clone(),
+        ),
+    );
+    handlebars.register_helper(
+        "typeArgs",
+        Box::new(
+            TypeArgs {
+                context: context.clone(),
+            }
+            .clone(),
+        ),
+    );
     handlebars_helper!(to_flat_case: |string: String| string.to_case(Case::Flat));
     handlebars.register_helper("toFlatCase", Box::new(to_flat_case));
-    handlebars.register_helper("typeParams", Box::new(TypeParams { context: context.clone() }.clone()));
-    handlebars.register_helper("valueDef", Box::new(ValueDef { context: context.clone() }.clone()));
+    handlebars.register_helper(
+        "typeParams",
+        Box::new(
+            TypeParams {
+                context: context.clone(),
+            }
+            .clone(),
+        ),
+    );
+    handlebars.register_helper(
+        "valueDef",
+        Box::new(
+            ValueDef {
+                context: context.clone(),
+            }
+            .clone(),
+        ),
+    );
 
     handlebars_misc_helpers::setup_handlebars(&mut handlebars);
     handlebars.set_strict_mode(false);
@@ -419,14 +600,27 @@ pub fn go(pkg: &Pkg, gen: Box<dyn Gen>, templates_path: Option<PathBuf>, context
     let templates = templates_path.map(templates).unwrap_or(HashMap::new());
     merged_templates.extend(templates);
 
-
     merged_templates.iter().for_each(|(name, template)| {
-        handlebars.register_template_string(name, template.clone()).unwrap();
+        handlebars
+            .register_template_string(name, template.clone())
+            .unwrap();
     });
 
-    handlebars.register_template(DTO_NAME_TEMPLATE_NAME, gen.lang().handlebars().get_template(DTO_NAME_TEMPLATE_NAME).unwrap().clone());
+    handlebars.register_template(
+        DTO_NAME_TEMPLATE_NAME,
+        gen.lang()
+            .handlebars()
+            .get_template(DTO_NAME_TEMPLATE_NAME)
+            .unwrap()
+            .clone(),
+    );
 
-    let dtos = gen.dtos(handlebars.clone(), pkg, context.clone(), merged_templates.clone());
+    let dtos = gen.dtos(
+        handlebars.clone(),
+        pkg,
+        context.clone(),
+        merged_templates.clone(),
+    );
 
     if pkg.ops.is_empty() {
         dtos
@@ -441,14 +635,22 @@ pub fn go(pkg: &Pkg, gen: Box<dyn Gen>, templates_path: Option<PathBuf>, context
 }
 
 pub fn dto_name(string: String, lang: Box<dyn Lang>) -> String {
-    lang.handlebars().render(DTO_NAME_TEMPLATE_NAME, &json!({"val": string})).unwrap()
+    lang.handlebars()
+        .render(DTO_NAME_TEMPLATE_NAME, &json!({"val": string}))
+        .unwrap()
 }
 
 fn templates(path: PathBuf) -> HashMap<String, String> {
-    fs::read_dir(path).unwrap().map(|entry| {
-        let path = entry.unwrap().path().clone();
-        (path.file_stem().unwrap().to_string_lossy().to_string(), template(path))
-    }).collect()
+    fs::read_dir(path)
+        .unwrap()
+        .map(|entry| {
+            let path = entry.unwrap().path().clone();
+            (
+                path.file_stem().unwrap().to_string_lossy().to_string(),
+                template(path),
+            )
+        })
+        .collect()
 }
 
 fn template(path: PathBuf) -> String {
@@ -456,5 +658,9 @@ fn template(path: PathBuf) -> String {
 }
 
 fn default_templates_path(gen: Box<dyn Gen>) -> PathBuf {
-    PathBuf::from("src/lib/gen/".to_string() + gen.src_dir().to_string_lossy().to_string().as_str() + "/templates")
+    PathBuf::from(
+        "src/lib/gen/".to_string()
+            + gen.src_dir().to_string_lossy().to_string().as_str()
+            + "/templates",
+    )
 }

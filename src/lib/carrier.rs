@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 #[serde(rename_all = "camelCase")]
 pub enum Carrier {
     Batch,
-    Stream
+    Stream,
 }
 
 impl Default for Carrier {

@@ -1,7 +1,6 @@
 use std::collections::HashMap;
 use std::fs;
 
-
 use std::path::PathBuf;
 
 use serde_yaml::Value;
@@ -18,7 +17,6 @@ pub struct Context {
 }
 
 impl Context {
-
     pub fn of(path: PathBuf) -> Context {
         let mut map = HashMap::new();
         let value: Value = read_t(path.clone());
@@ -26,12 +24,16 @@ impl Context {
         let base = path.parent().unwrap().to_path_buf();
         Self {
             base: fs::canonicalize(base.clone()).unwrap(),
-            val: Self::get_of(value, base, map)
+            val: Self::get_of(value, base, map),
         }
     }
 
-    fn get_of(value: Value, base: PathBuf, map: HashMap<Option<String>, Value>) -> HashMap<Option<String>, Value> {
-        match value  {
+    fn get_of(
+        value: Value,
+        base: PathBuf,
+        map: HashMap<Option<String>, Value>,
+    ) -> HashMap<Option<String>, Value> {
+        match value {
             Value::Mapping(mapping) => {
                 let path = mapping.get("path");
                 let src_opt = mapping.get("src").and_then(|src| src.as_str());
@@ -39,16 +41,25 @@ impl Context {
                     let src = src_opt.unwrap();
                     let mut new_map = map.clone();
                     new_map.insert(Some(src.to_string()), {
-                        let value: Value = read_t((base.to_string_lossy().to_string() + "/" + src).into());
+                        let value: Value =
+                            read_t((base.to_string_lossy().to_string() + "/" + src).into());
                         value
                     });
                     new_map
                 } else {
-                    mapping.iter().flat_map(|(_key, value)| Self::get_of(value.clone(), base.clone(),  map.clone())).collect()
+                    mapping
+                        .iter()
+                        .flat_map(|(_key, value)| {
+                            Self::get_of(value.clone(), base.clone(), map.clone())
+                        })
+                        .collect()
                 }
-            },
-            Value::Sequence(sequence) => sequence.iter().flat_map(|value| Self::get_of(value.clone(), base.clone(),  map.clone())).collect::<HashMap<_, _>>(),
-            _ => map
+            }
+            Value::Sequence(sequence) => sequence
+                .iter()
+                .flat_map(|value| Self::get_of(value.clone(), base.clone(), map.clone()))
+                .collect::<HashMap<_, _>>(),
+            _ => map,
         }
     }
     pub fn resolve(&self, r#ref: Ref) -> Def {
@@ -60,9 +71,12 @@ impl Context {
     }
 
     pub fn defs(&self) -> Vec<(Option<String>, Vec<String>)> {
-        self.val.iter().map(|(src, value)| {
-            let pkg: Pkg = serde_yaml::from_value(value.clone()).unwrap();
-            (src.clone(), pkg.defs.keys().cloned().collect::<Vec<_>>())
-        }).collect::<Vec<_>>()
+        self.val
+            .iter()
+            .map(|(src, value)| {
+                let pkg: Pkg = serde_yaml::from_value(value.clone()).unwrap();
+                (src.clone(), pkg.defs.keys().cloned().collect::<Vec<_>>())
+            })
+            .collect::<Vec<_>>()
     }
 }

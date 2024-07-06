@@ -1,7 +1,7 @@
-use serde::{Deserialize, Serialize};
 use crate::lib::carrier::Carrier;
 use crate::lib::desc::Desc;
 use crate::lib::meta::Meta;
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Res {
@@ -14,5 +14,5 @@ pub struct Res {
     pub carrier: Carrier,
     #[serde(skip_serializing_if = "Meta::is_empty")]
     #[serde(default)]
-    pub meta: Meta
+    pub meta: Meta,
 }

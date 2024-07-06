@@ -1,6 +1,5 @@
-use std::path::PathBuf;
 use handlebars::{Handlebars, JsonValue};
-
+use std::path::PathBuf;
 
 use crate::lib::def::Def;
 use crate::lib::desc::Desc;
@@ -25,8 +24,16 @@ pub static DTO_NAME_TEMPLATE_NAME: &str = "dtoName";
 
 pub fn inner(desc: Desc, suffix: &str, name: Option<String>, lang: Box<dyn Lang>) -> String {
     match desc {
-        Desc::Def(def) => lang.fmt_opt(lang.fmt_type(def.clone(), name.clone().map(|n| n + suffix).or(Some(suffix.to_string()))).replace((suffix.to_string() + suffix).as_str(), suffix)),
+        Desc::Def(def) => lang.fmt_opt(
+            lang.fmt_type(
+                def.clone(),
+                name.clone()
+                    .map(|n| n + suffix)
+                    .or(Some(suffix.to_string())),
+            )
+            .replace((suffix.to_string() + suffix).as_str(), suffix),
+        ),
         Desc::Ref(r#ref) => lang.fmt_ref(r#ref),
-        Desc::Param{param: _} => unimplemented!("Parameter not supported yet.")
+        Desc::Param { param: _ } => unimplemented!("Parameter not supported yet."),
     }
 }

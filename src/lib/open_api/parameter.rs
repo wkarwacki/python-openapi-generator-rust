@@ -1,13 +1,13 @@
 use serde::{Deserialize, Serialize};
-use std::ops::Not;
 use serde_yaml::Value;
+use std::ops::Not;
 
 use crate::lib::context::Context;
 use crate::lib::op_param::OpParam;
 use crate::lib::open_api::parameter::Parameter::{Cookie, Header, Path, Query};
 
-use crate::lib::open_api::schema::Schema;
 use crate::lib::open_api::context::Context as OpenApiContext;
+use crate::lib::open_api::schema::Schema;
 
 use crate::lib::util;
 
@@ -66,13 +66,12 @@ pub enum Parameter {
 }
 
 impl Parameter {
-
     pub fn schema(&self) -> Schema {
         match self {
             Cookie(val) => val.clone().schema,
             Header(val) => val.clone().schema,
             Path(val) => val.clone().schema,
-            Query(val) => val.clone().schema
+            Query(val) => val.clone().schema,
         }
     }
 
@@ -81,24 +80,48 @@ impl Parameter {
             "cookie" => Cookie(ParameterValDefault {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
-                schema: Schema::of_desc(&op_param.desc, "CookieParam".to_string(), op_param.clone().default, context),
+                schema: Schema::of_desc(
+                    &op_param.desc,
+                    "CookieParam".to_string(),
+                    op_param.clone().default,
+                    context,
+                ),
             }),
             "header" => Header(ParameterValDefault {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
-                schema: Schema::of_desc(&op_param.desc, "HeaderParam".to_string(), op_param.clone().default, context),
+                schema: Schema::of_desc(
+                    &op_param.desc,
+                    "HeaderParam".to_string(),
+                    op_param.clone().default,
+                    context,
+                ),
             }),
             "path" => Path(ParameterValPath {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
-                schema: Schema::of_desc(&op_param.desc, "PathParam".to_string(), if op_param.clone().default == Some(Value::Null) {None} else {op_param.clone().default}, context),
+                schema: Schema::of_desc(
+                    &op_param.desc,
+                    "PathParam".to_string(),
+                    if op_param.clone().default == Some(Value::Null) {
+                        None
+                    } else {
+                        op_param.clone().default
+                    },
+                    context,
+                ),
             }),
             "query" => Query(ParameterValDefault {
                 name: op_param.name.clone(),
                 required: op_param.default.is_none(),
-                schema: Schema::of_desc(&op_param.desc, "QueryParam".to_string(), op_param.clone().default, context),
+                schema: Schema::of_desc(
+                    &op_param.desc,
+                    "QueryParam".to_string(),
+                    op_param.clone().default,
+                    context,
+                ),
             }),
-            _ => unimplemented!()
+            _ => unimplemented!(),
         }
     }
 
@@ -109,25 +132,41 @@ impl Parameter {
                 name: val.name.clone(),
                 loc: Some("cookie".to_string()),
                 desc: val.clone().schema.desc("param".to_string(), context),
-                default: if val.required {None} else {Some(val.clone().schema.default.unwrap_or(Value::Null))}
+                default: if val.required {
+                    None
+                } else {
+                    Some(val.clone().schema.default.unwrap_or(Value::Null))
+                },
             },
             Header(val) => OpParam {
                 name: val.name.clone(),
                 loc: Some("header".to_string()),
                 desc: val.clone().schema.desc("param".to_string(), context),
-                default: if val.required {None} else {Some(val.clone().schema.default.unwrap_or(Value::Null))}
+                default: if val.required {
+                    None
+                } else {
+                    Some(val.clone().schema.default.unwrap_or(Value::Null))
+                },
             },
             Path(val) => OpParam {
                 name: val.name.clone(),
                 loc: Some("path".to_string()),
                 desc: val.clone().schema.desc("param".to_string(), context),
-                default: if val.required {None} else {Some(val.clone().schema.default.unwrap_or(Value::Null))}
+                default: if val.required {
+                    None
+                } else {
+                    Some(val.clone().schema.default.unwrap_or(Value::Null))
+                },
             },
             Query(val) => OpParam {
                 name: val.name.clone(),
                 loc: Some("query".to_string()),
                 desc: val.clone().schema.desc("param".to_string(), context),
-                default: if val.required {None} else {Some(val.clone().schema.default.unwrap_or(Value::Null))}
+                default: if val.required {
+                    None
+                } else {
+                    Some(val.clone().schema.default.unwrap_or(Value::Null))
+                },
             },
         }
     }

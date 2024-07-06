@@ -1,8 +1,8 @@
 use std::collections::HashMap;
 
+use def::DEFS;
 use serde::{Deserialize, Serialize};
 use typetag::serde;
-use def::DEFS;
 
 use crate::lib::context::Context;
 use crate::lib::def;
@@ -27,7 +27,11 @@ pub struct OpenApi {
 impl OpenApi {
     pub fn of(pkg: Pkg, context: &Context) -> OpenApi {
         OpenApi {
-            paths: pkg.ops.iter().map(|(id, ops)| (id.clone(), RefOr::Item(Path::of(ops, context)))).collect(),
+            paths: pkg
+                .ops
+                .iter()
+                .map(|(id, ops)| (id.clone(), RefOr::Item(Path::of(ops, context))))
+                .collect(),
             components: Components::of(pkg.defs, context),
         }
     }
@@ -54,7 +58,13 @@ impl OpenApi {
         other.append(&mut with_mapped_all_of);
 
         Pkg {
-            ops: self.paths.iter().flat_map(|(id, path)| path.clone().item().map(|p| (id, p))).map(|(id, path)| (id.clone(), path.ops(context))).filter(|(_, ops)| !ops.is_empty()).collect(),
+            ops: self
+                .paths
+                .iter()
+                .flat_map(|(id, path)| path.clone().item().map(|p| (id, p)))
+                .map(|(id, path)| (id.clone(), path.ops(context)))
+                .filter(|(_, ops)| !ops.is_empty())
+                .collect(),
             defs: other
                 .iter()
                 .map(|(name, schema)| (name.clone().clone(), schema.def(name.clone(), context)))

@@ -3,8 +3,8 @@ use serde::{Deserialize, Serialize};
 
 use crate::lib::context::Context;
 use crate::lib::desc::Desc;
-use crate::lib::open_api::context::Context as OpenApiContext;
 use crate::lib::open_api::content::Content;
+use crate::lib::open_api::context::Context as OpenApiContext;
 use crate::lib::open_api::open_api::OpenApi;
 use crate::lib::open_api::ref_or::RefOr;
 use crate::lib::req::Req;
@@ -32,12 +32,16 @@ impl RequestBody {
         Req {
             form: {
                 let mime = entry.0.clone().val;
-                if mime == mime::APPLICATION_JSON { None } else { Some(mime.to_string()) }
+                if mime == mime::APPLICATION_JSON {
+                    None
+                } else {
+                    Some(mime.to_string())
+                }
             },
             desc: match entry.1.clone().schema {
                 RefOr::Ref { r#ref } => Desc::Ref(OpenApi::trust_ref(r#ref)),
-                RefOr::Item(schema) => schema.clone().desc("req".to_string(), context)
-            }
+                RefOr::Item(schema) => schema.clone().desc("req".to_string(), context),
+            },
         }
     }
 }
