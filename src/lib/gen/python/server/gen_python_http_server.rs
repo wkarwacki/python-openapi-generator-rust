@@ -76,7 +76,7 @@ impl Gen for GenPythonHttpServer {
             .iter()
             .flat_map(|(src, defs)| {
                 defs.iter().map(move |def| {
-                    "from trust.".to_string()
+                    "from trust.".to_string() + self.lang.module().as_str()
                         + match src {
                             None => self.lang.feature.clone().to_case(Case::Snake),
                             Some(src) => self.lang.fmt_src(src.clone()),
@@ -95,6 +95,18 @@ impl Gen for GenPythonHttpServer {
         dtos_with_imports.insert((out_dir.clone() + "/__init__.py").into(), "".into());
         let trust_mod_template = templates.get("trustMod").unwrap();
         dtos_with_imports.insert("__init__.py".into(), trust_mod_template.clone());
+
+        self.lang.gen_cfg.module.iter().for_each(|path| {
+            path.iter().fold(None, |path: Option<String>, os_str| {
+                let p = match path {
+                    None => os_str.to_string_lossy().to_string(),
+                    Some(str) => str.to_string() + "/" + os_str.to_string_lossy().to_string().as_str()
+                };
+                dtos_with_imports.insert((p.clone() + "/__init__.py").into(), "".into());
+                Some(p)
+            });
+        });
+
         dtos_with_imports
     }
 
@@ -114,7 +126,7 @@ impl Gen for GenPythonHttpServer {
             .map(|path| path.file_stem().unwrap().to_string_lossy().to_string())
             .filter(|path| path != "__init__")
             .map(|path| {
-                "from trust.".to_string()
+                "from trust.".to_string() + self.lang.module().as_str()
                     + self.lang.feature.clone().to_case(Case::Snake).as_str()
                     + " import "
                     + path.to_case(Case::Snake).as_str()

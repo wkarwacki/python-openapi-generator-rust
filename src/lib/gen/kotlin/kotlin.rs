@@ -20,7 +20,7 @@ pub struct Kotlin {
 
 impl Kotlin {
     fn pkg_name(&self) -> String {
-        self.gen_cfg.subdir.clone().map(|path| path.iter().map(|os_str| os_str.to_string_lossy().to_string()).reduce(|string0, string1| string0 + "." + string1.as_str()).unwrap() + ".").unwrap_or("".to_string()) + self.feature.as_str().to_case(Case::Flat).as_str()
+        self.gen_cfg.module.clone().map(|path| path.iter().map(|os_str| os_str.to_string_lossy().to_string()).reduce(|string0, string1| string0 + "." + string1.as_str()).unwrap() + ".").unwrap_or("".to_string()) + self.feature.as_str().to_case(Case::Flat).as_str()
     }
 }
 

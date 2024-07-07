@@ -50,9 +50,9 @@ impl Lang for LangPython {
             .into()
     }
 
-    fn pkg_name(&self) -> String {
+    fn module(&self) -> String {
         self.gen_cfg
-            .subdir
+            .module
             .clone()
             .map(|path| {
                 path.iter()
@@ -62,6 +62,10 @@ impl Lang for LangPython {
                     + "."
             })
             .unwrap_or("".to_string())
+    }
+
+    fn pkg_name(&self) -> String {
+        self.module()
             + self.feature.as_str()
     }
 

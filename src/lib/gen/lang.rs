@@ -5,6 +5,7 @@ use std::path::PathBuf;
 pub trait Lang {
     fn handlebars(&self) -> Handlebars;
     fn out_dir(&self) -> PathBuf;
+    fn module(&self) -> String;
     fn pkg_name(&self) -> String;
     fn fmt_class(&self, class: String, origin: Option<String>) -> String;
     fn fmt_enum(&self, val: String) -> String;

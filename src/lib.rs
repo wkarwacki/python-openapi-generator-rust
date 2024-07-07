@@ -221,7 +221,7 @@ impl Generator {
 pub struct GenCfg {
     #[serde(default)]
     type_mapping: HashMap<String, String>,
-    subdir: Option<PathBuf>,
+    module: Option<PathBuf>,
     dto_name: Option<String>,
 }
 
@@ -263,7 +263,7 @@ pub fn do_main(cli: Cli) {
                 .map(|c| serde_yaml::from_reader::<File, GenCfg>(File::open(c).unwrap()).unwrap())
                 .unwrap_or(GenCfg {
                     type_mapping: HashMap::new(),
-                    subdir: None,
+                    module: None,
                     dto_name: None,
                 });
             gen(

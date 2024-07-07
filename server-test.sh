@@ -13,7 +13,7 @@ TRUST_SPEC_DIR=$SCRIPT_DIR/test_debug/$TEST/trust
 rm -rf $TRUST_SPEC_DIR
 mkdir -p $TRUST_SPEC_DIR
 
-cargo run from-open-api $SCRIPT_DIR/src/test/$TEST/api.yml $TRUST_SPEC_DIR -l=tag
+cargo run from-open-api $SCRIPT_DIR/src/lib/test/$TEST/api.yml $TRUST_SPEC_DIR -l=tag
 
 #OUTPUT_DIR=$SCRIPT_DIR/test_debug/$TEST/$GENERATOR/target/scala-3.4.2/src_managed/trust/scala
 OUTPUT_DIR=$SCRIPT_DIR/test_debug/$TEST/$GENERATOR/$ROLE/src/trust
