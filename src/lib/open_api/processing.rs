@@ -1,4 +1,3 @@
-use itertools::Itertools;
 use serde_yaml::{Mapping, Value};
 use std::collections::HashMap;
 

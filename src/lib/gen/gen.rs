@@ -212,9 +212,7 @@ impl HelperDef for FmtValue {
 }
 
 #[derive(Clone)]
-struct IsAlias {
-    gen: Box<dyn Gen>,
-}
+struct IsAlias;
 
 impl HelperDef for IsAlias {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -245,14 +243,10 @@ impl HelperDef for IsAlias {
 }
 
 #[derive(Clone)]
-struct IsPrimitive {
-    gen: Box<dyn Gen>,
-}
+struct IsPrimitive;
 
 #[derive(Clone)]
-struct Parents {
-    context: Context,
-}
+struct Parents;
 
 impl HelperDef for Parents {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -299,9 +293,7 @@ impl HelperDef for Resolve {
 }
 
 #[derive(Clone)]
-struct SortOptionalsLast {
-    context: Context,
-}
+struct SortOptionalsLast;
 
 impl HelperDef for SortOptionalsLast {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -327,9 +319,7 @@ impl HelperDef for SortOptionalsLast {
                 });
                 Value::Object(
                     vec.iter()
-                        .map(|(name, var)| {
-                            (name.clone().clone(), serde_json::to_value(var).unwrap())
-                        })
+                        .map(|(&ref name, var)| (name.clone(), serde_json::to_value(var).unwrap()))
                         .collect::<Map<_, _>>(),
                 )
             }
@@ -359,9 +349,7 @@ impl HelperDef for SortOptionalsLast {
 }
 
 #[derive(Clone)]
-struct TypeArgs {
-    context: Context,
-}
+struct TypeArgs;
 
 impl HelperDef for TypeArgs {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -384,9 +372,7 @@ impl HelperDef for TypeArgs {
 }
 
 #[derive(Clone)]
-struct TypeParams {
-    context: Context,
-}
+struct TypeParams;
 
 impl HelperDef for TypeParams {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -413,9 +399,7 @@ impl HelperDef for TypeParams {
 }
 
 #[derive(Clone)]
-struct ValueDef {
-    context: Context,
-}
+struct ValueDef {}
 
 impl HelperDef for ValueDef {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -528,24 +512,16 @@ pub fn go(
         _ => true
     }).map(|(name, def)| serde_json::to_value((name, def)).unwrap()).collect::<Vec<_>>()); // TIDY: make object (i.e. hashmap) out of it instead of Vec<Pair>, otherwise before and after filtering are different types | TIDY: make it handle nulls, otherwise double if is needed everywhere
     handlebars.register_helper("filterNonconst", Box::new(filter_nonconst));
-    handlebars_helper!(filter_op_params_by_loc: |op_params: Vec<OpParam>, loc: String| op_params.iter().filter(|op_param| op_param.clone().clone().loc.map(|l| l == loc).unwrap_or(false)).map(|op_param| serde_json::to_value(op_param).unwrap()).collect::<Vec<_>>());
+    handlebars_helper!(filter_op_params_by_loc: |op_params: Vec<OpParam>, loc: String| op_params.iter().filter(|&op_param| op_param.clone().loc.map(|l| l == loc).unwrap_or(false)).map(|op_param| serde_json::to_value(op_param).unwrap()).collect::<Vec<_>>());
     handlebars.register_helper("filterOpParamsByLoc", Box::new(filter_op_params_by_loc));
-    handlebars.register_helper("isAlias", Box::new(IsAlias { gen: gen.clone() }.clone()));
+    handlebars.register_helper("isAlias", Box::new(IsAlias {}.clone()));
     handlebars_helper!(has_key: |json_value: JsonValue, key: String| match json_value {
         Value::Object(map) => map.contains_key(key.as_str()),
         _ => false
     });
     handlebars.register_helper("hasKey", Box::new(has_key));
 
-    handlebars.register_helper(
-        "parents",
-        Box::new(
-            Parents {
-                context: context.clone(),
-            }
-            .clone(),
-        ),
-    );
+    handlebars.register_helper("parents", Box::new(Parents {}.clone()));
     handlebars.register_helper(
         "resolve",
         Box::new(
@@ -555,44 +531,12 @@ pub fn go(
             .clone(),
         ),
     );
-    handlebars.register_helper(
-        "sortOptionalsLast",
-        Box::new(
-            SortOptionalsLast {
-                context: context.clone(),
-            }
-            .clone(),
-        ),
-    );
-    handlebars.register_helper(
-        "typeArgs",
-        Box::new(
-            TypeArgs {
-                context: context.clone(),
-            }
-            .clone(),
-        ),
-    );
+    handlebars.register_helper("sortOptionalsLast", Box::new(SortOptionalsLast {}.clone()));
+    handlebars.register_helper("typeArgs", Box::new(TypeArgs {}.clone()));
     handlebars_helper!(to_flat_case: |string: String| string.to_case(Case::Flat));
     handlebars.register_helper("toFlatCase", Box::new(to_flat_case));
-    handlebars.register_helper(
-        "typeParams",
-        Box::new(
-            TypeParams {
-                context: context.clone(),
-            }
-            .clone(),
-        ),
-    );
-    handlebars.register_helper(
-        "valueDef",
-        Box::new(
-            ValueDef {
-                context: context.clone(),
-            }
-            .clone(),
-        ),
-    );
+    handlebars.register_helper("typeParams", Box::new(TypeParams {}.clone()));
+    handlebars.register_helper("valueDef", Box::new(ValueDef {}.clone()));
 
     handlebars_misc_helpers::setup_handlebars(&mut handlebars);
     handlebars.set_strict_mode(false);

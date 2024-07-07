@@ -6,7 +6,7 @@ use crate::lib::{
     },
     open_api::{
         open_api::OpenApi,
-        process::{refs, refs_rec},
+        processing::{refs, refs_rec},
     },
     pkg::Pkg,
     util::{read_t, write},
@@ -174,7 +174,7 @@ pub enum Role {
 }
 
 #[derive(Clone, PartialEq, ValueEnum)]
-enum Layout {
+pub enum Layout {
     Default,
     Tag,
 }
@@ -242,7 +242,7 @@ pub fn do_main(cli: Cli) {
                         .unwrap_or(input.file_name().unwrap().to_str().unwrap().to_string())
                         .as_str();
                 let path = Path::new(p.as_str());
-                fs::create_dir_all(path.parent().unwrap());
+                fs::create_dir_all(path.parent().unwrap()).unwrap();
                 write(pkg, path.into());
             });
         }
@@ -337,7 +337,7 @@ fn from_open_api(input: PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg>
                     .iter()
                     .into_group_map_by(|(src, _)| src)
                     .iter()
-                    .map(|(src, vec)| {
+                    .map(|(&src, vec)| {
                         (
                             (
                                 src.clone(),
@@ -346,8 +346,8 @@ fn from_open_api(input: PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg>
                                     .collect::<Vec<_>>(),
                             ),
                             vec.iter()
-                                .map(|(_, (name, path, _refs))| {
-                                    (name.clone().clone(), path.clone().clone())
+                                .map(|(_, (&ref name, &ref path, _refs))| {
+                                    (name.clone(), path.clone())
                                 })
                                 .collect::<HashMap<_, _>>(),
                         )

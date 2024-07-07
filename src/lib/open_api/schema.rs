@@ -362,7 +362,7 @@ impl Schema {
             .or_else(|| {
                 desc.def()
                     .as_ref()
-                    .map(|def| Schema::of_def(def.clone().clone(), name, default, context))
+                    .map(|&def| Schema::of_def(def.clone(), name, default, context))
             })
             .unwrap()
     }
@@ -560,8 +560,8 @@ impl Schema {
                                     .clone()
                                     .vars
                                     .iter()
-                                    .filter(|(name, _)| {
-                                        name.clone().clone() != discriminator.property_name
+                                    .filter(|(&ref name, _)| {
+                                        name.clone() != discriminator.property_name
                                     })
                                     .map(|(name, var)| (name.clone(), var.clone()))
                                     .collect::<HashMap<_, _>>(),

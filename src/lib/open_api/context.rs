@@ -70,9 +70,8 @@ impl Context {
                 let guess = self
                     .val
                     .iter()
-                    .find(|(_, val)| {
-                        let open_api: OpenApi =
-                            serde_yaml::from_value(val.clone().clone()).unwrap();
+                    .find(|(_, &ref val)| {
+                        let open_api: OpenApi = serde_yaml::from_value(val.clone()).unwrap();
                         open_api
                             .components
                             .schemas
