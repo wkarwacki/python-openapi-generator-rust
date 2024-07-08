@@ -1,6 +1,5 @@
 === must have
-do not require trust main module, respect passed module always
-make all tests work
+make dd2 test work
 
 === gen
 python: type_mapping -> make it work for both client and server

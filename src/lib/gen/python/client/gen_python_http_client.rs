@@ -104,7 +104,7 @@ impl Gen for GenPythonHttpClient {
             .collect();
         dtos_with_imports.insert((out_dir.clone() + "/__init__.py").into(), "".into());
         let trust_mod_template = templates.get("trustMod").unwrap();
-        dtos_with_imports.insert("__init__.py".into(), trust_mod_template.clone());
+        dtos_with_imports.insert((self.lang.module() + "/__init__.py").into(), trust_mod_template.clone());
 
         self.lang.gen_cfg.module.iter().for_each(|path| {
             path.iter().fold(None, |path: Option<String>, os_str| {
