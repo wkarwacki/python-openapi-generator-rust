@@ -86,7 +86,7 @@ impl Gen for GenPythonHttpClient {
             .iter()
             .flat_map(|(src, defs)| {
                 defs.iter().map(move |def| {
-                    "from trust.".to_string() + self.lang.module().as_str()
+                    "from ".to_string()  + self.lang.module().as_str() + "."
                         + match src {
                             None => self.lang.feature.clone().to_case(Case::Snake),
                             Some(src) => self.lang.fmt_src(src.clone()),
@@ -136,7 +136,7 @@ impl Gen for GenPythonHttpClient {
             .map(|path| path.file_stem().unwrap().to_string_lossy().to_string())
             .filter(|path| path != "__init__")
             .map(|path| {
-                "from trust.".to_string() + self.lang.module().as_str()
+                "from ".to_string() + self.lang.module().as_str() + "."
                     + self.lang.feature.clone().to_case(Case::Snake).as_str()
                     + " import "
                     + path.to_case(Case::Snake).as_str()

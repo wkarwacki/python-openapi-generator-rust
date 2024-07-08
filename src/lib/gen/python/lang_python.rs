@@ -61,11 +61,11 @@ impl Lang for LangPython {
                     .unwrap()
                     + "."
             })
-            .unwrap_or("".to_string())
+            .unwrap_or("trust".to_string())
     }
 
     fn pkg_name(&self) -> String {
-        self.module()
+        self.module() + "."
             + self.feature.as_str()
     }
 

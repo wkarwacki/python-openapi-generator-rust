@@ -19,23 +19,23 @@ mkdir -p $SCRIPT_DIR/test_debug/gen/scala/target/scala-3.4.2/src_managed/trust/s
 mkdir -p $SCRIPT_DIR/test_debug/gen/scala/target/scala-3.4.2/src_managed/trust/scala/types
 mkdir -p $SCRIPT_DIR/test_debug/gen/scala/target/scala-3.4.2/src_managed/trust/scala/vars
 
-rm -rf $SCRIPT_DIR/test_debug/gen/python/src/trust
+rm -rf $SCRIPT_DIR/test_debug/gen/python/src
 rm -rf $SCRIPT_DIR/test_debug/gen/python/.mypy_cache
-mkdir -p $SCRIPT_DIR/test_debug/gen/python/src/trust/adt
-mkdir -p $SCRIPT_DIR/test_debug/gen/python/src/trust/mix
-mkdir -p $SCRIPT_DIR/test_debug/gen/python/src/trust/mixofmix
-mkdir -p $SCRIPT_DIR/test_debug/gen/python/src/trust/typeparams
-mkdir -p $SCRIPT_DIR/test_debug/gen/python/src/trust/types
-mkdir -p $SCRIPT_DIR/test_debug/gen/python/src/trust/vars
+mkdir -p $SCRIPT_DIR/test_debug/gen/python/src/adt
+mkdir -p $SCRIPT_DIR/test_debug/gen/python/src/mix
+mkdir -p $SCRIPT_DIR/test_debug/gen/python/src/mixofmix
+mkdir -p $SCRIPT_DIR/test_debug/gen/python/src/typeparams
+mkdir -p $SCRIPT_DIR/test_debug/gen/python/src/types
+mkdir -p $SCRIPT_DIR/test_debug/gen/python/src/vars
 
-rm -rf $SCRIPT_DIR/test_debug/gen/typescript/src/trust
+rm -rf $SCRIPT_DIR/test_debug/gen/typescript/src
 rm -rf $SCRIPT_DIR/test_debug/gen/typescript/.mypy_cache
-mkdir -p $SCRIPT_DIR/test_debug/gen/typescript/src/trust/adt
-mkdir -p $SCRIPT_DIR/test_debug/gen/typescript/src/trust/mix
-mkdir -p $SCRIPT_DIR/test_debug/gen/typescript/src/trust/mixofmix
-mkdir -p $SCRIPT_DIR/test_debug/gen/typescript/src/trust/typeparams
-mkdir -p $SCRIPT_DIR/test_debug/gen/typescript/src/trust/types
-mkdir -p $SCRIPT_DIR/test_debug/gen/typescript/src/trust/vars
+mkdir -p $SCRIPT_DIR/test_debug/gen/typescript/src/adt
+mkdir -p $SCRIPT_DIR/test_debug/gen/typescript/src/mix
+mkdir -p $SCRIPT_DIR/test_debug/gen/typescript/src/mixofmix
+mkdir -p $SCRIPT_DIR/test_debug/gen/typescript/src/typeparams
+mkdir -p $SCRIPT_DIR/test_debug/gen/typescript/src/types
+mkdir -p $SCRIPT_DIR/test_debug/gen/typescript/src/vars
 
 cargo test -- --nocapture
 

@@ -16,7 +16,7 @@ mkdir -p $TRUST_SPEC_DIR
 cargo run from-open-api $SCRIPT_DIR/src/lib/test/$TEST/api.yml $TRUST_SPEC_DIR -l=tag
 
 #OUTPUT_DIR=$SCRIPT_DIR/test_debug/$TEST/$GENERATOR/target/scala-3.4.2/src_managed/trust/scala
-OUTPUT_DIR=$SCRIPT_DIR/test_debug/$TEST/$GENERATOR/$ROLE/src/trust
+OUTPUT_DIR=$SCRIPT_DIR/test_debug/$TEST/$GENERATOR/$ROLE/src
 
 rm -rf $OUTPUT_DIR
 mkdir -p $OUTPUT_DIR
@@ -39,7 +39,7 @@ cargo run generate $GENERATOR $ROLE $TRUST_SPEC_DIR/insight.yml $OUTPUT_DIR -c g
 cargo run generate $GENERATOR $ROLE $TRUST_SPEC_DIR/prediction.yml $OUTPUT_DIR -c gen-cfg.yml
 cargo run generate $GENERATOR $ROLE $TRUST_SPEC_DIR/table.yml $OUTPUT_DIR -c gen-cfg.yml
 
-cd $OUTPUT_DIR/../.. && SERVER_BASE_URL=http://localhost:8000 ./run.sh
+cd $OUTPUT_DIR/.. && SERVER_BASE_URL=http://localhost:8000 ./run.sh
 
 #sbt compile
 
