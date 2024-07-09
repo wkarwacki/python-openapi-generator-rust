@@ -10,6 +10,7 @@ custom types based on conversion for compile-time safety
 contract templating (use-case: auto implementation of content-disposition header based on some params)
 fail on unrecognized cfg option
 from-open-api should organize apis by tags
+support 3.1.0 nullable types (anyOf with 'null')
 
 === gen
 python: generate api implementation stub on cli param

@@ -1,5 +1,6 @@
 === must have
 make dd2 test work
+improve testing overall
 
 === gen
 python: type_mapping -> make it work for both client and server
