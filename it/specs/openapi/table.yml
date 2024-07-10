@@ -1,0 +1,430 @@
+paths:
+  "/tables":
+    get:
+      tags:
+        - table
+      operationId: getTables
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Table"
+  "/tables/{tableId}/columns":
+    get:
+      tags:
+        - table-column
+      operationId: getTableColumns
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/TableId'
+          name: tableId
+          in: path
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/TypedColumn"
+                type: array
+  "/tables/{tableId}/column-profiles":
+    get:
+      tags:
+        - table-column
+      operationId: getColumnProfiles
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/TableId'
+          name: tableId
+          in: path
+        - required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1024
+          name: binsResolution
+          in: query
+        - required: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/ColumnId'
+            default: []
+          name: columnIds
+          in: query
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/ColumnProfile"
+                type: array
+  "/tables/{tableId}/preview":
+    post:
+      tags:
+        - table
+      operationId: getTablePreview
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/TableId'
+          name: tableId
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TablePreviewRequest'
+        required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TablePreviewResponse"
+  "/tables/files":
+    post:
+      tags:
+        - table
+      operationId: uploadTableAsFile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                id:
+                  $ref: '#/components/schemas/TableId'
+                file:
+                  type: string
+                  format: binary
+                tableName:
+                  type: string
+                columns:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                    required:
+                      - id
+                      - name
+              required:
+                - file
+        required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TableId'
+components:
+  schemas:
+    ColumnId:
+      $ref: 'api.yml#/components/schemas/Id'
+    ColumnProfile:
+      oneOf:
+        - $ref: '#/components/schemas/ColumnProfileCategory'
+        - $ref: '#/components/schemas/ColumnProfileNumeric'
+        - $ref: '#/components/schemas/ColumnProfileTime'
+      discriminator:
+        propertyName: type
+        mapping:
+          category: '#/components/schemas/ColumnProfileCategory'
+          numeric: '#/components/schemas/ColumnProfileNumeric'
+          time: '#/components/schemas/ColumnProfileTime'
+    ColumnProfileAbstraction:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/ColumnId'
+      required:
+        - id
+    ColumnProfileCategory:
+      allOf:
+        - $ref: '#/components/schemas/ColumnProfileAbstraction'
+        - type: object
+          properties:
+            frequentValues:
+              $ref: '#/components/schemas/ColumnChartCategory'
+            stats:
+              $ref: '#/components/schemas/ColumnStatsCategory'
+          required:
+            - frequentValues
+            - stats
+      x-dotdata-discriminator: type
+    ColumnProfileNumeric:
+      allOf:
+        - $ref: '#/components/schemas/ColumnProfileAbstraction'
+        - type: object
+          properties:
+            histogram:
+              $ref: '#/components/schemas/ColumnChartNumeric'
+            frequentValues:
+              $ref: '#/components/schemas/ColumnChartCategory'
+            stats:
+              $ref: '#/components/schemas/ColumnStatsNumeric'
+          required:
+            - histogram
+            - frequentValues
+            - stats
+      x-dotdata-discriminator: type
+    ColumnProfileTime:
+      allOf:
+        - $ref: '#/components/schemas/ColumnProfileAbstraction'
+        - type: object
+          properties:
+            histogram:
+              $ref: '#/components/schemas/ColumnChartTime'
+            stats:
+              $ref: '#/components/schemas/ColumnStatsTime'
+          required:
+            - histogram
+            - stats
+      x-dotdata-discriminator: type
+    ColumnChartCategory:
+      type: array
+      items:
+        type: object
+        properties:
+          value:
+            type: string
+          count:
+            type: integer
+            format: int64
+        required:
+          - value
+          - count
+    ColumnChartNumeric:
+      type: array
+      items:
+        type: object
+        properties:
+          from:
+            type: number
+            format: double
+          to:
+            type: number
+            format: double
+          count:
+            type: integer
+            format: int64
+        required:
+          - from
+          - to
+          - count
+    ColumnChartTime:
+      type: array
+      items:
+        type: object
+        properties:
+          from:
+            type: integer
+            format: int64
+          to:
+            type: integer
+            format: int64
+          count:
+            type: integer
+            format: int64
+        required:
+          - from
+          - to
+          - count
+    ColumnStats:
+      type: object
+      properties:
+        nullCount:
+          type: integer
+          format: int64
+      required:
+        - nullCount
+    ColumnStatsCategory:
+      allOf:
+        - $ref: '#/components/schemas/ColumnStats'
+        - type: object
+          properties:
+            distinctCount:
+              type: integer
+          required:
+            - distinctCount
+    ColumnStatsNumeric:
+      allOf:
+        - $ref: '#/components/schemas/ColumnStats'
+        - type: object
+          properties:
+            mean:
+              type: number
+              format: double
+            stddev:
+              type: number
+              format: double
+            min:
+              type: number
+              format: double
+            max:
+              type: number
+              format: double
+            median:
+              type: number
+              format: double
+            zeroCount:
+              type: integer
+              format: int64
+          required:
+            - mean
+            - stddev
+            - min
+            - max
+            - median
+            - zeroCount
+    ColumnStatsTime:
+      allOf:
+        - $ref: '#/components/schemas/ColumnStats'
+        - type: object
+          properties:
+            mean:
+              type: string
+            min:
+              type: string
+            max:
+              type: string
+            median:
+              type: string
+          required:
+            - mean
+            - min
+            - max
+            - median
+    DataType:
+      type: string
+      enum:
+        - bool
+        - date
+        - decimal
+        - int
+        - str
+        - timestamp
+        - unknown
+    Table:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/TableId'
+        name:
+          type: string
+        rowCount:
+          type: integer
+          format: int64
+        columnCount:
+          type: integer
+        sizeInBytes:
+          type: integer
+          format: int64
+        source:
+          $ref: '#/components/schemas/TableSource'
+      required:
+        - id
+        - name
+        - rowCount
+        - columnCount
+        - sizeInBytes
+        - source
+    TableColumn:
+      properties:
+        table:
+          $ref: '#/components/schemas/TableId'
+        column:
+          type: string
+      type: object
+      required:
+        - table
+        - column
+    TableId:
+      $ref: 'api.yml#/components/schemas/Id'
+    TablePreviewRequest:
+      type: object
+      properties:
+        sortModel:
+          type: array
+          items:
+            type: object
+            properties:
+              colId:
+                $ref: '#/components/schemas/ColumnId'
+              sort:
+                $ref: 'api.yml#/components/schemas/SortType'
+            required:
+              - colId
+              - sort
+        filterModel:
+          type: object
+          additionalProperties:
+            $ref: 'search.yml#/components/schemas/SearchRequestFilter'
+        startRow:
+          type: integer
+          format: int64
+        endRow:
+          type: integer
+          format: int64
+      required:
+        - startRow
+        - endRow
+    TablePreviewResponse:
+      type: object
+      properties:
+        rowCount:
+          type: integer
+          format: int64
+        rowData:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              nullable: true
+        lastRow:
+          type: integer
+          format: int64
+      required:
+        - rowCount
+        - rowData
+        - lastRow
+    TableProfiledEvent:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/TableId'
+      required:
+        - id
+    TableSource:
+      type: string
+      enum:
+        - ddent
+        - file
+    TypedColumn:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/ColumnId"
+        name:
+          type: string
+        dataType:
+          $ref: "#/components/schemas/DataType"
+      required:
+        - id
+        - name
+        - dataType

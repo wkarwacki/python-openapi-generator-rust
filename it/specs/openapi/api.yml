@@ -1,0 +1,114 @@
+---
+openapi: 3.0.1
+info:
+  title: dotdata-studio
+  version: 0.1.0
+servers:
+  - url: "{url}"
+tags:
+  - name: dev
+  - name: entity-relation
+  - name: experiment
+  - name: feature
+  - name: log
+  - name: model
+  - name: sse
+  - name: table
+  - name: table-column
+paths:
+  /entity-relations/generations:
+    $ref: 'entity-relation.yml#/paths/~1entity-relations~1generations'
+  /experiment/{experiment_id}/lift:
+    $ref: 'insight.yml#/paths/~1experiment~1%7Bexperiment_id%7D~1lift'
+  /experiment/{experiment_id}/confusion-matrix:
+    $ref: 'insight.yml#/paths/~1experiment~1%7Bexperiment_id%7D~1confusion-matrix'
+  /experiment/{experiment_id}/scatter-plot:
+    $ref: 'insight.yml#/paths/~1experiment~1%7Bexperiment_id%7D~1scatter-plot'
+  /experiment/{experiment_id}/time-series-chart:
+    $ref: 'insight.yml#/paths/~1experiment~1%7Bexperiment_id%7D~1time-series-chart'
+  /experiments:
+    $ref: 'experiment.yml#/paths/~1experiments'
+  /experiments/configs:
+    $ref: 'experiment.yml#/paths/~1experiments~1configs'
+  /experiments/configs/{experimentConfigId}:
+    $ref: 'experiment.yml#/paths/~1experiments~1configs~1{experimentConfigId}'
+  /experiments/{experimentId}:
+    $ref: 'experiment.yml#/paths/~1experiments~1{experimentId}'
+  /experiments/{experimentId}/best-model:
+    $ref: 'experiment.yml#/paths/~1experiments~1{experimentId}~1best-model'
+  /experiments/{experimentId}/logs:
+    $ref: 'log.yml#/paths/~1experiments~1{experimentId}~1logs'
+  /features:
+    $ref: 'feature.yml#/paths/~1features'
+  /features/{featureId}/insights:
+    $ref: 'feature.yml#/paths/~1features~1{featureId}~1insights'
+  /health:
+    $ref: 'dev.yml#/paths/~1health'
+  /models:
+    $ref: 'model.yml#/paths/~1models'
+  /predictions:
+    $ref: 'prediction.yml#/paths/~1predictions'
+  /predictions/{predictionId}:
+    $ref: 'prediction.yml#/paths/~1predictions~1{predictionId}'
+  /predictions/{predictionId}/logs:
+    $ref: 'log.yml#/paths/~1predictions~1{predictionId}~1logs'
+  /predictions/{predictionId}/results:
+    $ref: 'prediction.yml#/paths/~1predictions~1{predictionId}~1results'
+  /sse:
+    get:
+      tags:
+        - sse
+      operationId: subscribeToSse
+      responses:
+        200:
+          description: ok
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/ServerEvent'
+      x-dotdata-sse: true
+  "/tables":
+    $ref: 'table.yml#/paths/~1tables'
+  "/tables/{tableId}/columns":
+    $ref: 'table.yml#/paths/~1tables~1{tableId}~1columns'
+  "/tables/{tableId}/column-profiles":
+    $ref: 'table.yml#/paths/~1tables~1{tableId}~1column-profiles'
+  "/tables/{tableId}/preview":
+    $ref: 'table.yml#/paths/~1tables~1{tableId}~1preview'
+  "/tables/files":
+    $ref: 'table.yml#/paths/~1tables~1files'
+components:
+  schemas:
+    Duration:
+      type: object
+      properties:
+        value:
+          type: integer
+          format: int64
+          minimum: 1
+        unit:
+          $ref: '#/components/schemas/TimeUnit'
+      required:
+        - value
+        - unit
+    ServerEvent:
+      type: object
+    Id:
+      type: string
+      format: cuid
+    SortType:
+      type: string
+      enum:
+        - asc
+        - desc
+    TimeUnit:
+      type: string
+      enum:
+        - millisecond
+        - second
+        - minute
+        - hour
+        - day
+        - week
+        - month
+        - year

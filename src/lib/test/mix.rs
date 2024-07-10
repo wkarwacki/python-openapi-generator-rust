@@ -22,6 +22,15 @@ mod mix {
     }
 
     #[test]
+    fn gen_python_client_test() {
+        gen_test(
+            Generator::Python,
+            Role::Client,
+            "mix-trust.yml".to_string(),
+        );
+    }
+
+    #[test]
     fn gen_python_server_test() {
         gen_test(Generator::Python, Role::Server, "mix-trust.yml".to_string());
     }

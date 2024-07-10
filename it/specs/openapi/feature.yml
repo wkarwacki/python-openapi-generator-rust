@@ -1,0 +1,110 @@
+paths:
+  /features:
+    get:
+      tags:
+        - feature
+      operationId: getFeatures
+      parameters:
+        - required: true
+          schema:
+            $ref: 'experiment.yml#/components/schemas/ExperimentId'
+          name: experimentId
+          in: query
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FeatureSummary"
+  /features/{featureId}/insights:
+    get:
+      tags:
+        - feature
+      operationId: getFeatureInsights
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/FeatureId'
+          name: featureId
+          in: path
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FeatureInsights"
+components:
+  schemas:
+    FeatureId:
+      $ref: 'api.yml#/components/schemas/Id'
+    FeatureInsights:
+      type: object
+      properties:
+        correlations:
+          type: array
+          items:
+            type: object
+            properties:
+              featureId:
+                $ref: '#/components/schemas/FeatureId'
+              correlation:
+                type: number
+                format: double
+                minimum: 0
+                maximum: 1
+            required:
+              - featureId
+              - correlation
+      required:
+        - correlations
+    FeatureSummary:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/FeatureId'
+        explanation:
+          type: string
+        group:
+          type: integer
+        metrics:
+          $ref: '#/components/schemas/FeatureMetrics'
+      required:
+        - id
+        - explanation
+        - group
+        - metrics
+    FeatureMetrics:
+      type: object
+      properties:
+        confidence:
+          type: number
+          format: double
+        min:
+          type: number
+          format: double
+        max:
+          type: number
+          format: double
+        mean:
+          type: number
+          format: double
+        stddev:
+          type: number
+          format: double
+        nullRatio:
+          type: number
+          format: double
+        zerosRatio:
+          type: number
+          format: double
+        featureAuc:
+          type: number
+          format: double
+      required:
+        - confidence
+        - nullRatio
+        - zerosRatio

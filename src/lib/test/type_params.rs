@@ -20,6 +20,15 @@ mod type_params {
     }
 
     #[test]
+    fn gen_python_client_test() {
+        gen_test(
+            Generator::Python,
+            Role::Client,
+            "type-parmas-trust.yml".to_string(),
+        );
+    }
+
+    #[test]
     fn gen_python_server_test() {
         gen_test(
             Generator::Python,

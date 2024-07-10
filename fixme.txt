@@ -1,6 +1,6 @@
 === must have
-make dd2 test work
-improve testing overall
+make openapi-it and regular test work
+improve regular tests overall
 
 === gen
 python: type_mapping -> make it work for both client and server

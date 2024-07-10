@@ -1,0 +1,194 @@
+paths:
+  /predictions:
+    get:
+      tags:
+        - prediction
+      operationId: getPredictions
+      parameters:
+        - in: query
+          name: experimentId
+          schema:
+            $ref: 'experiment.yml#/components/schemas/ExperimentId'
+          required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PredictionSummary'
+    post:
+      tags:
+        - prediction
+      operationId: runPrediction
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunPredictionRequest'
+        required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredictionId'
+  /predictions/{predictionId}:
+    get:
+      tags:
+        - prediction
+      operationId: getPrediction
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/PredictionId'
+          name: predictionId
+          in: path
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Prediction'
+  /predictions/{predictionId}/results:
+    get:
+      tags:
+        - prediction
+      operationId: getPredictionResults
+      parameters:
+        - required: true
+          schema:
+            $ref: 'prediction.yml#/components/schemas/PredictionId'
+          name: predictionId
+          in: path
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PredictionResultsRow'
+components:
+  schemas:
+    PredictedClass:
+      type: string
+      enum:
+        - positive
+        - negative
+    Prediction:
+      allOf:
+        - $ref: 'task.yml#/components/schemas/Task'
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/PredictionId'
+          required:
+            - id
+    PredictionId:
+      $ref: 'api.yml#/components/schemas/Id'
+    PredictionProgressedEvent:
+        oneOf:
+          - $ref: '#/components/schemas/PredictionProgressedEventStarted'
+          - $ref: '#/components/schemas/PredictionProgressedEventTablesLoaded'
+          - $ref: '#/components/schemas/PredictionProgressedEventFeatureValuesGenerated'
+          - $ref: '#/components/schemas/PredictionProgressedEventPredictionDone'
+          - $ref: '#/components/schemas/PredictionProgressedEventPredictionResultsCollected'
+          - $ref: '#/components/schemas/PredictionProgressedEventFailed'
+        discriminator:
+          propertyName: type
+          mapping:
+            started: '#/components/schemas/PredictionProgressedEventStarted'
+            tables-loaded: '#/components/schemas/PredictionProgressedEventTablesLoaded'
+            feature-values-generated: '#/components/schemas/PredictionProgressedEventFeatureValuesGenerated'
+            prediction-done: '#/components/schemas/PredictionProgressedEventPredictionDone'
+            prediction-results-collected: '#/components/schemas/PredictionProgressedEventPredictionResultsCollected'
+            failed: '#/components/schemas/PredictionProgressedEventFailed'
+    PredictionProgressedEventAbstraction:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/PredictionId'
+        progress:
+          $ref: 'task.yml#/components/schemas/Progress'
+      required:
+        - id
+        - progress
+    PredictionProgressedEventStarted:
+      allOf:
+        - $ref: '#/components/schemas/PredictionProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    PredictionProgressedEventTablesLoaded:
+      allOf:
+        - $ref: '#/components/schemas/PredictionProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    PredictionProgressedEventFeatureValuesGenerated:
+      allOf:
+        - $ref: '#/components/schemas/PredictionProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    PredictionProgressedEventPredictionDone:
+      allOf:
+        - $ref: '#/components/schemas/PredictionProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    PredictionProgressedEventPredictionResultsCollected:
+      allOf:
+        - $ref: '#/components/schemas/PredictionProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    PredictionProgressedEventFailed:
+      allOf:
+        - $ref: '#/components/schemas/PredictionProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    PredictionResultsRow:
+      type: object
+      properties:
+        predictionScore:
+          type: number
+          format: double
+        predictedClass:
+          $ref: '#/components/schemas/PredictedClass'
+        primaryKey:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - predictionScore
+        - predictedClass
+        - primaryKey
+    PredictionSummary:
+      allOf:
+        - $ref: 'task.yml#/components/schemas/TaskSummary'
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/PredictionId'
+            name:
+              type: string
+            modelName:
+              type: string
+            targetTableName:
+              type: string
+          required:
+            - id
+            - name
+            - modelName
+            - targetTableName
+    RunPredictionRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        modelId:
+          $ref: 'model.yml#/components/schemas/ModelId'
+        tables:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - name
+        - modelId
+        - tables

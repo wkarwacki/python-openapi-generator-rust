@@ -33,3 +33,6 @@ test_debug/dd2/python/client/src/trust
 test_debug/dd2/python/server/src/trust
 test_debug/dd2/scala/src
 test_debug/dd2/trust
+
+it/log
+it/run

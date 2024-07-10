@@ -1,0 +1,9 @@
+paths:
+  /health:
+    get:
+      tags:
+        - dev
+      operationId: getHealth
+      responses:
+        204:
+          description: no content

@@ -31,6 +31,20 @@ mod adt {
     }
 
     #[test]
+    fn gen_python_client_test() {
+        gen_test(
+            Generator::Python,
+            Role::Client,
+            "adt-from-open-api-trust.yml".to_string(),
+        );
+        gen_test(
+            Generator::Python,
+            Role::Client,
+            "adt-to-open-api-trust.yml".to_string(),
+        );
+    }
+
+    #[test]
     fn gen_python_server_test() {
         gen_test(
             Generator::Python,
