@@ -40,7 +40,9 @@ specs = [
     ),
 ]
 
-shutil.rmtree("it/run", ignore_errors=True)
+test_integration_path = "test/integration"
+
+shutil.rmtree(f"{test_integration_path}/run", ignore_errors=True)
 
 clients = []
 servers = []
@@ -51,24 +53,24 @@ for gen in gens:
     elif gen.role == "server":
         servers.append(gen)
         
-tests = os.environ.get("TESTS", "").split(",")
+tests = os.environ["TESTS"].split(",")
 
 for spec in specs:
     if spec.name in tests:
-        trust_path = os.path.join("it/run", spec.name, "trust")
-        subprocess.run(["cargo", "run", "from-open-api", os.path.join("it/specs", spec.name, spec.entrypoint), trust_path, *spec.params])
+        trust_path = f"{test_integration_path}/run/{spec.name}/trust"
+        subprocess.run(["cargo", "run", "from-open-api", f"{test_integration_path}/specs/{spec.name}/{spec.entrypoint}", trust_path, *spec.params])
         for gen in gens:
-            run_path = os.path.join("it/run", spec.name, gen.lang, gen.role)
+            run_path = f"{test_integration_path}/run/{spec.name}/{gen.lang}/{gen.role}"
             os.makedirs(run_path)
     
             for trust_file in os.listdir(trust_path):
-                out_path = os.path.join(run_path, gen.out_dir)
-                subprocess.run(["cargo", "run", "generate", gen.lang, gen.role, os.path.join(trust_path, trust_file), out_path])
+                out_path = f"{run_path}/{gen.out_dir}"
+                subprocess.run(["cargo", "run", "generate", gen.lang, gen.role, f"{trust_path}/{trust_file}", out_path])
     
-            gen_path=os.path.join("it/gens", gen.lang, gen.role)
+            gen_path=f"{test_integration_path}/gens/{gen.lang}/{gen.role}"
             subprocess.run(f"{gen_path }/build.sh")
             copy_tree(gen_path, run_path)
     
         for server in servers:
             for client in clients:
-                subprocess.run(["it/test.sh", f"run/{spec.name}/{server.lang}/{server.role}/run.sh", f"run/{spec.name}/{client.lang}/{client.role}/run.sh"])
+                subprocess.run([f"{test_integration_path}/run.sh", f"run/{spec.name}/{server.lang}/{server.role}/run.sh", f"run/{spec.name}/{client.lang}/{client.role}/run.sh"])

@@ -17,7 +17,7 @@ pub fn from_open_api_test_fn(name: &str) {
 
     write(
         pkg,
-        ("test_debug/".to_string() + name + "-from-open-api.yml").into(),
+        ("test/default/spec/".to_string() + name + "-from-open-api.yml").into(),
     );
 
     let expected: Pkg = read_t(("src/lib/test/".to_string() + name + "-trust.yml").into());
@@ -30,7 +30,7 @@ pub fn to_open_api_test_fn(name: &str) {
 
     write(
         open_api.clone(),
-        ("test_debug/".to_string() + name + "-to-open-api.yml").into(),
+        ("test/default/spec/".to_string() + name + "-to-open-api.yml").into(),
     );
 
     let expected: OpenApi = read_t(("src/lib/test/".to_string() + name + "-open-api.yml").into());
@@ -43,7 +43,7 @@ pub fn trust_only_test_fn(name: &str) {
 
     write(
         &pkg,
-        ("test_debug/".to_string() + name + "-trust-only.yml").into(),
+        ("test/default/spec/".to_string() + name + "-trust-only.yml").into(),
     );
 
     let expected: Pkg = read_t(("src/lib/test/".to_string() + name + "-trust-only.yml").into());
@@ -62,7 +62,7 @@ pub fn gen_test(generator: Generator, role: Role, input: String) {
 
 fn do_gen_test(generator: Generator, role: Role, input: String) {
     let role_str: &str = role.clone().into();
-    let output = "test_debug/gen/".to_string()
+    let output = "test/default/gens/".to_string()
         + match generator {
             Generator::Kotlin => "kotlin/src/main/kotlin".to_string(),
             Generator::Python => {
