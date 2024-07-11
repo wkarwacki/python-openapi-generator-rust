@@ -24,7 +24,7 @@ mod type_params {
         gen_test(
             Generator::Python,
             Role::Client,
-            "type-parmas-trust.yml".to_string(),
+            "type-params-trust.yml".to_string(),
         );
     }
 
