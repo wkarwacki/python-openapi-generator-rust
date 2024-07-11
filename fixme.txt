@@ -1,6 +1,4 @@
 === must have
-make openapi-it and regular test work
-improve regular tests overall
 
 === gen
 python: type_mapping -> make it work for both client and server
