@@ -65,8 +65,7 @@ impl Lang for LangPython {
     }
 
     fn pkg_name(&self) -> String {
-        self.module() + "."
-            + self.feature.as_str()
+        self.module() + "." + self.feature.as_str()
     }
 
     fn fmt_class(&self, class: String, _origin: Option<String>) -> String {
