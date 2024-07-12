@@ -16,7 +16,7 @@ use handlebars::{
     handlebars_helper, Context as HbContext, Handlebars, Helper, HelperDef, HelperResult,
     JsonRender, JsonValue, Output, RenderContext, RenderError, ScopedJson,
 };
-use serde_json::{json, Map, Value};
+use serde_json::{json, Value};
 use std::{
     collections::{HashMap, HashSet},
     fs,
@@ -307,7 +307,7 @@ impl HelperDef for SortOptionalsLast {
             serde_json::from_value(h.param(0).unwrap().value().clone());
         let value = match vars {
             Ok(vars) => {
-                let mut vec = vars.iter().collect::<Vec<_>>();
+                let mut vec: Vec<_> = vars.iter().collect();
                 vec.sort_by(|(name0, var0), (name1, var1)| {
                     if var0.opt && !var1.opt {
                         std::cmp::Ordering::Greater
@@ -320,7 +320,7 @@ impl HelperDef for SortOptionalsLast {
                 Value::Object(
                     vec.iter()
                         .map(|(&ref name, var)| (name.clone(), serde_json::to_value(var).unwrap()))
-                        .collect::<Map<_, _>>(),
+                        .collect(),
                 )
             }
             _ => {
@@ -339,7 +339,7 @@ impl HelperDef for SortOptionalsLast {
                     op_params
                         .iter()
                         .map(|op_param| serde_json::to_value(op_param).unwrap())
-                        .collect::<Vec<_>>(),
+                        .collect(),
                 )
             }
         };

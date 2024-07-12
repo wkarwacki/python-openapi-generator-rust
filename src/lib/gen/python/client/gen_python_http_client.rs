@@ -34,7 +34,7 @@ impl Gen for GenPythonHttpClient {
     ) -> HashMap<PathBuf, String> {
         let out_dir = self.lang.out_dir().to_string_lossy().to_string();
         let mut defs: Vec<(String, Def, bool)> = Vec::new();
-        let form_ops = pkg
+        let form_ops: Vec<_> = pkg
             .ops
             .iter()
             .flat_map(|(_, ops)| ops)
@@ -44,7 +44,7 @@ impl Gen for GenPythonHttpClient {
                     .and_then(|req| req.form.map(|form| form == "multipart/form-data"))
                     .unwrap_or(false)
             })
-            .collect::<Vec<_>>();
+            .collect();
         defs.extend(form_ops.iter().flat_map(|op| {
             op.req
                 .iter()

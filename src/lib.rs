@@ -305,7 +305,7 @@ fn from_open_api(input: PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg>
             // TIDY: hide processing behind trait
             let open_api: OpenApi = serde_yaml::from_value(value.clone()).unwrap();
             if layout == Layout::Tag {
-                let tag_and_path_with_its_name_and_used_refs_within = open_api
+                let tag_and_path_with_its_name_and_used_refs_within: Vec<_> = open_api
                     .paths
                     .iter()
                     .flat_map(|(name, ref_or_path)| {
@@ -330,10 +330,10 @@ fn from_open_api(input: PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg>
                             })
                             .collect::<Vec<_>>()
                     })
-                    .collect::<Vec<_>>();
+                    .collect();
 
                 let open_api_value = serde_yaml::to_value(open_api.clone()).unwrap();
-                let tag_and_pkg = tag_and_path_with_its_name_and_used_refs_within
+                let tag_and_pkg: Vec<_> = tag_and_path_with_its_name_and_used_refs_within
                     .iter()
                     .into_group_map_by(|(src, _)| src)
                     .iter()
@@ -369,7 +369,7 @@ fn from_open_api(input: PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg>
                         let pkg = open_api_for_tag.pkg(&context);
                         (Some(src.clone().clone()), pkg)
                     })
-                    .collect::<Vec<_>>();
+                    .collect();
                 tag_and_pkg
             } else {
                 let pkg = open_api.pkg(&context);

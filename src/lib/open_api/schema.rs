@@ -218,7 +218,7 @@ impl Schema {
                             .map(|(name, var)| {
                                 (name.clone(), Schema::of_var(var, name.clone(), context))
                             })
-                            .collect::<HashMap<_, _>>()
+                            .collect()
                     } else {
                         HashMap::new()
                     },
@@ -229,18 +229,15 @@ impl Schema {
                                 .iter()
                                 .filter(|(_, var)| !var.opt)
                                 .map(|(name, _)| name.clone())
-                                .collect::<Vec<_>>()
+                                .collect()
                         } else {
                             Vec::new()
                         }
                     },
                     nullable: false,
                     all_of: {
-                        let mut all_of = obj
-                            .mix
-                            .iter()
-                            .map(|r#ref| Schema::of_ref(&r#ref))
-                            .collect::<Vec<_>>();
+                        let mut all_of: Vec<_> =
+                            obj.mix.iter().map(|r#ref| Schema::of_ref(&r#ref)).collect();
                         if !all_of.is_empty() && !obj.vars.is_empty() {
                             all_of.push(Schema {
                                 r#type: Some("object".to_string()),
@@ -250,14 +247,14 @@ impl Schema {
                                     .map(|(name, var)| {
                                         (name.clone(), Schema::of_var(var, name.clone(), context))
                                     })
-                                    .collect::<HashMap<_, _>>(),
+                                    .collect(),
                                 additional_properties: None,
                                 required: obj
                                     .vars
                                     .iter()
                                     .filter(|(_, var)| !var.opt)
                                     .map(|(name, _)| name.clone())
-                                    .collect::<Vec<_>>(),
+                                    .collect(),
                                 nullable: false,
                                 all_of: Vec::new(),
                                 one_of: Vec::new(),
@@ -285,7 +282,7 @@ impl Schema {
                                     format!("#{schemas_path}/{name}{subname}") // FIXME_LATER: src is not taken
                                 })
                             })
-                            .collect::<HashMap<_, _>>(),
+                            .collect(),
                     }),
                     items: None,
                     r#enum: Vec::new(),
@@ -445,7 +442,7 @@ impl Schema {
                                     }))
                                 })
                                 .unwrap_or({
-                                    let vars = self
+                                    let vars: HashMap<_, _> = self
                                         .properties
                                         .iter()
                                         .map(|(n, schema)| {
@@ -457,7 +454,7 @@ impl Schema {
                                                 }),
                                             )
                                         })
-                                        .collect::<HashMap<_, _>>();
+                                        .collect();
                                     Def::Obj(Obj {
                                         ext: None,
                                         mix: Vec::new(),
@@ -555,7 +552,7 @@ impl Schema {
                                         mix.path != format!("{defs}.{name}")
                                     }) // FIXME_LATER: src is not taken
                                     .map(|_ref| _ref.clone())
-                                    .collect::<Vec<_>>(),
+                                    .collect(),
                                 vars: obj
                                     .clone()
                                     .vars
@@ -564,14 +561,14 @@ impl Schema {
                                         name.clone() != discriminator.property_name
                                     })
                                     .map(|(name, var)| (name.clone(), var.clone()))
-                                    .collect::<HashMap<_, _>>(),
+                                    .collect(),
                                 adt: obj.clone().adt,
                                 null: self.nullable,
                             })
                             .unwrap()
                     })
                 })
-                .collect::<HashMap<_, _>>(),
+                .collect(),
         })
     }
 
@@ -620,11 +617,11 @@ impl Schema {
                 .collect(),
             nullable: false,
             all_of: {
-                let mut all_of = schema
+                let mut all_of: Vec<_> = schema
                     .all_of
                     .iter()
                     .map(|s| s.with_mapped_all_of())
-                    .collect::<Vec<_>>();
+                    .collect();
                 all_of.append(&mut all_of.iter().flat_map(|ss| ss.all_of.clone()).collect());
                 all_of
             },

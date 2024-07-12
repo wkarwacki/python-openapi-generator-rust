@@ -30,7 +30,7 @@ impl Components {
         self.schemas.is_empty()
     }
     pub fn of(defs: HashMap<String, Def>, context: &Context) -> Components {
-        let with_synth_adt_refs_schemas = defs
+        let with_synth_adt_refs_schemas: HashMap<_, _> = defs
             .iter()
             .flat_map(|(name, def)| {
                 def.obj()
@@ -89,13 +89,13 @@ impl Components {
                                     },
                                 )
                             })
-                            .collect::<HashMap<_, _>>()
+                            .collect::<Vec<_>>()
                     })
-                    .collect::<HashMap<_, _>>()
+                    .collect::<Vec<_>>()
             })
-            .collect::<HashMap<_, _>>();
+            .collect();
 
-        let with_synth_param_subtypes_schemas = defs
+        let with_synth_param_subtypes_schemas: HashMap<_, _> = defs
             .iter()
             .flat_map(|(def_name, def)| {
                 def.obj()
@@ -112,7 +112,7 @@ impl Components {
                                 .1
                                 .obj()
                                 .unwrap(); // FIXME_LATER: only path is taken
-                            let vars_for_args = ext
+                            let vars_for_args: Vec<_> = ext
                                 .args
                                 .iter()
                                 .flat_map(|(arg_name, arg)| {
@@ -138,7 +138,7 @@ impl Components {
                                             )
                                         })
                                 })
-                                .collect::<Vec<_>>();
+                                .collect();
                             let mut required: Vec<_> = vars_for_args
                                 .iter()
                                 .filter(|(_, var)| !var.opt)
@@ -180,9 +180,9 @@ impl Components {
                     })
                     .collect::<Vec<_>>()
             })
-            .collect::<HashMap<_, _>>();
+            .collect();
 
-        let mut schemas = defs
+        let mut schemas: HashMap<_, _> = defs
             .clone()
             .iter()
             .filter(|(_name, def)| {
@@ -198,7 +198,7 @@ impl Components {
                     Schema::of_def(def.clone(), name.clone(), None, context),
                 )
             })
-            .collect::<HashMap<_, _>>();
+            .collect();
 
         schemas.extend(with_synth_adt_refs_schemas.clone());
         schemas.extend(with_synth_param_subtypes_schemas.clone());

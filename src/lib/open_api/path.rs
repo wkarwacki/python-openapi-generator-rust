@@ -44,7 +44,7 @@ impl Path {
         .collect()
     }
     pub fn of(ops: &Vec<Op>, context: &Context) -> Path {
-        let common_op_params = ops
+        let common_op_params: Vec<_> = ops
             .iter()
             .fold(None as Option<Vec<OpParam>>, |vec, op| match vec {
                 Some(vec) => Some(
@@ -58,7 +58,7 @@ impl Path {
             .iter()
             .flatten()
             .cloned()
-            .collect::<Vec<OpParam>>();
+            .collect();
         Path {
             summary: None,
             description: None,

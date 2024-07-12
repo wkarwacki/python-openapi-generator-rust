@@ -52,8 +52,6 @@ impl Gen for GenPythonHttpServer {
                 .flat_map(|op| {
                     op.req
                         .iter()
-                        .collect::<Vec<_>>()
-                        .iter()
                         .flat_map(|req| {
                             req.desc
                                 .def()

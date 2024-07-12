@@ -69,6 +69,6 @@ impl Context {
                 let pkg: Pkg = serde_yaml::from_value(value.clone()).unwrap();
                 (src.clone(), pkg.defs.keys().cloned().collect::<Vec<_>>())
             })
-            .collect::<Vec<_>>()
+            .collect()
     }
 }

@@ -36,7 +36,7 @@ impl OpenApi {
     }
 
     pub fn pkg(&self, context: &OpenApiContext) -> Pkg {
-        let mut with_mapped_all_of = self
+        let mut with_mapped_all_of: Vec<_> = self
             .components
             .schemas
             .iter()
@@ -45,15 +45,15 @@ impl OpenApi {
                 let name_clone = name.clone();
                 (name_clone, schema.with_mapped_all_of())
             })
-            .collect::<Vec<_>>();
+            .collect();
 
-        let mut other = self
+        let mut other: Vec<_> = self
             .components
             .schemas
             .iter()
             .filter(|(_, schema)| schema.all_of.is_empty())
             .map(|(name, schema)| (name.clone(), schema.clone()))
-            .collect::<Vec<_>>();
+            .collect();
         other.append(&mut with_mapped_all_of);
 
         Pkg {
@@ -67,7 +67,7 @@ impl OpenApi {
             defs: other
                 .iter()
                 .map(|(name, schema)| (name.clone().clone(), schema.def(name.clone(), context)))
-                .collect::<HashMap<_, _>>(),
+                .collect(),
         }
     }
 
