@@ -13,6 +13,7 @@ from-open-api should organize apis by tags
 support 3.1.0 nullable types (anyOf with 'null')
 
 === gen
+python: type_mapping -> make it work for both client and server
 python: generate api implementation stub on cli param
 python: optional headers not handled, default headers not handled
 python: everything including formatting and imports should be covered within the generator

@@ -1,7 +1,6 @@
 === must have
 
 === gen
-python: type_mapping -> make it work for both client and server
 python-client: handle ref to separate def (with inner ref to def) in multipart/form-data case
 python-client: drop exclude-none and exclude one by one, or make sure that nullable properties are not excluded somehow
 
