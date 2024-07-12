@@ -185,7 +185,7 @@ impl HelperDef for FmtType {
             match desc {
                 Desc::Def(def) => self.gen.lang().fmt_type(def, name),
                 Desc::Ref(r#ref) => self.gen.lang().fmt_ref(r#ref),
-                Desc::Param { param } => param,
+                Desc::TypeParam { param } => param,
             }
             .as_str(),
         )?)

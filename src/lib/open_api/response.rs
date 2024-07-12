@@ -45,7 +45,7 @@ impl Response {
                             Desc::Ref(r#ref) => RefOr::Ref {
                                 r#ref: Schema::openapi_path(r#ref),
                             },
-                            Desc::Param { .. } => unimplemented!(),
+                            Desc::TypeParam { .. } => unimplemented!(),
                         },
                     )
                 })

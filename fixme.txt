@@ -1,8 +1,9 @@
 === must have
 
 === gen
-python-client: handle ref to separate def (with inner ref to def) in multipart/form-data case
-python-client: drop exclude-none and exclude one by one, or make sure that nullable properties are not excluded somehow
 
 === other
-make sure that adt and params are handled recursively
+
+=== known-bugs/limitations:
+tristate (opt/null) is not handled corretly in any gen
+python-gen: ref to separate def (with inner ref to def) in multipart/form-data case - workaround = do not use inner refs when defining multipart/form-data

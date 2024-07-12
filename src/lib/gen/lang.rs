@@ -31,6 +31,6 @@ pub fn inner(desc: Desc, suffix: &str, name: Option<String>, lang: Box<dyn Lang>
             .replace((suffix.to_string() + suffix).as_str(), suffix),
         ),
         Desc::Ref(r#ref) => lang.fmt_ref(r#ref),
-        Desc::Param { param: _ } => unimplemented!("Parameter not supported yet."),
+        Desc::TypeParam { .. } => unimplemented!("Type parameter not supported yet."),
     }
 }

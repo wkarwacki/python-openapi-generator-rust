@@ -126,7 +126,7 @@ impl Lang for LangPython {
                 .map(|desc| match *desc {
                     Desc::Def(def) => self.fmt_type(def.clone(), name),
                     Desc::Ref(r#ref) => self.fmt_ref(r#ref),
-                    Desc::Param { param: _ } => unimplemented!("Parameter not supported yet."),
+                    Desc::TypeParam { .. } => unimplemented!("Type parameter not supported yet."),
                 })
                 .unwrap_or("const".to_string()),
             Def::Dec(_) => "float".to_string(),

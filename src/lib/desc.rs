@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 pub enum Desc {
     Def(Def),
     Ref(Ref),
-    Param { param: String },
+    TypeParam { param: String },
 }
 
 impl Desc {
@@ -26,7 +26,7 @@ impl Desc {
 
     pub fn param(&self) -> Option<&str> {
         match self {
-            Desc::Param { param } => Some(param),
+            Desc::TypeParam { param } => Some(param),
             _ => None,
         }
     }

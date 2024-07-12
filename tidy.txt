@@ -1,6 +1,4 @@
-use template params and simplify dto.hbs entirely
-rename param -> type_param
-make all methods take &var instead of var, clone on call only when needed
+    make all methods take &var instead of var, clone on call only when needed
 replace all push_str with +
 more typesafe open_api (look for open_api in .rs on gh)
 try to replace all vec push with some kind of + as with string
