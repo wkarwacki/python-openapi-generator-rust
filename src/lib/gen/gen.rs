@@ -473,10 +473,10 @@ impl HelperDef for Add {
                         serde_json::to_value(vec)
                     })
                     .or(param.as_str().map(|str| {
-                        let mut string = str.to_string();
+                        let string = str.to_string();
                         let other = h.param(1).unwrap().value().as_str();
-                        other.iter().for_each(|o| string.push_str(o));
-                        serde_json::to_value(string)
+                        let joined = string + other.unwrap_or("");
+                        serde_json::to_value(joined)
                     }))
                     .unwrap();
                 Ok(ScopedJson::from(result.unwrap()))
