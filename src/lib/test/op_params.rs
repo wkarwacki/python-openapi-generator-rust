@@ -2,7 +2,7 @@
 mod op_params {
     use crate::{
         test::util::{from_open_api_test_fn, gen_test, to_open_api_test_fn},
-        Generator, Role,
+        Lang, Role,
     };
 
     #[test]
@@ -18,7 +18,7 @@ mod op_params {
     #[test]
     fn gen_python_client_test() {
         gen_test(
-            Generator::Python,
+            Lang::Python,
             Role::Client,
             "op-params-trust.yml".to_string(),
         );
@@ -27,7 +27,7 @@ mod op_params {
     #[test]
     fn gen_python_server_test() {
         gen_test(
-            Generator::Python,
+            Lang::Python,
             Role::Server,
             "op-params-trust.yml".to_string(),
         );

@@ -2,7 +2,7 @@
 mod mix {
     use crate::{
         test::util::{from_open_api_test_fn, gen_test},
-        Generator, Role,
+        Lang, Role,
     };
 
     #[test]
@@ -13,7 +13,7 @@ mod mix {
     #[test]
     fn gen_kotlin_test() {
         gen_test(
-            Generator::Kotlin,
+            Lang::Kotlin,
             Role::Server,
             "mix-of-mix-trust.yml".to_string(),
         );
@@ -22,7 +22,7 @@ mod mix {
     #[test]
     fn gen_python_client_test() {
         gen_test(
-            Generator::Python,
+            Lang::Python,
             Role::Client,
             "mix-of-mix-trust.yml".to_string(),
         );
@@ -31,7 +31,7 @@ mod mix {
     #[test]
     fn gen_python_server_test() {
         gen_test(
-            Generator::Python,
+            Lang::Python,
             Role::Server,
             "mix-of-mix-trust.yml".to_string(),
         );
@@ -40,7 +40,7 @@ mod mix {
     #[test]
     fn gen_scala_test() {
         gen_test(
-            Generator::Scala,
+            Lang::Scala,
             Role::Server,
             "mix-of-mix-trust.yml".to_string(),
         );
@@ -49,7 +49,7 @@ mod mix {
     #[test]
     fn gen_typescript_test() {
         gen_test(
-            Generator::TypeScript,
+            Lang::TypeScript,
             Role::Server,
             "mix-of-mix-trust.yml".to_string(),
         );

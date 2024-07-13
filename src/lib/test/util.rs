@@ -4,7 +4,7 @@ use crate::{
     pkg::Pkg,
     to_open_api,
     util::{read_t, write},
-    Cli, Cmd, Generator, Layout, Role,
+    Cli, Cmd, Lang, Layout, Role,
 };
 use convert_case::{Case, Casing};
 
@@ -51,30 +51,30 @@ pub fn trust_only_test_fn(name: &str) {
     assert_eq!(pkg, expected);
 }
 
-pub fn gen_test(generator: Generator, role: Role, input: String) {
+pub fn gen_test(generator: Lang, role: Role, input: String) {
     match generator {
-        Generator::Kotlin => {}
-        Generator::Python => do_gen_test(generator, role, input),
-        Generator::Scala => {}
-        Generator::TypeScript => {}
+        Lang::Kotlin => {}
+        Lang::Python => do_gen_test(generator, role, input),
+        Lang::Scala => {}
+        Lang::TypeScript => {}
     };
 }
 
-fn do_gen_test(generator: Generator, role: Role, input: String) {
+fn do_gen_test(generator: Lang, role: Role, input: String) {
     let role_str: &str = role.clone().into();
     let output = "test/default/gens/".to_string()
         + match generator {
-            Generator::Kotlin => "kotlin/src/main/kotlin".to_string(),
-            Generator::Python => {
+            Lang::Kotlin => "kotlin/src/main/kotlin".to_string(),
+            Lang::Python => {
                 "python/".to_string() + role_str.to_case(Case::Lower).as_str() + "/src"
             }
-            Generator::Scala => "scala/src/main/scala".to_string(),
-            Generator::TypeScript => "typescript/src/trust".to_string(),
+            Lang::Scala => "scala/src/main/scala".to_string(),
+            Lang::TypeScript => "typescript/src/trust".to_string(),
         }
         .as_str();
     do_main(Cli {
         cmd: Cmd::Generate {
-            generator,
+            lang: generator,
             role,
             input: format!("src/lib/test/{input}").into(),
             output: output.into(),

@@ -2,7 +2,7 @@
 mod vars {
     use crate::{
         test::util::{from_open_api_test_fn, gen_test, to_open_api_test_fn},
-        Generator, Role,
+        Lang, Role,
     };
 
     #[test]
@@ -18,7 +18,7 @@ mod vars {
     #[test]
     fn gen_kotlin_test() {
         gen_test(
-            Generator::Kotlin,
+            Lang::Kotlin,
             Role::Server,
             "vars-trust.yml".to_string(),
         );
@@ -27,7 +27,7 @@ mod vars {
     #[test]
     fn gen_python_client_test() {
         gen_test(
-            Generator::Python,
+            Lang::Python,
             Role::Client,
             "vars-trust.yml".to_string(),
         );
@@ -36,7 +36,7 @@ mod vars {
     #[test]
     fn gen_python_server_test() {
         gen_test(
-            Generator::Python,
+            Lang::Python,
             Role::Server,
             "vars-trust.yml".to_string(),
         );
@@ -44,13 +44,13 @@ mod vars {
 
     #[test]
     fn gen_scala_test() {
-        gen_test(Generator::Scala, Role::Server, "vars-trust.yml".to_string());
+        gen_test(Lang::Scala, Role::Server, "vars-trust.yml".to_string());
     }
 
     #[test]
     fn gen_typescript_test() {
         gen_test(
-            Generator::TypeScript,
+            Lang::TypeScript,
             Role::Server,
             "vars-trust.yml".to_string(),
         );

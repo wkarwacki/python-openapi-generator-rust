@@ -3,7 +3,7 @@ mod req_res {
 
     use crate::{
         test::util::{from_open_api_test_fn, gen_test, to_open_api_test_fn},
-        Generator, Role,
+        Lang, Role,
     };
 
     #[test]
@@ -19,7 +19,7 @@ mod req_res {
     #[test]
     fn gen_python_client_test() {
         gen_test(
-            Generator::Python,
+            Lang::Python,
             Role::Client,
             "req-res-trust.yml".to_string(),
         );
@@ -28,7 +28,7 @@ mod req_res {
     #[test]
     fn gen_python_server_test() {
         gen_test(
-            Generator::Python,
+            Lang::Python,
             Role::Server,
             "req-res-trust.yml".to_string(),
         );

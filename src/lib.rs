@@ -147,7 +147,7 @@ pub enum Cmd {
     },
     Generate {
         #[clap(value_enum)]
-        generator: Generator,
+        lang: Lang,
         #[clap(value_enum)]
         role: Role,
         input: PathBuf,
@@ -157,14 +157,6 @@ pub enum Cmd {
         #[clap(short)]
         templates_path: Option<PathBuf>,
     },
-}
-
-#[derive(Clone, ValueEnum)]
-pub enum Generator {
-    Kotlin,
-    Python,
-    Scala,
-    TypeScript,
 }
 
 #[derive(Clone, Debug, IntoStaticStr, ValueEnum)]
@@ -179,43 +171,6 @@ pub enum Layout {
     Tag,
 }
 
-impl Generator {
-    fn gen(&self, gen_cfg: GenCfg, input: PathBuf, role: Role) -> Box<dyn Gen> {
-        match self {
-            Generator::Kotlin => unimplemented!("not supported yet")/*Box::new(Kotlin {
-                gen_cfg,
-                feature: input.file_stem().unwrap().to_str().unwrap().to_string()
-            })*/,
-            Generator::Python => {
-                let mut handlebars = Handlebars::new();
-                handlebars.register_template_string(DTO_NAME_TEMPLATE_NAME, gen_cfg.clone().dto_name.unwrap_or(LangPython::dto_name_template())).unwrap();
-
-                let lang = LangPython {
-                    gen_cfg,
-                    feature: input.file_stem().unwrap().to_str().unwrap().to_string(),
-                    handlebars: handlebars,
-                };
-                match role {
-                    Role::Client => Box::new(GenPythonHttpClient {
-                        lang: lang
-                    }),
-                    Role::Server => Box::new(GenPythonHttpServer {
-                        lang: lang
-                    })
-                }
-            }
-            Generator::Scala => unimplemented!("not supported yet")/*Box::new(Scala {
-                gen_cfg,
-                feature: input.file_stem().unwrap().to_str().unwrap().to_string()
-            })*/,
-            Generator::TypeScript => unimplemented!("not supported yet")/*Box::new(TypeScript {
-                gen_cfg,
-                feature: input.file_stem().unwrap().to_str().unwrap().to_string()
-            })*/
-        }
-    }
-}
-
 #[derive(Clone, Debug, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GenCfg {
@@ -223,6 +178,14 @@ pub struct GenCfg {
     type_mapping: HashMap<String, String>,
     module: Option<PathBuf>,
     dto_name: Option<String>,
+}
+
+#[derive(Clone, ValueEnum)]
+pub enum Lang {
+    Kotlin,
+    Python,
+    Scala,
+    TypeScript,
 }
 
 pub fn do_main(cli: Cli) {
@@ -252,7 +215,7 @@ pub fn do_main(cli: Cli) {
             write(open_api, "out.yml".into())
         }
         Cmd::Generate {
-            generator,
+            lang,
             role,
             input,
             output,
@@ -268,7 +231,7 @@ pub fn do_main(cli: Cli) {
                 });
             gen(
                 input.clone(),
-                generator,
+                lang,
                 role,
                 generator_config,
                 templates_path,
@@ -387,7 +350,7 @@ fn to_open_api(input: PathBuf) -> OpenApi {
 
 fn gen(
     input: PathBuf,
-    generator: Generator,
+    lang: Lang,
     role: Role,
     gen_cfg: GenCfg,
     templates_path: Option<PathBuf>,
@@ -395,10 +358,47 @@ fn gen(
     let pkg: Pkg = read_t(input.clone());
     let context = Context::of(input.clone());
 
+    let gen = get_gen(lang, gen_cfg.clone(), input.clone(), role.clone());
+
     gen::gen::go(
         &pkg,
-        generator.gen(gen_cfg, input, role),
+        gen,
         templates_path,
         context,
     )
+}
+
+fn get_gen(lang: Lang, gen_cfg: GenCfg, input: PathBuf, role: Role) -> Box<dyn Gen> {
+    match lang {
+        Lang::Kotlin => unimplemented!("not supported yet")/*Box::new(Kotlin {
+            gen_cfg,
+            feature: input.file_stem().unwrap().to_str().unwrap().to_string()
+        })*/,
+        Lang::Python => {
+            let mut handlebars = Handlebars::new();
+            handlebars.register_template_string(DTO_NAME_TEMPLATE_NAME, gen_cfg.clone().dto_name.unwrap_or(LangPython::dto_name_template())).unwrap();
+
+            let lang = LangPython {
+                gen_cfg,
+                feature: input.file_stem().unwrap().to_str().unwrap().to_string(),
+                handlebars: handlebars,
+            };
+            match role {
+                Role::Client => Box::new(GenPythonHttpClient {
+                    lang: lang
+                }),
+                Role::Server => Box::new(GenPythonHttpServer {
+                    lang: lang
+                })
+            }
+        }
+        Lang::Scala => unimplemented!("not supported yet")/*Box::new(Scala {
+            gen_cfg,
+            feature: input.file_stem().unwrap().to_str().unwrap().to_string()
+        })*/,
+        Lang::TypeScript => unimplemented!("not supported yet")/*Box::new(TypeScript {
+            gen_cfg,
+            feature: input.file_stem().unwrap().to_str().unwrap().to_string()
+        })*/
+    }
 }
