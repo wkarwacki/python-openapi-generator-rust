@@ -4,17 +4,13 @@ use Default macro and drop all of the defaults where applicable
 try to get rid of redundant clones
 use pub(crate) for package private access
 refactor to method references when applicable
-replace of(...) calls with From impls
 try using handlebars_helper! macro everywhere
 type: object is created when converting trust to open-api for subclass of adt with empty vars
-rename interface ParamTypeDto<Bool, Type> to ParamTypeDto<Param0, Param1>
-check if "this" may be replaced with "." in handlebars
 with_mapped_all_of etc. create an intermediary type that is not clear to the reader, consider creating specialized schema type for that
 replace "origin" and "parent" json value with local var
 think about renaming origin/paarent to something resembling src/path
 this about optionality for type property in trust, and in general
 expose FeatureName variable and add Dto, Service to it and use it everywhere instead of separate variable for Dto/Service and so on
-cleanup kotlin gen templates
 cleanup all fmt_ref, fmt_class methods, rethinkg what shohuld be responsible for what
 rethink all methods in gen, all of them should be used externally, otherwise they are implementation specific
 ? vs unwrap
