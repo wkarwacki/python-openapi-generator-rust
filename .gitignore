@@ -1,7 +1,7 @@
 .bsp
 .gradle
 .idea
-.iml
+*.iml
 .venv
 
 __pycache__

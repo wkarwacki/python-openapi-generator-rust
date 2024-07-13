@@ -154,10 +154,10 @@ impl HelperDef for FmtSrcIfPresent {
     ) -> Result<ScopedJson<'rc>, RenderError> {
         let param = h.param(0).unwrap();
         match param.value().as_str() {
-            Some(str) => Ok(ScopedJson::from(
-                serde_json::to_value(self.gen.lang().fmt_src(str.to_string())).unwrap(),
-            )),
-            None => Ok(ScopedJson::from(Value::Null)),
+            Some(str) => Ok(
+                serde_json::to_value(self.gen.lang().fmt_src(str.to_string())).unwrap().into()
+            ),
+            None => Ok(Value::Null.into()),
         }
     }
 }
@@ -222,7 +222,7 @@ impl HelperDef for IsAlias {
         _: &'rc handlebars::Context,
         _: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
-        Ok(ScopedJson::from(Value::Bool(
+        Ok(Value::Bool(
             if let Ok(Ref { path: _, src: _ }) =
                 serde_json::from_value(h.param(0).unwrap().value().clone())
             {
@@ -238,7 +238,7 @@ impl HelperDef for IsAlias {
                     Err(_) => false,
                 }
             },
-        )))
+        ).into())
     }
 }
 
@@ -261,7 +261,7 @@ impl HelperDef for Parents {
         obj.ext.iter().for_each(|ext| {
             refs.insert(0, ext.clone().r#ref);
         });
-        Ok(ScopedJson::from(serde_json::to_value(refs).unwrap()))
+        Ok(serde_json::to_value(refs).unwrap().into())
     }
 }
 
@@ -285,7 +285,7 @@ impl HelperDef for Resolve {
                 .as_object_mut()
                 .unwrap()
                 .insert("origin".to_string(), serde_json::to_value(r#ref).unwrap());
-            Ok(ScopedJson::from(value))
+            Ok(value.into())
         } else {
             Ok(ScopedJson::Missing)
         }
@@ -344,7 +344,7 @@ impl HelperDef for SortOptionalsLast {
             }
         };
 
-        Ok(ScopedJson::from(value))
+        Ok(value.into())
     }
 }
 
@@ -363,11 +363,11 @@ impl HelperDef for TypeArgs {
         ext.map(|e| {
             let mut vec: Vec<_> = e.args.into_iter().collect();
             vec.sort_by(|(name0, _), (name1, _)| name0.cmp(name1));
-            Ok(ScopedJson::from(
-                serde_json::to_value(vec.iter().map(|(_, desc)| desc).collect::<Vec<_>>()).unwrap(),
-            ))
+            Ok(
+                serde_json::to_value(vec.iter().map(|(_, desc)| desc).collect::<Vec<_>>()).unwrap().into()
+            )
         })
-        .unwrap_or(Ok(ScopedJson::from(Value::Array(Vec::new()))))
+        .unwrap_or(Ok(Value::Array(Vec::new()).into()))
     }
 }
 
@@ -392,9 +392,9 @@ impl HelperDef for TypeParams {
                 .into_iter()
                 .collect();
             vec.sort();
-            Ok(ScopedJson::from(serde_json::to_value(vec).unwrap()))
+            Ok(serde_json::to_value(vec).unwrap().into())
         })
-        .unwrap_or(Ok(ScopedJson::from(Value::Array(Vec::new()))))
+        .unwrap_or(Ok(Value::Array(Vec::new()).into()))
     }
 }
 
@@ -410,13 +410,13 @@ impl HelperDef for ValueDef {
         _: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
         let val = h.param(0).unwrap().value().render();
-        Ok(ScopedJson::from(Value::from(
+        Ok(Value::from(
             serde_json::to_value(match val.parse::<i64>() {
                 Ok(_) => Def::Int(Int { null: false }),
                 _ => Def::Str(Str { null: false }),
             })
             .unwrap(),
-        )))
+        ).into())
     }
 }
 
@@ -454,14 +454,14 @@ impl HelperDef for Add {
         match param {
             Value::Null => {
                 let other = h.param(1).unwrap().value();
-                Ok(ScopedJson::from(
-                    other
+                Ok(other
                         .as_array()
                         .map(|vec| vec.clone())
                         .map(Value::from)
                         .or(other.as_str().map(Value::from))
-                        .unwrap(),
-                ))
+                        .unwrap()
+                    .into()
+                )
             }
             _ => {
                 let result = param
@@ -479,7 +479,7 @@ impl HelperDef for Add {
                         serde_json::to_value(joined)
                     }))
                     .unwrap();
-                Ok(ScopedJson::from(result.unwrap()))
+                Ok(result.unwrap().into())
             }
         }
     }
@@ -603,9 +603,7 @@ fn template(path: PathBuf) -> String {
 }
 
 fn default_templates_path(gen: Box<dyn Gen>) -> PathBuf {
-    PathBuf::from(
-        "src/lib/gen/".to_string()
+    ("src/lib/gen/".to_string()
             + gen.src_dir().to_string_lossy().to_string().as_str()
-            + "/templates",
-    )
+            + "/templates").into()
 }
