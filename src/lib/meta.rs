@@ -2,7 +2,7 @@ use crate::lib::desc::Desc;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-#[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Meta {
     #[serde(flatten)]
     pub value: HashMap<String, Desc>,

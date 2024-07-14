@@ -325,7 +325,7 @@ impl HelperDef for SortOptionalsLast {
             }
             _ => {
                 let mut op_params: Vec<OpParam> =
-                    serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
+                    serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap_or(Vec::new());
                 op_params.sort_by(|op_param0, op_param1| {
                     if op_param0.default.is_some() && op_param1.default.is_none() {
                         std::cmp::Ordering::Greater

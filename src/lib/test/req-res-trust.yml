@@ -13,3 +13,20 @@ ops:
               - value0
               - value1
               - value2
+  inlineSeqReqRes:
+    - name: inlineSeqReqResName
+      type: GET
+      req:
+        type: seq
+        item:
+          type: obj
+          vars:
+            str:
+              type: str
+      res:
+        type: seq
+        item:
+          type: obj
+          vars:
+            str:
+              type: str
