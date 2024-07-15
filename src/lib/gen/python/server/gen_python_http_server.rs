@@ -34,32 +34,72 @@ impl Gen for GenPythonHttpServer {
     ) -> HashMap<PathBuf, String> {
         let out_dir = self.lang.out_dir().to_string_lossy().to_string();
         let mut defs: Vec<(String, Def, bool)> = Vec::new();
-        defs.extend(
-            pkg.defs
-                .iter()
-                .map(|(def_name, def)| (def_name.clone(), def.clone(), false)),
-        );
-        defs.extend(
-            pkg.ops
-                .iter()
-                .flat_map(|(_, ops)| ops)
-                .filter(|op| {
-                    op.req
-                        .clone()
-                        .and_then(|req| req.form.map(|form| form == "multipart/form-data"))
-                        .unwrap_or(false)
-                })
-                .flat_map(|op| {
-                    op.req
-                        .iter()
-                        .flat_map(|req| {
-                            req.desc
-                                .def()
-                                .map(|def| (op.name.clone(), def.clone(), true))
+        let inline_ops: Vec<_> = pkg
+            .ops
+            .iter()
+            .flat_map(|(_, ops)| ops)
+            .flat_map(|op| {
+                let req_dto = op.req.clone().map(|req| (self.lang.fmt_class(op.name.clone() + "Req", None), req.desc, req.form));
+                let res_dto = op.res.clone().map(|res| (self.lang.fmt_class(op.name.clone() + "Res", None), res.desc, res.form));
+                let mut vec = Vec::new();
+                if let Some(tuple) = req_dto {
+                    tuple.1.clone().def().iter().for_each(|def| match def {
+                        Def::Obj(_) | Def::Seq(_) | Def::Map(_) => vec.push(tuple.clone()),
+                        _ => {}
+                    });
+                }
+                if let Some(tuple) = res_dto {
+                    tuple.1.clone().def().iter().for_each(|def| match def {
+                        Def::Obj(_) | Def::Seq(_) | Def::Map(_) => vec.push(tuple.clone()),
+                        _ => {}
+                    });
+                }
+                vec
+            })
+            .filter(|(_, desc, _)| desc.def().is_some())
+            .collect();
+        defs.extend(inline_ops.iter().flat_map(|(name, desc, form)| {
+            desc
+                .def()
+                .map(|def| (name.clone(), def.clone(), form.clone().map(|f| f == "multipart/form-data").unwrap_or(false)))
+        }));
+        let form_ops: Vec<_> = pkg
+            .ops
+            .iter()
+            .flat_map(|(_, ops)| ops)
+            .flat_map(|op| {
+                let req_dto = op.req.clone().map(|req| (self.lang.fmt_class(op.name.clone() + "Req", None), req.desc, req.form));
+                let res_dto = op.res.clone().map(|res| (self.lang.fmt_class(op.name.clone() + "Res", None), res.desc, res.form));
+                let mut vec = Vec::new();
+                if let Some(tuple) = req_dto {
+                    tuple.1.clone().def().iter().for_each(|def| match def {
+                        Def::Obj(_) | Def::Seq(_) | Def::Map(_) => vec.push(tuple.clone()),
+                        _ => {}
+                    });
+                }
+                if let Some(tuple) = res_dto {
+                    tuple.1.clone().def().iter().for_each(|def| match def {
+                        Def::Obj(_) | Def::Seq(_) | Def::Map(_) => vec.push(tuple.clone()),
+                        _ => {}
+                    });
+                }
+                vec
+            })
+            .filter(|(_, _, form)| form.clone().map(|f| f == "multipart/form-data").unwrap_or(false))
+            .collect();
+        defs.extend(pkg.defs.iter().map(|(def_name, def)| {
+            (def_name.clone(), def.clone(), {
+                let form_refs = form_ops
+                    .iter()
+                    .flat_map(|(_, desc, _)| {
+                        desc.r#ref().map(|r#ref| {
+                            r#ref.path.clone().rsplit_once('.').unwrap().1.to_string()
                         })
-                        .collect::<Vec<_>>()
-                }),
-        );
+                    })
+                    .collect::<Vec<_>>();
+                form_refs.contains(def_name) // FIXME: take src into account as well
+            })
+        }));
         let dtos: HashMap<PathBuf, _> = defs.iter().map(|(def_name, def, form_like)| {
             let dto_template = templates.get("dtoFile").unwrap();
             let dto_path = def_name.to_case(Case::Snake).to_string() + ".py";

@@ -26,3 +26,4 @@ more typesafe open_api (look for open_api in .rs on gh)
 
 soome other time:
 https://docs.rs/serde_with/3.4.0/serde_with/attr.skip_serializing_none.html
+abstract python gen
