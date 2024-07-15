@@ -17,29 +17,17 @@ mod vars {
 
     #[test]
     fn gen_kotlin_test() {
-        gen_test(
-            Lang::Kotlin,
-            Role::Server,
-            "vars-trust.yml".to_string(),
-        );
+        gen_test(Lang::Kotlin, Role::Server, "vars-trust.yml".to_string());
     }
 
     #[test]
     fn gen_python_client_test() {
-        gen_test(
-            Lang::Python,
-            Role::Client,
-            "vars-trust.yml".to_string(),
-        );
+        gen_test(Lang::Python, Role::Client, "vars-trust.yml".to_string());
     }
 
     #[test]
     fn gen_python_server_test() {
-        gen_test(
-            Lang::Python,
-            Role::Server,
-            "vars-trust.yml".to_string(),
-        );
+        gen_test(Lang::Python, Role::Server, "vars-trust.yml".to_string());
     }
 
     #[test]
@@ -49,10 +37,6 @@ mod vars {
 
     #[test]
     fn gen_typescript_test() {
-        gen_test(
-            Lang::TypeScript,
-            Role::Server,
-            "vars-trust.yml".to_string(),
-        );
+        gen_test(Lang::TypeScript, Role::Server, "vars-trust.yml".to_string());
     }
 }

@@ -229,32 +229,26 @@ pub fn do_main(cli: Cli) {
                     module: None,
                     dto_name: None,
                 });
-            gen(
-                input.clone(),
-                lang,
-                role,
-                generator_config,
-                templates_path,
-            )
-            .iter()
-            .for_each(|(path, content)| {
-                let full_path = output.to_string_lossy().to_string()
-                    + "/"
-                    + path.to_string_lossy().to_string().as_str();
-                fs::create_dir_all(
-                    PathBuf::from_str(full_path.as_str())
-                        .unwrap()
-                        .parent()
-                        .unwrap(),
-                )
-                .unwrap();
-                let mut out = std::fs::OpenOptions::new()
-                    .write(true)
-                    .create(true)
-                    .open(full_path)
+            gen(input.clone(), lang, role, generator_config, templates_path)
+                .iter()
+                .for_each(|(path, content)| {
+                    let full_path = output.to_string_lossy().to_string()
+                        + "/"
+                        + path.to_string_lossy().to_string().as_str();
+                    fs::create_dir_all(
+                        PathBuf::from_str(full_path.as_str())
+                            .unwrap()
+                            .parent()
+                            .unwrap(),
+                    )
                     .unwrap();
-                out.write_all(content.as_bytes()).unwrap()
-            })
+                    let mut out = std::fs::OpenOptions::new()
+                        .write(true)
+                        .create(true)
+                        .open(full_path)
+                        .unwrap();
+                    out.write_all(content.as_bytes()).unwrap()
+                })
         }
     }
 }
@@ -360,12 +354,7 @@ fn gen(
 
     let gen = get_gen(lang, gen_cfg.clone(), input.clone(), role.clone());
 
-    gen::gen::go(
-        &pkg,
-        gen,
-        templates_path,
-        context,
-    )
+    gen::gen::go(&pkg, gen, templates_path, context)
 }
 
 fn get_gen(lang: Lang, gen_cfg: GenCfg, input: PathBuf, role: Role) -> Box<dyn Gen> {

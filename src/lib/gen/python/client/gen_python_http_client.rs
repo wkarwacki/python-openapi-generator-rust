@@ -39,8 +39,20 @@ impl Gen for GenPythonHttpClient {
             .iter()
             .flat_map(|(_, ops)| ops)
             .flat_map(|op| {
-                let req_dto = op.req.clone().map(|req| (self.lang.fmt_class(op.name.clone() + "Req", None), req.desc, req.form));
-                let res_dto = op.res.clone().map(|res| (self.lang.fmt_class(op.name.clone() + "Res", None), res.desc, res.form));
+                let req_dto = op.req.clone().map(|req| {
+                    (
+                        self.lang.fmt_class(op.name.clone() + "Req", None),
+                        req.desc,
+                        req.form,
+                    )
+                });
+                let res_dto = op.res.clone().map(|res| {
+                    (
+                        self.lang.fmt_class(op.name.clone() + "Res", None),
+                        res.desc,
+                        res.form,
+                    )
+                });
                 let mut vec = Vec::new();
                 if let Some(tuple) = req_dto {
                     tuple.1.clone().def().iter().for_each(|def| match def {
@@ -59,17 +71,35 @@ impl Gen for GenPythonHttpClient {
             .filter(|(_, desc, _)| desc.def().is_some())
             .collect();
         defs.extend(inline_ops.iter().flat_map(|(name, desc, form)| {
-            desc
-                .def()
-                .map(|def| (name.clone(), def.clone(), form.clone().map(|f| f == "multipart/form-data").unwrap_or(false)))
+            desc.def().map(|def| {
+                (
+                    name.clone(),
+                    def.clone(),
+                    form.clone()
+                        .map(|f| f == "multipart/form-data")
+                        .unwrap_or(false),
+                )
+            })
         }));
         let form_ops: Vec<_> = pkg
             .ops
             .iter()
             .flat_map(|(_, ops)| ops)
             .flat_map(|op| {
-                let req_dto = op.req.clone().map(|req| (self.lang.fmt_class(op.name.clone() + "Req", None), req.desc, req.form));
-                let res_dto = op.res.clone().map(|res| (self.lang.fmt_class(op.name.clone() + "Res", None), res.desc, res.form));
+                let req_dto = op.req.clone().map(|req| {
+                    (
+                        self.lang.fmt_class(op.name.clone() + "Req", None),
+                        req.desc,
+                        req.form,
+                    )
+                });
+                let res_dto = op.res.clone().map(|res| {
+                    (
+                        self.lang.fmt_class(op.name.clone() + "Res", None),
+                        res.desc,
+                        res.form,
+                    )
+                });
                 let mut vec = Vec::new();
                 if let Some(tuple) = req_dto {
                     tuple.1.clone().def().iter().for_each(|def| match def {
@@ -85,16 +115,19 @@ impl Gen for GenPythonHttpClient {
                 }
                 vec
             })
-            .filter(|(_, _, form)| form.clone().map(|f| f == "multipart/form-data").unwrap_or(false))
+            .filter(|(_, _, form)| {
+                form.clone()
+                    .map(|f| f == "multipart/form-data")
+                    .unwrap_or(false)
+            })
             .collect();
         defs.extend(pkg.defs.iter().map(|(def_name, def)| {
             (def_name.clone(), def.clone(), {
                 let form_refs = form_ops
                     .iter()
                     .flat_map(|(_, desc, _)| {
-                        desc.r#ref().map(|r#ref| {
-                            r#ref.path.clone().rsplit_once('.').unwrap().1.to_string()
-                        })
+                        desc.r#ref()
+                            .map(|r#ref| r#ref.path.clone().rsplit_once('.').unwrap().1.to_string())
                     })
                     .collect::<Vec<_>>();
                 form_refs.contains(def_name) // FIXME: take src into account as well
@@ -118,9 +151,9 @@ impl Gen for GenPythonHttpClient {
                         + self.lang.module().as_str()
                         + "."
                         + match src {
-                        None => self.lang.feature.clone().to_case(Case::Snake),
-                        Some(src) => self.lang.fmt_src(src.clone()),
-                    }
+                            None => self.lang.feature.clone().to_case(Case::Snake),
+                            Some(src) => self.lang.fmt_src(src.clone()),
+                        }
                         .as_str()
                         + " import "
                         + def.to_case(Case::Snake).as_str()

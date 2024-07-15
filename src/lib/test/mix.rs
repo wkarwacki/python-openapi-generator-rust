@@ -38,10 +38,6 @@ mod mix {
 
     #[test]
     fn gen_typescript_test() {
-        gen_test(
-            Lang::TypeScript,
-            Role::Server,
-            "mix-trust.yml".to_string(),
-        );
+        gen_test(Lang::TypeScript, Role::Server, "mix-trust.yml".to_string());
     }
 }

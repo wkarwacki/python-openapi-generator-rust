@@ -65,9 +65,7 @@ fn do_gen_test(generator: Lang, role: Role, input: String) {
     let output = "test/default/gens/".to_string()
         + match generator {
             Lang::Kotlin => "kotlin/src/main/kotlin".to_string(),
-            Lang::Python => {
-                "python/".to_string() + role_str.to_case(Case::Lower).as_str() + "/src"
-            }
+            Lang::Python => "python/".to_string() + role_str.to_case(Case::Lower).as_str() + "/src",
             Lang::Scala => "scala/src/main/scala".to_string(),
             Lang::TypeScript => "typescript/src/trust".to_string(),
         }

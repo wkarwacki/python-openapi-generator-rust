@@ -155,7 +155,9 @@ impl HelperDef for FmtSrcIfPresent {
         let param = h.param(0).unwrap();
         match param.value().as_str() {
             Some(str) => Ok(
-                serde_json::to_value(self.gen.lang().fmt_src(str.to_string())).unwrap().into()
+                serde_json::to_value(self.gen.lang().fmt_src(str.to_string()))
+                    .unwrap()
+                    .into(),
             ),
             None => Ok(Value::Null.into()),
         }
@@ -212,6 +214,78 @@ impl HelperDef for FmtValue {
 }
 
 #[derive(Clone)]
+struct FilterNonconst;
+
+impl HelperDef for FilterNonconst {
+    fn call_inner<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper<'rc>,
+        _: &'reg Handlebars<'reg>,
+        _: &'rc handlebars::Context,
+        _: &mut RenderContext<'reg, 'rc>,
+    ) -> Result<ScopedJson<'rc>, RenderError> {
+        let defs: HashMap<String, Def> =
+            serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
+        Ok(Value::Array(
+            defs.iter()
+                .filter(|(_name, def)| match def {
+                    Def::Const(_) => false,
+                    _ => true,
+                })
+                .map(|(name, def)| serde_json::to_value((name, def)).unwrap())
+                .collect::<Vec<_>>(),
+        )
+        .into())
+    }
+}
+
+#[derive(Clone)]
+struct FilterOpParamsByLoc;
+
+impl HelperDef for FilterOpParamsByLoc {
+    fn call_inner<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper<'rc>,
+        _: &'reg Handlebars<'reg>,
+        _: &'rc handlebars::Context,
+        _: &mut RenderContext<'reg, 'rc>,
+    ) -> Result<ScopedJson<'rc>, RenderError> {
+        let op_params: Vec<OpParam> =
+            serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
+        let loc: String = serde_json::from_value(h.param(1).unwrap().value().clone()).unwrap();
+        Ok(Value::Array(
+            op_params
+                .iter()
+                .filter(|&op_param| op_param.clone().loc.map(|l| l == loc).unwrap_or(false))
+                .map(|op_param| serde_json::to_value(op_param).unwrap())
+                .collect::<Vec<_>>(),
+        )
+        .into())
+    }
+}
+
+#[derive(Clone)]
+struct HasKey;
+
+impl HelperDef for HasKey {
+    fn call_inner<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper<'rc>,
+        _: &'reg Handlebars<'reg>,
+        _: &'rc handlebars::Context,
+        _: &mut RenderContext<'reg, 'rc>,
+    ) -> Result<ScopedJson<'rc>, RenderError> {
+        let value = h.param(0).unwrap().value().clone();
+        let key: String = serde_json::from_value(h.param(1).unwrap().value().clone()).unwrap();
+        Ok(Value::Bool(match value {
+            Value::Object(map) => map.contains_key(key.as_str()),
+            _ => false,
+        })
+        .into())
+    }
+}
+
+#[derive(Clone)]
 struct IsAlias;
 
 impl HelperDef for IsAlias {
@@ -238,7 +312,8 @@ impl HelperDef for IsAlias {
                     Err(_) => false,
                 }
             },
-        ).into())
+        )
+        .into())
     }
 }
 
@@ -325,7 +400,8 @@ impl HelperDef for SortOptionalsLast {
             }
             _ => {
                 let mut op_params: Vec<OpParam> =
-                    serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap_or(Vec::new());
+                    serde_json::from_value(h.param(0).unwrap().value().clone())
+                        .unwrap_or(Vec::new());
                 op_params.sort_by(|op_param0, op_param1| {
                     if op_param0.default.is_some() && op_param1.default.is_none() {
                         std::cmp::Ordering::Greater
@@ -364,7 +440,9 @@ impl HelperDef for TypeArgs {
             let mut vec: Vec<_> = e.args.into_iter().collect();
             vec.sort_by(|(name0, _), (name1, _)| name0.cmp(name1));
             Ok(
-                serde_json::to_value(vec.iter().map(|(_, desc)| desc).collect::<Vec<_>>()).unwrap().into()
+                serde_json::to_value(vec.iter().map(|(_, desc)| desc).collect::<Vec<_>>())
+                    .unwrap()
+                    .into(),
             )
         })
         .unwrap_or(Ok(Value::Array(Vec::new()).into()))
@@ -416,7 +494,8 @@ impl HelperDef for ValueDef {
                 _ => Def::Str(Str { null: false }),
             })
             .unwrap(),
-        ).into())
+        )
+        .into())
     }
 }
 
@@ -455,13 +534,12 @@ impl HelperDef for Add {
             Value::Null => {
                 let other = h.param(1).unwrap().value();
                 Ok(other
-                        .as_array()
-                        .map(|vec| vec.clone())
-                        .map(Value::from)
-                        .or(other.as_str().map(Value::from))
-                        .unwrap()
-                    .into()
-                )
+                    .as_array()
+                    .map(|vec| vec.clone())
+                    .map(Value::from)
+                    .or(other.as_str().map(Value::from))
+                    .unwrap()
+                    .into())
             }
             _ => {
                 let result = param
@@ -482,6 +560,22 @@ impl HelperDef for Add {
                 Ok(result.unwrap().into())
             }
         }
+    }
+}
+
+#[derive(Clone)]
+struct ToFlatCase {}
+
+impl HelperDef for ToFlatCase {
+    fn call_inner<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper<'rc>,
+        _: &'reg Handlebars<'reg>,
+        _: &'rc handlebars::Context,
+        _: &mut RenderContext<'reg, 'rc>,
+    ) -> Result<ScopedJson<'rc>, RenderError> {
+        let string: String = serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
+        Ok(Value::from(string.to_case(Case::Flat)).into())
     }
 }
 
@@ -507,19 +601,13 @@ pub fn go(
     handlebars.register_helper("fmtType", Box::new(FmtType { gen: gen.clone() }.clone()));
     handlebars.register_helper("fmtValue", Box::new(FmtValue { gen: gen.clone() }.clone()));
 
-    handlebars_helper!(filter_nonconst: |defs: HashMap<String, Def>| defs.iter().filter(|(_name, def)| match def{
-        Def::Const(_) => false,
-        _ => true
-    }).map(|(name, def)| serde_json::to_value((name, def)).unwrap()).collect::<Vec<_>>()); // TIDY: make object (i.e. hashmap) out of it instead of Vec<Pair>, otherwise before and after filtering are different types | TIDY: make it handle nulls, otherwise double if is needed everywhere
-    handlebars.register_helper("filterNonconst", Box::new(filter_nonconst));
-    handlebars_helper!(filter_op_params_by_loc: |op_params: Vec<OpParam>, loc: String| op_params.iter().filter(|&op_param| op_param.clone().loc.map(|l| l == loc).unwrap_or(false)).map(|op_param| serde_json::to_value(op_param).unwrap()).collect::<Vec<_>>());
-    handlebars.register_helper("filterOpParamsByLoc", Box::new(filter_op_params_by_loc));
+    handlebars.register_helper("filterNonconst", Box::new(FilterNonconst {}.clone()));
+    handlebars.register_helper(
+        "filterOpParamsByLoc",
+        Box::new(FilterOpParamsByLoc {}.clone()),
+    );
     handlebars.register_helper("isAlias", Box::new(IsAlias {}.clone()));
-    handlebars_helper!(has_key: |json_value: JsonValue, key: String| match json_value {
-        Value::Object(map) => map.contains_key(key.as_str()),
-        _ => false
-    });
-    handlebars.register_helper("hasKey", Box::new(has_key));
+    handlebars.register_helper("hasKey", Box::new(HasKey {}.clone()));
 
     handlebars.register_helper("parents", Box::new(Parents {}.clone()));
     handlebars.register_helper(
@@ -604,6 +692,7 @@ fn template(path: PathBuf) -> String {
 
 fn default_templates_path(gen: Box<dyn Gen>) -> PathBuf {
     ("src/lib/gen/".to_string()
-            + gen.src_dir().to_string_lossy().to_string().as_str()
-            + "/templates").into()
+        + gen.src_dir().to_string_lossy().to_string().as_str()
+        + "/templates")
+        .into()
 }
