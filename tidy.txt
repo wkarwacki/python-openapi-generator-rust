@@ -1,6 +1,5 @@
 make all methods take &var instead of var, clone on call only when needed
 
-helpers to separate files each
 use Default macro and drop all of the defaults where applicable
 try to get rid of redundant clones
 use pub(crate) for package private access
