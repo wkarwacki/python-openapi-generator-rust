@@ -17,7 +17,6 @@ merge / reuse code in contexts
 schema _ref property is handled in RefOr, use only RefOr everywhere
 desc::ref and def::alias are the same, use only one
 investigate why op_params are null and {{#if this.params}} is needed (like in service.hbs: "{{#if this.params}}{{#each (filterOpParamsByLoc")
-change generator cli property to lang
 
 open_api:
 more typesafe open_api (look for open_api in .rs on gh)
