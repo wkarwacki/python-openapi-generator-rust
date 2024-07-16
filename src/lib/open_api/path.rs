@@ -1,3 +1,4 @@
+use std::convert::identity;
 use crate::lib::{
     context::Context,
     op::Op,
@@ -40,7 +41,7 @@ impl Path {
             self.patch.clone(),
         ]
         .into_iter()
-        .filter_map(|op| op)
+        .filter_map(identity)
         .collect()
     }
     pub fn of(ops: &Vec<Op>, context: &Context) -> Path {

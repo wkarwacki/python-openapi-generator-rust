@@ -28,7 +28,7 @@ impl Context {
         match value {
             Value::Mapping(mapping) => {
                 let path = mapping.get("path");
-                let src_opt = mapping.get("src").and_then(|src| src.as_str());
+                let src_opt = mapping.get("src").and_then(Value::as_str);
                 if path.is_some() && src_opt.is_some() {
                     let src = src_opt.unwrap();
                     let mut new_map = map.clone();

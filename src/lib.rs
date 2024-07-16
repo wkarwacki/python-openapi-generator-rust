@@ -275,7 +275,7 @@ fn from_open_api(input: PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg>
                                     .tags
                                     .first()
                                     .cloned()
-                                    .map(|tag| tag.to_string() + ".yml")
+                                    .map(|tag| tag + ".yml")
                                     .or_else(|| src.clone())
                                     .unwrap_or_else(|| "default.yml".to_string());
 

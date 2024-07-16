@@ -160,7 +160,7 @@ impl Schema {
                 discriminator: None,
                 items: None,
                 r#enum: match vals {
-                    EnumVals::Int(vec) => vec.iter().map(|i| i.to_string()).collect(),
+                    EnumVals::Int(vec) => vec.iter().map(i64::to_string).collect(),
                     EnumVals::Str(vec) => vec.clone(),
                 },
                 format: None,
@@ -237,7 +237,7 @@ impl Schema {
                     nullable: false,
                     all_of: {
                         let mut all_of: Vec<_> =
-                            obj.mix.iter().map(|r#ref| Schema::of_ref(&r#ref)).collect();
+                            obj.mix.iter().map(Schema::of_ref).collect();
                         if !all_of.is_empty() && !obj.vars.is_empty() {
                             all_of.push(Schema {
                                 r#type: Some("object".to_string()),
@@ -355,7 +355,8 @@ impl Schema {
     pub fn of_desc(desc: &Desc, name: String, default: Option<Value>, context: &Context) -> Schema {
         desc.r#ref()
             .as_ref()
-            .map(|r#ref| Schema::of_ref(&r#ref))
+            .cloned()
+            .map(Schema::of_ref)
             .or_else(|| {
                 desc.def()
                     .as_ref()
@@ -620,7 +621,7 @@ impl Schema {
                 let mut all_of: Vec<_> = schema
                     .all_of
                     .iter()
-                    .map(|s| s.with_mapped_all_of())
+                    .map(Schema::with_mapped_all_of)
                     .collect();
                 all_of.append(&mut all_of.iter().flat_map(|ss| ss.all_of.clone()).collect());
                 all_of

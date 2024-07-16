@@ -17,7 +17,7 @@ pub fn refs(value: &Value) -> Vec<String> {
                 }
             })
             .collect(),
-        Value::Sequence(seq) => seq.iter().flat_map(|val| refs(val)).collect(),
+        Value::Sequence(seq) => seq.iter().flat_map(refs).collect(),
         _ => Vec::new(),
     }
 }

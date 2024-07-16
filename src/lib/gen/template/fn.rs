@@ -41,7 +41,7 @@ impl HelperDef for Add {
                 let other = h.param(1).unwrap().value();
                 Ok(other
                     .as_array()
-                    .map(|vec| vec.clone())
+                    .map(Vec::clone)
                     .map(Value::from)
                     .or(other.as_str().map(Value::from))
                     .unwrap()
