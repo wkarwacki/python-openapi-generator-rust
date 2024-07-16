@@ -1,4 +1,8 @@
 defs:
+  NoTypeGiven:
+    vars:
+      var:
+        type: str
   Alias:
     type: alias
     path: defs.Str

@@ -13,7 +13,7 @@ impl<'de> Deserialize<'de> for Mime {
     where
         D: Deserializer<'de>,
     {
-        let value: Value = Deserialize::deserialize(deserializer)?;
+        let value: Value = Deserialize::deserialize(deserializer).unwrap();
         match value {
             Value::String(string) => Ok(Mime {
                 val: mime::Mime::from_str(string.as_str()).unwrap(),

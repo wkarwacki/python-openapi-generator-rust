@@ -13,7 +13,7 @@ impl<'de> Deserialize<'de> for StatusCode {
     where
         D: Deserializer<'de>,
     {
-        let value: Value = Deserialize::deserialize(deserializer)?;
+        let value: Value = Deserialize::deserialize(deserializer).unwrap();
         match value {
             Value::Number(number) => Ok(StatusCode {
                 val: http::StatusCode::from_str(number.to_string().as_str()).unwrap(),

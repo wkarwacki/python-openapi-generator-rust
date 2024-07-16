@@ -53,7 +53,8 @@ impl HelperDef for FmtEnum {
     ) -> HelperResult {
         let param = h.param(0).unwrap();
 
-        out.write(self.gen.lang().fmt_enum(param.value().render()).as_str())?;
+        out.write(self.gen.lang().fmt_enum(param.value().render()).as_str())
+            .unwrap();
         Ok(())
     }
 }
@@ -74,7 +75,8 @@ impl HelperDef for FmtName {
     ) -> HelperResult {
         let param = h.param(0).unwrap();
 
-        out.write(self.gen.lang().fmt_name(param.value().render()).as_str())?;
+        out.write(self.gen.lang().fmt_name(param.value().render()).as_str())
+            .unwrap();
         Ok(())
     }
 }
@@ -144,14 +146,16 @@ impl HelperDef for FmtType {
             .param(1)
             .and_then(|param| param.value().clone().as_str().map(|str| str.to_string()));
 
-        Ok(out.write(
-            match desc {
-                Desc::Def(def) => self.gen.lang().fmt_type(def, name),
-                Desc::Ref(r#ref) => self.gen.lang().fmt_ref(r#ref),
-                Desc::TypeParam { param } => param,
-            }
-            .as_str(),
-        )?)
+        Ok(out
+            .write(
+                match desc {
+                    Desc::Def(def) => self.gen.lang().fmt_type(def, name),
+                    Desc::Ref(r#ref) => self.gen.lang().fmt_ref(r#ref),
+                    Desc::TypeParam { param } => param,
+                }
+                .as_str(),
+            )
+            .unwrap())
     }
 }
 
@@ -170,6 +174,8 @@ impl HelperDef for FmtValue {
         out: &mut dyn Output,
     ) -> HelperResult {
         let json_value: JsonValue = h.param(0).unwrap().value().clone();
-        Ok(out.write(self.gen.lang().fmt_value(json_value).as_str())?)
+        Ok(out
+            .write(self.gen.lang().fmt_value(json_value).as_str())
+            .unwrap())
     }
 }

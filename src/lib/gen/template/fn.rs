@@ -19,7 +19,7 @@ impl HelperDef for Json {
     ) -> HelperResult {
         let param = h.param(0).unwrap();
 
-        out.write(param.value().to_string().as_str())?;
+        out.write(param.value().to_string().as_str()).unwrap();
         Ok(())
     }
 }

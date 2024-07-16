@@ -5,14 +5,11 @@ try to get rid of redundant clones
 use pub(crate) for package private access
 refactor to method references when applicable
 type: object is created when converting trust to open-api for subclass of adt with empty vars
-with_mapped_all_of etc. create an intermediary type that is not clear to the reader, consider creating specialized schema type for that
 replace "origin" and "parent" json value with local var
 think about renaming origin/paarent to something resembling src/path
-this about optionality for type property in trust, and in general
 expose FeatureName variable and add Dto, Service to it and use it everywhere instead of separate variable for Dto/Service and so on
 cleanup all fmt_ref, fmt_class methods, rethinkg what shohuld be responsible for what
 rethink all methods in gen, all of them should be used externally, otherwise they are implementation specific
-? vs unwrap
 merge / reuse code in contexts
 schema _ref property is handled in RefOr, use only RefOr everywhere
 desc::ref and def::alias are the same, use only one
@@ -24,3 +21,6 @@ more typesafe open_api (look for open_api in .rs on gh)
 soome other time:
 https://docs.rs/serde_with/3.4.0/serde_with/attr.skip_serializing_none.html
 abstract python gen
+use !isPrimitive (or like) instead of type == obj | seq | map
+with_mapped_all_of etc. create an intermediary type that is not clear to the reader, consider creating specialized schema type for that
+https://github.com/serde-rs/serde/pull/2476

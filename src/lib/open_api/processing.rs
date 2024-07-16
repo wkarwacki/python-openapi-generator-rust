@@ -31,7 +31,7 @@ fn resolve<'a>(value: &'a Value, r#ref: &str) -> Option<&'a Value> {
     let mut v = value;
     for part in r#ref.replace("#/", "").split('/') {
         v = match v {
-            Value::Mapping(map) => map.get(&Value::String(part.to_string()))?,
+            Value::Mapping(map) => map.get(&Value::String(part.to_string())).unwrap(),
             _ => return None,
         };
     }
