@@ -41,7 +41,7 @@ impl HelperDef for FilterOpParamsByLoc {
         _: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
         let op_params: Vec<OpParam> =
-            serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
+            serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap_or(Default::default());
         let loc: String = serde_json::from_value(h.param(1).unwrap().value().clone()).unwrap();
         Ok(Value::Array(
             op_params

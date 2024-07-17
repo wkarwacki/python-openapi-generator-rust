@@ -1,13 +1,11 @@
 make all methods take &var instead of var, clone on call only when needed
 
-use Default macro and drop all of the defaults where applicable
 try to get rid of redundant clones
 use pub(crate) for package private access
 think about renaming origin/paarent to something resembling src/path
 expose FeatureName variable and add Dto, Service to it and use it everywhere instead of separate variable for Dto/Service and so on
 cleanup all fmt_ref, fmt_class methods, rethinkg what shohuld be responsible for what
 rethink all methods in gen, all of them should be used externally, otherwise they are implementation specific
-investigate why op_params are null and {{#if this.params}} is needed (like in service.hbs: "{{#if this.params}}{{#each (filterOpParamsByLoc")
 
 open_api:
 more typesafe open_api (look for open_api in; .rs on gh)
