@@ -1,4 +1,3 @@
-use std::convert::identity;
 use crate::lib::{
     context::Context,
     op::Op,
@@ -10,6 +9,7 @@ use crate::lib::{
 };
 use http::method::Method;
 use serde::{Deserialize, Serialize};
+use std::convert::identity;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub struct Path {

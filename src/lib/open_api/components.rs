@@ -44,31 +44,14 @@ impl Components {
                                     name.to_string()
                                         + subname.clone().to_case(Case::UpperCamel).as_str(),
                                     Schema {
-                                        r#type: None,
-                                        properties: HashMap::new(),
-                                        additional_properties: None,
-                                        required: Vec::new(),
-                                        nullable: false,
                                         all_of: {
                                             let mut vec = Vec::new();
                                             vec.push(Schema {
-                                                r#type: None,
-                                                properties: HashMap::new(),
-                                                additional_properties: None,
-                                                required: Vec::new(),
-                                                nullable: false,
-                                                all_of: Vec::new(),
-                                                one_of: Vec::new(),
-                                                discriminator: None,
-                                                items: None,
-                                                r#enum: Vec::new(),
-                                                format: None,
-                                                r#const: None,
-                                                default: None,
                                                 _ref: Some({
                                                     let schemas_path = schemas_path();
                                                     format!("#{schemas_path}/{name}")
                                                 }),
+                                                ..Default::default()
                                             });
                                             vec.push(Schema::of_def(
                                                 Obj(subtype),
@@ -78,14 +61,7 @@ impl Components {
                                             ));
                                             vec
                                         },
-                                        one_of: Vec::new(),
-                                        discriminator: None,
-                                        items: None,
-                                        r#enum: Vec::new(),
-                                        format: None,
-                                        r#const: None,
-                                        default: None,
-                                        _ref: None,
+                                        ..Default::default()
                                     },
                                 )
                             })
@@ -162,18 +138,8 @@ impl Components {
                                         })
                                         .collect()
                                 },
-                                all_of: Vec::new(),
-                                one_of: Vec::new(),
-                                additional_properties: None,
                                 required: required,
-                                nullable: false,
-                                discriminator: None,
-                                items: None,
-                                r#enum: Vec::new(),
-                                format: None,
-                                r#const: None,
-                                default: None,
-                                _ref: None,
+                                ..Default::default()
                             };
                             (def_name.clone(), supertype_schema)
                         })

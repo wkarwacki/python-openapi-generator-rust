@@ -24,7 +24,7 @@ pub fn schemas_path() -> String {
     format!("/{COMPONENTS}/{SCHEMAS}")
 }
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct Schema {
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -74,19 +74,8 @@ impl Schema {
             Def::Alias(alias) => Schema::of_ref(&alias.r#ref),
             Def::Bool(_) => Schema {
                 r#type: Some("boolean".to_string()),
-                properties: HashMap::new(),
-                additional_properties: None,
-                required: Vec::new(),
-                nullable: false,
-                all_of: Vec::new(),
-                one_of: Vec::new(),
-                discriminator: None,
-                items: None,
-                r#enum: Vec::new(),
-                format: None,
-                r#const: None,
                 default: default,
-                _ref: None,
+                ..Default::default()
             },
             Def::Const(_const) => Schema {
                 r#type: Some(
@@ -101,109 +90,47 @@ impl Schema {
                     }
                     .to_string(),
                 ),
-                properties: HashMap::new(),
-                additional_properties: None,
-                required: Vec::new(),
-                nullable: false,
-                all_of: Vec::new(),
-                one_of: Vec::new(),
-                discriminator: None,
                 items: match _const.val.clone() {
                     Value::Sequence(_) => Some(Box::new(Schema {
                         r#type: Some("string".to_string()), // FIXME_LATER parse all kinds of values
-                        properties: HashMap::new(),
-                        additional_properties: None,
-                        required: Vec::new(),
-                        nullable: false,
-                        all_of: Vec::new(),
-                        one_of: Vec::new(),
-                        discriminator: None,
-                        items: None,
-                        r#enum: Vec::new(),
-                        format: None,
-                        r#const: None,
-                        default: None,
-                        _ref: None,
+                        ..Default::default()
                     })),
                     _ => None,
                 },
-                r#enum: Vec::new(),
-                format: None,
                 r#const: Some(_const.val),
                 default: default,
-                _ref: None,
+                ..Default::default()
             },
             Def::Dec(_) => Schema {
                 r#type: Some("double".to_string()),
-                properties: HashMap::new(),
-                additional_properties: None,
-                required: Vec::new(),
-                nullable: false,
-                all_of: Vec::new(),
-                one_of: Vec::new(),
-                discriminator: None,
-                items: None,
-                r#enum: Vec::new(),
-                format: None,
-                r#const: None,
                 default: default,
-                _ref: None,
+                ..Default::default()
             },
             Def::Enum(Enum { vals, null: _ }) => Schema {
                 r#type: Some("string".to_string()),
-                properties: HashMap::new(),
-                additional_properties: None,
-                required: Vec::new(),
-                nullable: false,
-                all_of: Vec::new(),
-                one_of: Vec::new(),
-                discriminator: None,
-                items: None,
                 r#enum: match vals {
                     EnumVals::Int(vec) => vec.iter().map(i64::to_string).collect(),
                     EnumVals::Str(vec) => vec.clone(),
                 },
-                format: None,
-                r#const: None,
                 default: default,
-                _ref: None,
+                ..Default::default()
             },
             Def::Int(_) => Schema {
                 r#type: Some("integer".to_string()),
-                properties: HashMap::new(),
-                additional_properties: None,
-                required: Vec::new(),
-                nullable: false,
-                all_of: Vec::new(),
-                one_of: Vec::new(),
-                discriminator: None,
-                items: None,
-                r#enum: Vec::new(),
                 format: Some("int64".to_string()),
-                r#const: None,
                 default: default,
-                _ref: None,
+                ..Default::default()
             },
             Def::Map(map) => Schema {
                 r#type: Some("object".to_string()),
-                properties: HashMap::new(),
                 additional_properties: Some(Box::new(Schema::of_desc(
                     &map.val,
                     "additionalProperties".to_string(),
                     None,
                     context,
                 ))),
-                required: Vec::new(),
-                nullable: false,
-                all_of: Vec::new(),
-                one_of: Vec::new(),
-                discriminator: None,
-                items: None,
-                r#enum: Vec::new(),
-                format: None,
-                r#const: None,
                 default: default,
-                _ref: None,
+                ..Default::default()
             },
             Def::Obj(obj) => {
                 Schema {
@@ -222,7 +149,6 @@ impl Schema {
                     } else {
                         HashMap::new()
                     },
-                    additional_properties: None,
                     required: {
                         if obj.mix.is_empty() {
                             obj.vars
@@ -234,10 +160,8 @@ impl Schema {
                             Vec::new()
                         }
                     },
-                    nullable: false,
                     all_of: {
-                        let mut all_of: Vec<_> =
-                            obj.mix.iter().map(Schema::of_ref).collect();
+                        let mut all_of: Vec<_> = obj.mix.iter().map(Schema::of_ref).collect();
                         if !all_of.is_empty() && !obj.vars.is_empty() {
                             all_of.push(Schema {
                                 r#type: Some("object".to_string()),
@@ -248,28 +172,17 @@ impl Schema {
                                         (name.clone(), Schema::of_var(var, name.clone(), context))
                                     })
                                     .collect(),
-                                additional_properties: None,
                                 required: obj
                                     .vars
                                     .iter()
                                     .filter(|(_, var)| !var.opt)
                                     .map(|(name, _)| name.clone())
                                     .collect(),
-                                nullable: false,
-                                all_of: Vec::new(),
-                                one_of: Vec::new(),
-                                discriminator: None,
-                                items: None,
-                                r#enum: Vec::new(),
-                                format: None,
-                                r#const: None,
-                                default: None,
-                                _ref: None,
+                                ..Default::default()
                             });
                         }
                         all_of
                     },
-                    one_of: Vec::new(),
                     discriminator: obj.adt.as_ref().map(|adt| Discriminator {
                         property_name: adt.var.clone(),
                         mapping: adt
@@ -284,66 +197,29 @@ impl Schema {
                             })
                             .collect(),
                     }),
-                    items: None,
-                    r#enum: Vec::new(),
-                    format: None,
-                    r#const: None,
                     default: default,
-                    _ref: None,
+                    ..Default::default()
                 }
             }
             Def::Seq(seq) => Schema {
                 r#type: Some("array".to_string()),
-                properties: HashMap::new(),
-                additional_properties: None,
-                required: Vec::new(),
-                nullable: false,
-                all_of: Vec::new(),
-                one_of: Vec::new(),
-                discriminator: None,
                 items: Some(Box::new(Schema::of_desc(
                     &seq.item,
                     "items".to_string(),
                     None,
                     context,
                 ))),
-                r#enum: Vec::new(),
-                format: None,
-                r#const: None,
                 default: default,
-                _ref: None,
+                ..Default::default()
             },
             Def::Str(_) => Schema {
                 r#type: Some("string".to_string()),
-                properties: HashMap::new(),
-                additional_properties: None,
-                required: Vec::new(),
-                nullable: false,
-                all_of: Vec::new(),
-                one_of: Vec::new(),
-                discriminator: None,
-                items: None,
-                r#enum: Vec::new(),
-                format: None,
-                r#const: None,
                 default: default,
-                _ref: None,
+                ..Default::default()
             },
             Def::Struct(_) => Schema {
-                r#type: None,
-                properties: HashMap::new(),
-                additional_properties: None,
-                required: Vec::new(),
-                nullable: false,
-                all_of: Vec::new(),
-                one_of: Vec::new(),
-                discriminator: None,
-                items: None,
-                r#enum: Vec::new(),
-                format: None,
-                r#const: None,
                 default: default,
-                _ref: None,
+                ..Default::default()
             },
         }
     }
@@ -367,20 +243,8 @@ impl Schema {
 
     fn of_ref(r#ref: &Ref) -> Schema {
         Schema {
-            r#type: None,
-            properties: HashMap::new(),
-            additional_properties: None,
-            required: Vec::new(),
-            nullable: false,
-            all_of: Vec::new(),
-            one_of: Vec::new(),
-            discriminator: None,
-            items: None,
-            r#enum: Vec::new(),
-            format: None,
-            r#const: None,
-            default: None,
             _ref: Some(Schema::openapi_path(r#ref)),
+            ..Default::default()
         }
     }
 
@@ -616,7 +480,6 @@ impl Schema {
                 .iter()
                 .flat_map(|s| s.required.clone())
                 .collect(),
-            nullable: false,
             all_of: {
                 let mut all_of: Vec<_> = schema
                     .all_of
@@ -626,14 +489,11 @@ impl Schema {
                 all_of.append(&mut all_of.iter().flat_map(|ss| ss.all_of.clone()).collect());
                 all_of
             },
-            one_of: Vec::new(),
             discriminator: schema.discriminator,
             items: schema.items,
             r#enum: schema.r#enum,
-            format: None,
-            r#const: None,
-            default: None,
             _ref: schema._ref,
+            ..Default::default()
         }
     }
 }
