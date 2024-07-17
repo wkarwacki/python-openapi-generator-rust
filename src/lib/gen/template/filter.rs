@@ -15,7 +15,8 @@ impl HelperDef for FilterNonconst {
         _: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
         let defs: HashMap<String, Def> =
-            serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap_or(Default::default());
+            serde_json::from_value(h.param(0).unwrap().value().clone())
+                .unwrap_or(Default::default());
         Ok(Value::Array(
             defs.iter()
                 .filter(|(_name, def)| match def {
@@ -40,8 +41,8 @@ impl HelperDef for FilterOpParamsByLoc {
         _: &'rc handlebars::Context,
         _: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
-        let op_params: Vec<OpParam> =
-            serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap_or(Default::default());
+        let op_params: Vec<OpParam> = serde_json::from_value(h.param(0).unwrap().value().clone())
+            .unwrap_or(Default::default());
         let loc: String = serde_json::from_value(h.param(1).unwrap().value().clone()).unwrap();
         Ok(Value::Array(
             op_params
