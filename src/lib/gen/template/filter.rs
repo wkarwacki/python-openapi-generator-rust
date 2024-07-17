@@ -15,7 +15,7 @@ impl HelperDef for FilterNonconst {
         _: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
         let defs: HashMap<String, Def> =
-            serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
+            serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap_or(Default::default());
         Ok(Value::Array(
             defs.iter()
                 .filter(|(_name, def)| match def {
