@@ -35,12 +35,7 @@ impl Response {
                         name.clone(),
                         match meta {
                             Desc::Def(def) => RefOr::Item(Header {
-                                schema: Schema::of_def(
-                                    def.clone(),
-                                    name.to_string(),
-                                    None,
-                                    context,
-                                ),
+                                schema: Schema::of_def(def.clone(), name, None, context),
                             }),
                             Desc::Ref(r#ref) => RefOr::Ref {
                                 r#ref: Schema::openapi_path(r#ref),

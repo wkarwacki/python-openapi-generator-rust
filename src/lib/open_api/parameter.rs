@@ -74,7 +74,7 @@ impl Parameter {
                 required: op_param.default.is_none(),
                 schema: Schema::of_desc(
                     &op_param.desc,
-                    "CookieParam".to_string(),
+                    "CookieParam",
                     op_param.clone().default,
                     context,
                 ),
@@ -84,7 +84,7 @@ impl Parameter {
                 required: op_param.default.is_none(),
                 schema: Schema::of_desc(
                     &op_param.desc,
-                    "HeaderParam".to_string(),
+                    "HeaderParam",
                     op_param.clone().default,
                     context,
                 ),
@@ -94,7 +94,7 @@ impl Parameter {
                 required: op_param.default.is_none(),
                 schema: Schema::of_desc(
                     &op_param.desc,
-                    "PathParam".to_string(),
+                    "PathParam",
                     if op_param.clone().default == Some(Value::Null) {
                         None
                     } else {
@@ -108,7 +108,7 @@ impl Parameter {
                 required: op_param.default.is_none(),
                 schema: Schema::of_desc(
                     &op_param.desc,
-                    "QueryParam".to_string(),
+                    "QueryParam",
                     op_param.clone().default,
                     context,
                 ),

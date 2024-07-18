@@ -47,7 +47,7 @@ impl Components {
                                             });
                                             vec.push(Schema::of_def(
                                                 Obj(subtype),
-                                                subname.clone(),
+                                                &subname,
                                                 None,
                                                 context,
                                             ));
@@ -123,7 +123,7 @@ impl Components {
                                                 var_name.to_string(),
                                                 Schema::of_var(
                                                     &Box::new(var.clone()),
-                                                    var_name.to_string(),
+                                                    var_name,
                                                     context,
                                                 ),
                                             )
@@ -153,7 +153,7 @@ impl Components {
             .map(|(name, def)| {
                 (
                     name.clone(),
-                    Schema::of_def(def.clone(), name.clone(), None, context),
+                    Schema::of_def(def.clone(), name, None, context),
                 )
             })
             .collect();

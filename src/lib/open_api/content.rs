@@ -18,7 +18,7 @@ impl Content {
         let mut val = HashMap::new();
         val.insert(
             Mime::of(req.form.clone()),
-            MediaType::of(req.desc.clone(), context),
+            MediaType::of(&req.desc, context),
         );
         Content { val: val }
     }
@@ -26,7 +26,7 @@ impl Content {
         let mut val = HashMap::new();
         val.insert(
             Mime::of(res.form.clone()),
-            MediaType::of(res.desc.clone(), context),
+            MediaType::of(&res.desc, context),
         );
         Content { val: val }
     }

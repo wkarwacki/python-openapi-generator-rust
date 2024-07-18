@@ -11,14 +11,9 @@ pub(crate) struct MediaType {
 }
 
 impl MediaType {
-    pub(crate) fn of(desc: Desc, context: &Context) -> MediaType {
+    pub(crate) fn of(desc: &Desc, context: &Context) -> MediaType {
         MediaType {
-            schema: RefOr::Item(Schema::of_desc(
-                &desc,
-                "MediaType".to_string(),
-                None,
-                context,
-            )),
+            schema: RefOr::Item(Schema::of_desc(desc, "MediaType", None, context)),
         }
     }
 }

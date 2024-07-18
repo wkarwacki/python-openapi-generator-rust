@@ -66,7 +66,7 @@ pub(crate) struct Schema {
 impl Schema {
     pub(crate) fn of_def(
         def: Def,
-        name: String,
+        name: &str,
         default: Option<Value>,
         context: &Context,
     ) -> Schema {
@@ -125,7 +125,7 @@ impl Schema {
                 r#type: Some("object".to_string()),
                 additional_properties: Some(Box::new(Schema::of_desc(
                     &map.val,
-                    "additionalProperties".to_string(),
+                    "additionalProperties",
                     None,
                     context,
                 ))),
@@ -142,9 +142,7 @@ impl Schema {
                     properties: if obj.mix.is_empty() {
                         obj.vars
                             .iter()
-                            .map(|(name, var)| {
-                                (name.clone(), Schema::of_var(var, name.clone(), context))
-                            })
+                            .map(|(name, var)| (name.clone(), Schema::of_var(var, name, context)))
                             .collect()
                     } else {
                         HashMap::new()
@@ -169,7 +167,7 @@ impl Schema {
                                     .vars
                                     .iter()
                                     .map(|(name, var)| {
-                                        (name.clone(), Schema::of_var(var, name.clone(), context))
+                                        (name.clone(), Schema::of_var(var, name, context))
                                     })
                                     .collect(),
                                 required: obj
@@ -203,12 +201,7 @@ impl Schema {
             }
             Def::Seq(seq) => Schema {
                 r#type: Some("array".to_string()),
-                items: Some(Box::new(Schema::of_desc(
-                    &seq.item,
-                    "items".to_string(),
-                    None,
-                    context,
-                ))),
+                items: Some(Box::new(Schema::of_desc(&seq.item, "items", None, context))),
                 default: default,
                 ..Default::default()
             },
@@ -224,13 +217,13 @@ impl Schema {
         }
     }
 
-    pub(crate) fn of_var(var: &Box<Var>, name: String, context: &Context) -> Schema {
+    pub(crate) fn of_var(var: &Box<Var>, name: &str, context: &Context) -> Schema {
         Schema::of_desc(&var.desc, name, None, context)
     }
 
     pub(crate) fn of_desc(
         desc: &Desc,
-        name: String,
+        name: &str,
         default: Option<Value>,
         context: &Context,
     ) -> Schema {
