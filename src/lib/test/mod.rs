@@ -7,4 +7,4 @@ mod type_params;
 mod types;
 mod vars;
 
-pub mod util;
+pub(crate) mod util;

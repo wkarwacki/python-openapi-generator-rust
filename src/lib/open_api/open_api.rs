@@ -14,7 +14,7 @@ use std::collections::HashMap;
 use typetag::serde;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct OpenApi {
+pub(crate) struct OpenApi {
     #[serde(default)]
     #[serde(skip_serializing_if = "HashMap::is_empty")]
     pub paths: HashMap<String, RefOr<Path>>,
@@ -24,7 +24,7 @@ pub struct OpenApi {
 }
 
 impl OpenApi {
-    pub fn of(pkg: Pkg, context: &Context) -> OpenApi {
+    pub(crate) fn of(pkg: Pkg, context: &Context) -> OpenApi {
         OpenApi {
             paths: pkg
                 .ops
@@ -35,7 +35,7 @@ impl OpenApi {
         }
     }
 
-    pub fn pkg(&self, context: &OpenApiContext) -> Pkg {
+    pub(crate) fn pkg(&self, context: &OpenApiContext) -> Pkg {
         let mut with_mapped_all_of: Vec<_> = self
             .components
             .schemas
@@ -71,7 +71,7 @@ impl OpenApi {
         }
     }
 
-    pub fn trust_ref(r#ref: String) -> Ref {
+    pub(crate) fn trust_ref(r#ref: String) -> Ref {
         let (src, path) = OpenApiContext::src_and_path(r#ref);
         let defs = DEFS;
         Ref {
@@ -83,7 +83,7 @@ impl OpenApi {
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Discriminator {
+pub(crate) struct Discriminator {
     pub(crate) property_name: String,
     pub(crate) mapping: HashMap<String, String>,
 }

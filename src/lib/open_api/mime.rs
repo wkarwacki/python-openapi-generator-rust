@@ -4,7 +4,7 @@ use serde_yaml::Value;
 use std::str::FromStr;
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
-pub struct Mime {
+pub(crate) struct Mime {
     pub val: mime::Mime,
 }
 
@@ -33,7 +33,7 @@ impl Serialize for Mime {
 }
 
 impl Mime {
-    pub fn of(string: Option<String>) -> Mime {
+    pub(crate) fn of(string: Option<String>) -> Mime {
         Mime {
             val: string
                 .map(|s| mime::Mime::from_str(s.as_str()).unwrap())

@@ -19,7 +19,7 @@ trait ParameterVal {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct ParameterValDefault {
+pub(crate) struct ParameterValDefault {
     pub name: String,
     #[serde(default, skip_serializing_if = "<&bool>::not")]
     pub required: bool,
@@ -38,7 +38,7 @@ impl ParameterVal for ParameterValDefault {
     }
 }
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct ParameterValPath {
+pub(crate) struct ParameterValPath {
     pub name: String,
     #[serde(default = "util::r#true", skip_serializing_if = "util::val")]
     pub required: bool,
@@ -59,7 +59,7 @@ impl ParameterVal for ParameterValPath {
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(tag = "in", rename_all = "camelCase")]
-pub enum Parameter {
+pub(crate) enum Parameter {
     Cookie(ParameterValDefault),
     Header(ParameterValDefault),
     Path(ParameterValPath),
@@ -67,16 +67,7 @@ pub enum Parameter {
 }
 
 impl Parameter {
-    pub fn schema(&self) -> Schema {
-        match self {
-            Cookie(val) => val.clone().schema,
-            Header(val) => val.clone().schema,
-            Path(val) => val.clone().schema,
-            Query(val) => val.clone().schema,
-        }
-    }
-
-    pub fn of(op_param: &OpParam, context: &Context) -> Parameter {
+    pub(crate) fn of(op_param: &OpParam, context: &Context) -> Parameter {
         match op_param.clone().loc.unwrap_or("query".to_string()).as_str() {
             "cookie" => Cookie(ParameterValDefault {
                 name: op_param.name.clone(),
@@ -127,7 +118,7 @@ impl Parameter {
     }
 
     // TIDY: extract processing for all below methods
-    pub fn op_param(&self, context: &OpenApiContext) -> OpParam {
+    pub(crate) fn op_param(&self, context: &OpenApiContext) -> OpParam {
         match self {
             Cookie(val) => OpParam {
                 name: val.name.clone(),

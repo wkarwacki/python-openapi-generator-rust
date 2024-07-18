@@ -9,7 +9,7 @@ pub static DEFS: &str = "defs";
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(tag = "type")]
 #[serde(rename_all = "lowercase")]
-pub enum Def {
+pub(crate) enum Def {
     Alias(Alias),
     Bool(Bool),
     Const(Const),
@@ -24,7 +24,7 @@ pub enum Def {
 }
 
 impl Def {
-    pub fn obj(&self) -> Option<&Obj> {
+    pub(crate) fn obj(&self) -> Option<&Obj> {
         match self {
             Def::Obj(obj) => Some(obj),
             _ => None,
@@ -33,34 +33,34 @@ impl Def {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Alias {
+pub(crate) struct Alias {
     #[serde(flatten)]
     pub r#ref: Ref,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Bool {
+pub(crate) struct Bool {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
     pub null: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Const {
+pub(crate) struct Const {
     pub val: Value,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     pub desc: Option<Box<Desc>>,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Dec {
+pub(crate) struct Dec {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
     pub null: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Enum {
+pub(crate) struct Enum {
     pub vals: EnumVals,
     #[serde(default, skip_serializing_if = "<&bool>::not")]
     pub null: bool,
@@ -68,13 +68,13 @@ pub struct Enum {
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(untagged)]
-pub enum EnumVals {
+pub(crate) enum EnumVals {
     Int(Vec<i64>),
     Str(Vec<String>),
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Int {
+pub(crate) struct Int {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
     pub null: bool,
@@ -82,7 +82,7 @@ pub struct Int {
 
 // TODO_LATER: for http gen, validation, whether a key is string-like
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Map {
+pub(crate) struct Map {
     pub key: Desc,
     pub val: Desc,
     #[serde(default)]
@@ -91,7 +91,7 @@ pub struct Map {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Obj {
+pub(crate) struct Obj {
     #[serde(default)]
     #[serde(skip_serializing_if = "Option::is_none")]
     pub ext: Option<Ext>,
@@ -109,7 +109,7 @@ pub struct Obj {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Seq {
+pub(crate) struct Seq {
     pub item: Desc,
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
@@ -117,11 +117,11 @@ pub struct Seq {
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Str {
+pub(crate) struct Str {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
     pub null: bool,
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Struct {}
+pub(crate) struct Struct {}

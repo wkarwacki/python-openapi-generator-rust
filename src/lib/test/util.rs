@@ -1,14 +1,14 @@
 use crate::{
     do_main, from_open_api,
+    lib::util::{read_t, write},
     open_api::open_api::OpenApi,
     pkg::Pkg,
-    to_open_api,
-    util::{read_t, write},
-    Cli, Cmd, Lang, Layout, Role,
+    to_open_api, Cli, Cmd, Lang, Layout, Role,
 };
 use convert_case::{Case, Casing};
 
-pub fn from_open_api_test_fn(name: &str) {
+#[allow(dead_code)]
+pub(crate) fn from_open_api_test_fn(name: &str) {
     let pkgs = from_open_api(
         ("src/lib/test/".to_string() + name + "-open-api.yml").into(),
         Layout::Default,
@@ -25,7 +25,8 @@ pub fn from_open_api_test_fn(name: &str) {
     assert_eq!(pkg, &expected);
 }
 
-pub fn to_open_api_test_fn(name: &str) {
+#[allow(dead_code)]
+pub(crate) fn to_open_api_test_fn(name: &str) {
     let open_api = to_open_api(("src/lib/test/".to_string() + name + "-trust.yml").into());
 
     write(
@@ -38,7 +39,8 @@ pub fn to_open_api_test_fn(name: &str) {
     assert_eq!(open_api, expected);
 }
 
-pub fn trust_only_test_fn(name: &str) {
+#[allow(dead_code)]
+pub(crate) fn trust_only_test_fn(name: &str) {
     let pkg: Pkg = read_t(("src/lib/test/".to_string() + name + "-trust-only.yml").into());
 
     write(
@@ -51,7 +53,8 @@ pub fn trust_only_test_fn(name: &str) {
     assert_eq!(pkg, expected);
 }
 
-pub fn gen_test(generator: Lang, role: Role, input: String) {
+#[allow(dead_code)]
+pub(crate) fn gen_test(generator: Lang, role: Role, input: String) {
     match generator {
         Lang::Kotlin => {}
         Lang::Python => do_gen_test(generator, role, input),
@@ -60,7 +63,8 @@ pub fn gen_test(generator: Lang, role: Role, input: String) {
     };
 }
 
-fn do_gen_test(generator: Lang, role: Role, input: String) {
+#[allow(dead_code)]
+pub(crate) fn do_gen_test(generator: Lang, role: Role, input: String) {
     let role_str: &str = role.clone().into();
     let output = "test/default/gens/".to_string()
         + match generator {

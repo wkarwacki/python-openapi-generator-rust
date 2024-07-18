@@ -27,81 +27,47 @@ use std::{
 use strum_macros::IntoStaticStr;
 use typetag::serde;
 
-pub mod adt {
-    pub use crate::lib::adt::*;
-}
+pub mod adt {}
 
-pub mod carrier {
-    pub use crate::lib::carrier::*;
-}
+pub mod carrier {}
 
-pub mod context {
-    pub use crate::lib::context::*;
-}
+pub mod context {}
 
-pub mod def {
-    pub use crate::lib::def::*;
-}
+pub mod def {}
 
-pub mod desc {
-    pub use crate::lib::desc::*;
-}
+pub mod desc {}
 
-pub mod ext {
-    pub use crate::lib::ext::*;
-}
+pub mod ext {}
 
 pub mod open_api {
-    pub use crate::lib::open_api::*;
+    pub(crate) use crate::lib::open_api::*;
 }
 
 pub mod pkg {
-    pub use crate::lib::pkg::*;
+    pub(crate) use crate::lib::pkg::*;
 }
 
-pub mod op {
-    pub use crate::lib::op::*;
-}
+pub mod op {}
 
-pub mod r#ref {
-    pub use crate::lib::r#ref::*;
-}
+pub mod r#ref {}
 
-pub mod test {
-    pub use crate::lib::test::*;
-}
+pub mod test {}
 
-pub mod util {
-    pub use crate::lib::util::*;
-}
+pub mod var {}
 
-pub mod var {
-    pub use crate::lib::var::*;
-}
+pub mod op_param {}
 
-pub mod op_param {
-    pub use crate::lib::op_param::*;
-}
+pub mod res {}
 
-pub mod res {
-    pub use crate::lib::res::*;
-}
-
-pub mod req {
-    pub use crate::lib::req::*;
-}
+pub mod req {}
 
 pub mod gen {
-    pub use crate::lib::gen::*;
+    pub(crate) use crate::lib::gen::*;
 }
 
-pub mod meta {
-    pub use crate::lib::meta::*;
-}
+pub mod meta {}
 
-pub mod validation {
-    pub use crate::lib::validation::*;
-}
+pub mod validation {}
 
 pub mod lib {
     pub mod adt;

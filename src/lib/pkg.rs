@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fmt::Debug};
 
 #[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Pkg {
+pub(crate) struct Pkg {
     #[serde(default)]
     #[serde(skip_serializing_if = "HashMap::is_empty")]
     pub ops: HashMap<String, Vec<Op>>,

@@ -1,14 +1,14 @@
 use serde::{de::DeserializeOwned, Serialize};
 use std::{fs::File, io::Read, path::PathBuf};
 
-pub fn read(path: PathBuf) -> String {
+pub(crate) fn read(path: PathBuf) -> String {
     let mut file = File::open(&path).unwrap();
     let mut content = String::new();
     file.read_to_string(&mut content).unwrap();
     content
 }
 
-pub fn read_t<T>(path: PathBuf) -> T
+pub(crate) fn read_t<T>(path: PathBuf) -> T
 where
     T: DeserializeOwned,
 {
@@ -16,7 +16,7 @@ where
     serde_yaml::from_str(&content).unwrap()
 }
 
-pub fn write<T>(t: T, path: PathBuf)
+pub(crate) fn write<T>(t: T, path: PathBuf)
 where
     T: Serialize,
 {
@@ -28,10 +28,10 @@ where
     serde_yaml::to_writer(out, &t).unwrap();
 }
 
-pub fn val(b: &bool) -> bool {
+pub(crate) fn val(b: &bool) -> bool {
     *b == true
 }
 
-pub fn r#true() -> bool {
+pub(crate) fn r#true() -> bool {
     true
 }

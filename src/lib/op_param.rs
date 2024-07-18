@@ -3,7 +3,7 @@ use serde::{Deserialize, Deserializer, Serialize};
 use serde_yaml::Value;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct OpParam {
+pub(crate) struct OpParam {
     pub loc: Option<String>,
     pub name: String,
     #[serde(flatten)]

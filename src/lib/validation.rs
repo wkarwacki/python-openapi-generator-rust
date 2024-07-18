@@ -1,4 +1,4 @@
-pub fn ensure<F>(f: F)
+pub(crate) fn ensure<F>(f: F)
 where
     F: Fn() -> bool,
 {

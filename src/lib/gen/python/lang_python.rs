@@ -16,7 +16,7 @@ use serde_json::Value;
 use std::path::PathBuf;
 
 #[derive(Clone)]
-pub struct LangPython {
+pub(crate) struct LangPython {
     pub gen_cfg: GenCfg,
     pub feature: String,
     pub handlebars: Handlebars<'static>,
@@ -32,7 +32,7 @@ impl LangPython {
         ]
     }
 
-    pub fn dto_name_template() -> String {
+    pub(crate) fn dto_name_template() -> String {
         "{{val}}Dto".to_string()
     }
 }

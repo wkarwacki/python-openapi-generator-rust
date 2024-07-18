@@ -3,19 +3,19 @@ use serde_yaml::Value;
 use std::{collections::HashMap, fs, path::PathBuf};
 
 #[derive(Clone, Debug)]
-pub struct Context {
-    pub base: PathBuf,
+pub(crate) struct Context {
+    pub _base: PathBuf,
     pub val: HashMap<Option<String>, Value>,
 }
 
 impl Context {
-    pub fn of(path: PathBuf) -> Context {
+    pub(crate) fn of(path: PathBuf) -> Context {
         let mut map = HashMap::new();
         let value: Value = read_t(path.clone());
         map.insert(None, value.clone());
         let base = path.parent().unwrap().to_path_buf();
         Self {
-            base: fs::canonicalize(base.clone()).unwrap(),
+            _base: fs::canonicalize(base.clone()).unwrap(),
             val: Self::get_of(value, base, map),
         }
     }
@@ -54,7 +54,7 @@ impl Context {
             _ => map,
         }
     }
-    pub fn resolve(&self, r#ref: Ref) -> Def {
+    pub(crate) fn resolve(&self, r#ref: Ref) -> Def {
         let (src, path) = r#ref.src_and_path();
         let value = path
             .iter()
@@ -62,7 +62,7 @@ impl Context {
         serde_yaml::from_value(value.clone()).unwrap()
     }
 
-    pub fn defs(&self) -> Vec<(Option<String>, Vec<String>)> {
+    pub(crate) fn defs(&self) -> Vec<(Option<String>, Vec<String>)> {
         self.val
             .iter()
             .map(|(src, value)| {

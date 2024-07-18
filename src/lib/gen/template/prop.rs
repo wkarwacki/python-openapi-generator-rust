@@ -3,7 +3,7 @@ use handlebars::{Handlebars, Helper, HelperDef, RenderContext, RenderError, Scop
 use serde_json::Value;
 
 #[derive(Clone)]
-pub struct HasKey;
+pub(crate) struct HasKey;
 
 impl HelperDef for HasKey {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -24,7 +24,7 @@ impl HelperDef for HasKey {
 }
 
 #[derive(Clone)]
-pub struct IsAlias;
+pub(crate) struct IsAlias;
 
 impl HelperDef for IsAlias {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -56,4 +56,4 @@ impl HelperDef for IsAlias {
 }
 
 #[derive(Clone)]
-pub struct IsPrimitive;
+pub(crate) struct IsPrimitive;

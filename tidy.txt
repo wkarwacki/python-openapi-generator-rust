@@ -1,9 +1,6 @@
 make all methods take &var instead of var, clone on call only when needed
 try to get rid of redundant clones
 
-use pub(crate) for package private access
-
-
 open_api:
 more typesafe open_api (look for open_api in; .rs on gh)
 
@@ -15,3 +12,4 @@ abstract python gen
 use !isPrimitive (or like) instead of type == obj | seq | map
 with_mapped_all_of etc. create an intermediary type that is not clear to the reader, consider creating specialized schema type for that
 https://github.com/serde-rs/serde/pull/2476
+get rid of #[allow(dead_code)] in test.util

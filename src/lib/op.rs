@@ -2,7 +2,7 @@ use crate::lib::{op_param::OpParam, req::Req, res::Res};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Op {
+pub(crate) struct Op {
     pub name: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub r#type: Option<String>,

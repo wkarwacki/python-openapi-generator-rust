@@ -14,7 +14,7 @@ use typetag::serde;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Operation {
+pub(crate) struct Operation {
     pub operation_id: String,
     #[serde(default, skip_serializing_if = "Vec::is_empty")]
     pub tags: Vec<String>,
@@ -27,7 +27,7 @@ pub struct Operation {
 }
 
 impl Operation {
-    pub fn of(
+    pub(crate) fn of(
         ops: &Vec<Op>,
         method: Method,
         common_op_params: &Vec<OpParam>,
@@ -65,7 +65,12 @@ impl Operation {
             })
     }
 
-    pub fn op(&self, method: Method, path_op_params: Vec<OpParam>, context: &OpenApiContext) -> Op {
+    pub(crate) fn op(
+        &self,
+        method: Method,
+        path_op_params: Vec<OpParam>,
+        context: &OpenApiContext,
+    ) -> Op {
         Op {
             name: self.operation_id.clone(),
             r#type: Some(method.to_string()),

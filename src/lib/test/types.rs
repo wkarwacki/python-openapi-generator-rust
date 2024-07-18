@@ -1,7 +1,9 @@
 #[cfg(test)]
 mod types {
     use crate::{
-        test::util::{from_open_api_test_fn, gen_test, to_open_api_test_fn, trust_only_test_fn},
+        lib::test::util::{
+            from_open_api_test_fn, gen_test, to_open_api_test_fn, trust_only_test_fn,
+        },
         Lang, Role,
     };
 

@@ -2,7 +2,7 @@ use crate::lib::{def::Def, desc::Desc, r#ref::Ref};
 use handlebars::{Handlebars, JsonValue};
 use std::path::PathBuf;
 
-pub trait Lang {
+pub(crate) trait Lang {
     fn handlebars(&self) -> Handlebars;
     fn out_dir(&self) -> PathBuf;
     fn module(&self) -> String;
@@ -19,7 +19,7 @@ pub trait Lang {
 
 pub static DTO_NAME_TEMPLATE_NAME: &str = "dtoName";
 
-pub fn inner(desc: Desc, suffix: &str, name: Option<String>, lang: Box<dyn Lang>) -> String {
+pub(crate) fn inner(desc: Desc, suffix: &str, name: Option<String>, lang: Box<dyn Lang>) -> String {
     match desc {
         Desc::Def(def) => lang.fmt_opt(
             lang.fmt_type(

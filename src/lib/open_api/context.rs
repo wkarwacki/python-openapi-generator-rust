@@ -4,14 +4,14 @@ use serde_yaml::Value;
 use std::{collections::HashMap, fs, path::PathBuf};
 
 #[derive(Debug)]
-pub struct Context {
-    pub base: PathBuf,
+pub(crate) struct Context {
+    pub _base: PathBuf,
     pub val: HashMap<Option<String>, Value>,
 }
 
 impl Context {
     // FIXME_LATER: clean up algorithm + it should only take nodes that are referenced, not whole files
-    pub fn of(path: PathBuf) -> Self {
+    pub(crate) fn of(path: PathBuf) -> Self {
         let mut map = HashMap::new();
         let value: Value = read_t(path.clone());
         map.insert(None, value.clone());
@@ -22,7 +22,7 @@ impl Context {
         let base = path.parent().unwrap().to_path_buf();
         Self::get_of(value, base.clone(), &mut map);
         Self {
-            base: fs::canonicalize(base.clone()).unwrap(),
+            _base: fs::canonicalize(base.clone()).unwrap(),
             val: map,
         }
     }
@@ -57,7 +57,7 @@ impl Context {
     }
 
     // TODO: REFACTOR
-    pub fn resolve<T: de::DeserializeOwned>(&self, r#ref: String) -> T {
+    pub(crate) fn resolve<T: de::DeserializeOwned>(&self, r#ref: String) -> T {
         let (src, path) = Self::src_and_path(r#ref.clone());
         let value = path
             .split('/')
@@ -89,7 +89,7 @@ impl Context {
         serde_yaml::from_value(result).unwrap()
     }
 
-    pub fn src_and_path(r#ref: String) -> (Option<String>, String) {
+    pub(crate) fn src_and_path(r#ref: String) -> (Option<String>, String) {
         let split: Vec<_> = r#ref.split('#').collect();
         let src = if split[0].is_empty() {
             None

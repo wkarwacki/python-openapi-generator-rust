@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
 use std::convert::identity;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Path {
+pub(crate) struct Path {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub summary: Option<String>,
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -32,7 +32,7 @@ pub struct Path {
 }
 
 impl Path {
-    pub fn operations(&self) -> Vec<Operation> {
+    pub(crate) fn operations(&self) -> Vec<Operation> {
         vec![
             self.get.clone(),
             self.put.clone(),
@@ -44,7 +44,7 @@ impl Path {
         .filter_map(identity)
         .collect()
     }
-    pub fn of(ops: &Vec<Op>, context: &Context) -> Path {
+    pub(crate) fn of(ops: &Vec<Op>, context: &Context) -> Path {
         let common_op_params: Vec<_> = ops
             .iter()
             .fold(None as Option<Vec<OpParam>>, |vec, op| match vec {
@@ -75,7 +75,7 @@ impl Path {
         }
     }
 
-    pub fn ops(&self, context: &OpenApiContext) -> Vec<Op> {
+    pub(crate) fn ops(&self, context: &OpenApiContext) -> Vec<Op> {
         let mut ops = vec![];
         let path_op_params: Vec<_> = self
             .parameters

@@ -2,7 +2,7 @@ use crate::lib::{carrier::Carrier, desc::Desc, meta::Meta};
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Res {
+pub(crate) struct Res {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub form: Option<String>,
     #[serde(flatten)]

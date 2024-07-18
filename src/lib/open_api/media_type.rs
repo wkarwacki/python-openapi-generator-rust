@@ -6,12 +6,12 @@ use crate::lib::{
 use serde::{Deserialize, Serialize};
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct MediaType {
+pub(crate) struct MediaType {
     pub schema: RefOr<Schema>,
 }
 
 impl MediaType {
-    pub fn of(desc: Desc, context: &Context) -> MediaType {
+    pub(crate) fn of(desc: Desc, context: &Context) -> MediaType {
         MediaType {
             schema: RefOr::Item(Schema::of_desc(
                 &desc,

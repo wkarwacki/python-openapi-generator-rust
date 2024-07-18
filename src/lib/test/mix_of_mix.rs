@@ -1,7 +1,7 @@
 #[cfg(test)]
 mod mix {
     use crate::{
-        test::util::{from_open_api_test_fn, gen_test},
+        lib::test::util::{from_open_api_test_fn, gen_test, to_open_api_test_fn},
         Lang, Role,
     };
 

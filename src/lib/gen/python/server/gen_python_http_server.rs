@@ -14,7 +14,7 @@ use serde_json::json;
 use std::{collections::HashMap, path::PathBuf};
 
 #[derive(Clone)]
-pub struct GenPythonHttpServer {
+pub(crate) struct GenPythonHttpServer {
     pub lang: LangPython,
 }
 

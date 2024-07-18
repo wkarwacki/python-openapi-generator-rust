@@ -6,7 +6,7 @@ use handlebars::{
 use serde_json::Value;
 
 #[derive(Clone)]
-pub struct FmtClass {
+pub(crate) struct FmtClass {
     pub gen: Box<dyn Gen>,
 }
 
@@ -38,7 +38,7 @@ impl HelperDef for FmtClass {
 }
 
 #[derive(Clone)]
-pub struct FmtEnum {
+pub(crate) struct FmtEnum {
     pub gen: Box<dyn Gen>,
 }
 
@@ -60,7 +60,7 @@ impl HelperDef for FmtEnum {
 }
 
 #[derive(Clone)]
-pub struct FmtName {
+pub(crate) struct FmtName {
     pub gen: Box<dyn Gen>,
 }
 
@@ -82,7 +82,7 @@ impl HelperDef for FmtName {
 }
 
 #[derive(Clone)]
-pub struct FmtOpt {
+pub(crate) struct FmtOpt {
     pub gen: Box<dyn Gen>,
 }
 
@@ -103,7 +103,7 @@ impl HelperDef for FmtOpt {
 }
 
 #[derive(Clone)]
-pub struct FmtSrcIfPresent {
+pub(crate) struct FmtSrcIfPresent {
     pub gen: Box<dyn Gen>,
 }
 
@@ -128,7 +128,7 @@ impl HelperDef for FmtSrcIfPresent {
 }
 
 #[derive(Clone)]
-pub struct FmtType {
+pub(crate) struct FmtType {
     pub gen: Box<dyn Gen>,
 }
 
@@ -160,7 +160,7 @@ impl HelperDef for FmtType {
 }
 
 #[derive(Clone)]
-pub struct FmtValue {
+pub(crate) struct FmtValue {
     pub gen: Box<dyn Gen>,
 }
 

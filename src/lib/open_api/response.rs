@@ -14,7 +14,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Response {
+pub(crate) struct Response {
     pub description: String,
     pub content: Option<Content>,
     #[serde(default, skip_serializing_if = "HashMap::is_empty")]
@@ -22,7 +22,7 @@ pub struct Response {
 }
 
 impl Response {
-    pub fn of(res: &Res, status_code: StatusCode, context: &Context) -> Response {
+    pub(crate) fn of(res: &Res, status_code: StatusCode, context: &Context) -> Response {
         Response {
             description: status_code.val.to_string(),
             content: Some(Content::of_res(res, context)),
@@ -52,7 +52,7 @@ impl Response {
                 .collect(),
         }
     }
-    pub fn res(&self, context: &OpenApiContext) -> Option<Res> {
+    pub(crate) fn res(&self, context: &OpenApiContext) -> Option<Res> {
         self.clone().content.map(|content| {
             let entries = content.val;
             ensure(|| entries.len() == 1);

@@ -11,7 +11,7 @@ use serde_json::Value;
 use std::collections::HashSet;
 
 #[derive(Clone)]
-pub struct Parents;
+pub(crate) struct Parents;
 
 impl HelperDef for Parents {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -31,7 +31,7 @@ impl HelperDef for Parents {
 }
 
 #[derive(Clone)]
-pub struct Resolve {
+pub(crate) struct Resolve {
     pub context: Context,
 }
 
@@ -58,7 +58,7 @@ impl HelperDef for Resolve {
 }
 
 #[derive(Clone)]
-pub struct TypeArgs;
+pub(crate) struct TypeArgs;
 
 impl HelperDef for TypeArgs {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -83,7 +83,7 @@ impl HelperDef for TypeArgs {
 }
 
 #[derive(Clone)]
-pub struct TypeParams;
+pub(crate) struct TypeParams;
 
 impl HelperDef for TypeParams {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -110,7 +110,7 @@ impl HelperDef for TypeParams {
 }
 
 #[derive(Clone)]
-pub struct ValueDef {}
+pub(crate) struct ValueDef {}
 
 impl HelperDef for ValueDef {
     fn call_inner<'reg: 'rc, 'rc>(

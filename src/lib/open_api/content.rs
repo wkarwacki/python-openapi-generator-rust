@@ -8,13 +8,13 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Content {
+pub(crate) struct Content {
     #[serde(flatten)]
     pub val: HashMap<Mime, MediaType>,
 }
 
 impl Content {
-    pub fn of_req(req: &Req, context: &Context) -> Content {
+    pub(crate) fn of_req(req: &Req, context: &Context) -> Content {
         let mut val = HashMap::new();
         val.insert(
             Mime::of(req.form.clone()),
@@ -22,7 +22,7 @@ impl Content {
         );
         Content { val: val }
     }
-    pub fn of_res(res: &Res, context: &Context) -> Content {
+    pub(crate) fn of_res(res: &Res, context: &Context) -> Content {
         let mut val = HashMap::new();
         val.insert(
             Mime::of(res.form.clone()),

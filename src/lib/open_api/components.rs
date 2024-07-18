@@ -13,7 +13,7 @@ use std::collections::HashMap;
 pub static COMPONENTS: &str = "components";
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Components {
+pub(crate) struct Components {
     pub schemas: HashMap<String, Schema>,
 }
 
@@ -26,10 +26,10 @@ impl Default for Components {
 }
 
 impl Components {
-    pub fn is_empty(&self) -> bool {
+    pub(crate) fn is_empty(&self) -> bool {
         self.schemas.is_empty()
     }
-    pub fn of(defs: HashMap<String, Def>, context: &Context) -> Components {
+    pub(crate) fn of(defs: HashMap<String, Def>, context: &Context) -> Components {
         let with_synth_adt_refs_schemas: HashMap<_, _> = defs
             .iter()
             .flat_map(|(name, def)| {

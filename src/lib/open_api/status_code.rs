@@ -4,7 +4,7 @@ use serde_yaml::Value;
 use std::str::FromStr;
 
 #[derive(Clone, Debug, Eq, Hash, PartialEq)]
-pub struct StatusCode {
+pub(crate) struct StatusCode {
     pub val: http::StatusCode,
 }
 
@@ -36,7 +36,7 @@ impl Serialize for StatusCode {
 }
 
 impl StatusCode {
-    pub fn of(method: Method) -> StatusCode {
+    pub(crate) fn of(method: Method) -> StatusCode {
         match method {
             Method::GET => StatusCode {
                 val: http::StatusCode::OK,

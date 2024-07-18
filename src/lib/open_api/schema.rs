@@ -20,13 +20,13 @@ use std::{collections::HashMap, ops::Not};
 use typetag::serde;
 
 pub static SCHEMAS: &str = "schemas";
-pub fn schemas_path() -> String {
+pub(crate) fn schemas_path() -> String {
     format!("/{COMPONENTS}/{SCHEMAS}")
 }
 
 #[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 #[serde(rename_all = "camelCase")]
-pub struct Schema {
+pub(crate) struct Schema {
     #[serde(skip_serializing_if = "Option::is_none")]
     pub r#type: Option<String>,
     #[serde(skip_serializing_if = "HashMap::is_empty")]
@@ -228,7 +228,12 @@ impl Schema {
         Schema::of_desc(&var.desc, name, None, context)
     }
 
-    pub fn of_desc(desc: &Desc, name: String, default: Option<Value>, context: &Context) -> Schema {
+    pub(crate) fn of_desc(
+        desc: &Desc,
+        name: String,
+        default: Option<Value>,
+        context: &Context,
+    ) -> Schema {
         desc.r#ref()
             .as_ref()
             .cloned()
@@ -248,7 +253,7 @@ impl Schema {
         }
     }
 
-    pub fn openapi_path(r#ref: &Ref) -> String {
+    pub(crate) fn openapi_path(r#ref: &Ref) -> String {
         let (src, path) = r#ref.src_and_path();
         let mut result = path;
         result.remove(0);
@@ -395,7 +400,7 @@ impl Schema {
         }
     }
 
-    pub fn adt(&self, name: String, context: &OpenApiContext) -> Option<Adt> {
+    pub(crate) fn adt(&self, name: String, context: &OpenApiContext) -> Option<Adt> {
         self.clone().discriminator.map(|discriminator| Adt {
             var: discriminator.property_name.clone(),
             map: discriminator
@@ -437,7 +442,7 @@ impl Schema {
         })
     }
 
-    pub fn desc(self, name: String, context: &OpenApiContext) -> Desc {
+    pub(crate) fn desc(self, name: String, context: &OpenApiContext) -> Desc {
         self._ref
             .as_ref()
             .map(|r| Desc::Ref(OpenApi::trust_ref(r.clone())))

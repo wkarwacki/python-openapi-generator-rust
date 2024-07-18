@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Adt {
+pub(crate) struct Adt {
     pub var: String,
     #[serde(skip_serializing_if = "HashMap::is_empty")]
     pub map: HashMap<String, Obj>,

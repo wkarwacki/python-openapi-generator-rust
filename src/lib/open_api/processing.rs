@@ -1,7 +1,7 @@
 use serde_yaml::{Mapping, Value};
 use std::collections::HashMap;
 
-pub fn refs(value: &Value) -> Vec<String> {
+pub(crate) fn refs(value: &Value) -> Vec<String> {
     match value {
         Value::Mapping(map) => map
             .iter()
@@ -22,7 +22,7 @@ pub fn refs(value: &Value) -> Vec<String> {
     }
 }
 
-pub fn refs_rec(open_api: &Value, refs: Vec<String>) -> Value {
+pub(crate) fn refs_rec(open_api: &Value, refs: Vec<String>) -> Value {
     let mut visited = HashMap::new();
     get_refs_rec(open_api, &refs, &mut visited)
 }

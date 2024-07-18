@@ -4,7 +4,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Clone)]
-pub struct FilterNonconst;
+pub(crate) struct FilterNonconst;
 
 impl HelperDef for FilterNonconst {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -31,7 +31,7 @@ impl HelperDef for FilterNonconst {
 }
 
 #[derive(Clone)]
-pub struct FilterOpParamsByLoc;
+pub(crate) struct FilterOpParamsByLoc;
 
 impl HelperDef for FilterOpParamsByLoc {
     fn call_inner<'reg: 'rc, 'rc>(

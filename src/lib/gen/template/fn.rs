@@ -6,7 +6,7 @@ use handlebars::{
 use serde_json::Value;
 
 #[derive(Clone)]
-pub struct Json;
+pub(crate) struct Json;
 
 impl HelperDef for Json {
     fn call<'reg: 'rc, 'rc>(
@@ -25,7 +25,7 @@ impl HelperDef for Json {
 }
 
 #[derive(Clone)]
-pub struct Add;
+pub(crate) struct Add;
 
 impl HelperDef for Add {
     fn call_inner<'reg: 'rc, 'rc>(
@@ -70,7 +70,7 @@ impl HelperDef for Add {
 }
 
 #[derive(Clone)]
-pub struct ToFlatCase {}
+pub(crate) struct ToFlatCase {}
 
 impl HelperDef for ToFlatCase {
     fn call_inner<'reg: 'rc, 'rc>(

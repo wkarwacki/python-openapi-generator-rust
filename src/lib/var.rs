@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::ops::Not;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Var {
+pub(crate) struct Var {
     #[serde(flatten)]
     pub desc: Desc,
     #[serde(default)]

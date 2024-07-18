@@ -21,7 +21,7 @@ use serde_json::json;
 use sort::SortOptionalsLast;
 use std::{collections::HashMap, fs, path::PathBuf};
 
-pub trait Gen: DynClone + Send + Sync {
+pub(crate) trait Gen: DynClone + Send + Sync {
     fn lang(&self) -> Box<dyn Lang>;
     fn dtos(
         &self,
@@ -42,7 +42,7 @@ pub trait Gen: DynClone + Send + Sync {
 
 dyn_clone::clone_trait_object!(Gen);
 
-pub fn go(
+pub(crate) fn go(
     pkg: &Pkg,
     gen: Box<dyn Gen>,
     templates_path: Option<PathBuf>,
@@ -129,7 +129,7 @@ pub fn go(
     }
 }
 
-pub fn dto_name(string: String, lang: Box<dyn Lang>) -> String {
+pub(crate) fn dto_name(string: String, lang: Box<dyn Lang>) -> String {
     lang.handlebars()
         .render(DTO_NAME_TEMPLATE_NAME, &json!({ "val": string }))
         .unwrap()

@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
-pub struct Meta {
+pub(crate) struct Meta {
     #[serde(flatten)]
     pub value: HashMap<String, Desc>,
 }
@@ -17,7 +17,7 @@ impl Default for Meta {
 }
 
 impl Meta {
-    pub fn is_empty(&self) -> bool {
+    pub(crate) fn is_empty(&self) -> bool {
         self.value.is_empty()
     }
 }

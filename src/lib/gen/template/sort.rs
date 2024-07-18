@@ -4,7 +4,7 @@ use serde_json::Value;
 use std::collections::HashMap;
 
 #[derive(Clone)]
-pub struct SortOptionalsLast;
+pub(crate) struct SortOptionalsLast;
 
 impl HelperDef for SortOptionalsLast {
     fn call_inner<'reg: 'rc, 'rc>(

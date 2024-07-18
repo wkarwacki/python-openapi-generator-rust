@@ -13,7 +13,7 @@ use crate::lib::pkg::Pkg;
 use crate::lib::r#ref::Ref;
 
 #[derive(Clone)]
-pub struct Scala {
+pub(crate) struct Scala {
     pub gen_cfg: GenCfg,
     pub feature: String,
 }
