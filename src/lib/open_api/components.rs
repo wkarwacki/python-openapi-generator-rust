@@ -12,17 +12,9 @@ use std::collections::HashMap;
 
 pub static COMPONENTS: &str = "components";
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub(crate) struct Components {
     pub schemas: HashMap<String, Schema>,
-}
-
-impl Default for Components {
-    fn default() -> Self {
-        Components {
-            schemas: HashMap::new(),
-        }
-    }
 }
 
 impl Components {
