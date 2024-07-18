@@ -10,7 +10,7 @@ use convert_case::{Case, Casing};
 #[allow(dead_code)]
 pub(crate) fn from_open_api_test_fn(name: &str) {
     let pkgs = from_open_api(
-        ("src/lib/test/".to_string() + name + "-open-api.yml").into(),
+        &("src/lib/test/".to_string() + name + "-open-api.yml").into(),
         Layout::Default,
     );
     let pkg = pkgs.get(&None).unwrap();
@@ -20,35 +20,35 @@ pub(crate) fn from_open_api_test_fn(name: &str) {
         ("test/default/spec/".to_string() + name + "-from-open-api.yml").into(),
     );
 
-    let expected: Pkg = read_t(("src/lib/test/".to_string() + name + "-trust.yml").into());
+    let expected: Pkg = read_t(&("src/lib/test/".to_string() + name + "-trust.yml").into());
 
     assert_eq!(pkg, &expected);
 }
 
 #[allow(dead_code)]
 pub(crate) fn to_open_api_test_fn(name: &str) {
-    let open_api = to_open_api(("src/lib/test/".to_string() + name + "-trust.yml").into());
+    let open_api = to_open_api(&("src/lib/test/".to_string() + name + "-trust.yml").into());
 
     write(
         open_api.clone(),
         ("test/default/spec/".to_string() + name + "-to-open-api.yml").into(),
     );
 
-    let expected: OpenApi = read_t(("src/lib/test/".to_string() + name + "-open-api.yml").into());
+    let expected: OpenApi = read_t(&("src/lib/test/".to_string() + name + "-open-api.yml").into());
 
     assert_eq!(open_api, expected);
 }
 
 #[allow(dead_code)]
 pub(crate) fn trust_only_test_fn(name: &str) {
-    let pkg: Pkg = read_t(("src/lib/test/".to_string() + name + "-trust-only.yml").into());
+    let pkg: Pkg = read_t(&("src/lib/test/".to_string() + name + "-trust-only.yml").into());
 
     write(
         &pkg,
         ("test/default/spec/".to_string() + name + "-trust-only.yml").into(),
     );
 
-    let expected: Pkg = read_t(("src/lib/test/".to_string() + name + "-trust-only.yml").into());
+    let expected: Pkg = read_t(&("src/lib/test/".to_string() + name + "-trust-only.yml").into());
 
     assert_eq!(pkg, expected);
 }

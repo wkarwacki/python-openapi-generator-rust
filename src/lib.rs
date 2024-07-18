@@ -161,7 +161,7 @@ pub fn do_main(cli: Cli) {
             output,
             layout,
         } => {
-            let pkgs = from_open_api(input.clone(), layout);
+            let pkgs = from_open_api(&input, layout);
 
             pkgs.iter().for_each(|(src, pkg)| {
                 let p = output.to_string_lossy().to_string()
@@ -176,7 +176,7 @@ pub fn do_main(cli: Cli) {
             });
         }
         Cmd::ToOpenApi { input } => {
-            let open_api = to_open_api(input);
+            let open_api = to_open_api(&input);
 
             write(open_api, "out.yml".into())
         }
@@ -195,7 +195,7 @@ pub fn do_main(cli: Cli) {
                     module: None,
                     dto_name: None,
                 });
-            gen(input.clone(), lang, role, generator_config, templates_path)
+            gen(&input, lang, role, generator_config, &templates_path)
                 .iter()
                 .for_each(|(path, content)| {
                     let full_path = output.to_string_lossy().to_string()
@@ -219,8 +219,8 @@ pub fn do_main(cli: Cli) {
     }
 }
 
-fn from_open_api(input: PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg> {
-    let context = open_api::context::Context::of(input.clone());
+fn from_open_api(input: &PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg> {
+    let context = open_api::context::Context::of(input);
     context
         .val
         .iter()
@@ -303,20 +303,20 @@ fn from_open_api(input: PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg>
 }
 
 // TODO_LATER: make it work for multiple files
-fn to_open_api(input: PathBuf) -> OpenApi {
-    let pkg: Pkg = read_t(input.clone());
+fn to_open_api(input: &PathBuf) -> OpenApi {
+    let pkg: Pkg = read_t(input);
     OpenApi::of(pkg, &Context::of(input))
 }
 
 fn gen(
-    input: PathBuf,
+    input: &PathBuf,
     lang: Lang,
     role: Role,
     gen_cfg: GenCfg,
-    templates_path: Option<PathBuf>,
+    templates_path: &Option<PathBuf>,
 ) -> HashMap<PathBuf, String> {
-    let pkg: Pkg = read_t(input.clone());
-    let context = Context::of(input.clone());
+    let pkg: Pkg = read_t(input);
+    let context = Context::of(input);
 
     let gen = get_gen(lang, gen_cfg.clone(), input.clone(), role.clone());
 

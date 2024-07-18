@@ -1,14 +1,14 @@
 use serde::{de::DeserializeOwned, Serialize};
 use std::{fs::File, io::Read, path::PathBuf};
 
-pub(crate) fn read(path: PathBuf) -> String {
-    let mut file = File::open(&path).unwrap();
+pub(crate) fn read(path: &PathBuf) -> String {
+    let mut file = File::open(path).unwrap();
     let mut content = String::new();
     file.read_to_string(&mut content).unwrap();
     content
 }
 
-pub(crate) fn read_t<T>(path: PathBuf) -> T
+pub(crate) fn read_t<T>(path: &PathBuf) -> T
 where
     T: DeserializeOwned,
 {

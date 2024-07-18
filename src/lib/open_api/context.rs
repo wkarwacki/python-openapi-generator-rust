@@ -11,9 +11,9 @@ pub(crate) struct Context {
 
 impl Context {
     // FIXME_LATER: clean up algorithm + it should only take nodes that are referenced, not whole files
-    pub(crate) fn of(path: PathBuf) -> Self {
+    pub(crate) fn of(path: &PathBuf) -> Self {
         let mut map = HashMap::new();
-        let value: Value = read_t(path.clone());
+        let value: Value = read_t(path);
         map.insert(None, value.clone());
         map.insert(
             path.file_name().unwrap().to_str().map(|s| s.to_string()),
@@ -40,7 +40,7 @@ impl Context {
                     .for_each(|src| {
                         let base_src = base.to_string_lossy().to_string() + "/" + src.as_str();
                         if !map.contains_key(&Some(src.clone())) {
-                            let value: Value = read_t(base_src.into());
+                            let value: Value = read_t(&base_src.into());
                             map.insert(Some(src.clone()), value.clone());
                             Self::get_of(value, base.clone(), map);
                         }

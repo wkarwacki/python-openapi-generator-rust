@@ -45,7 +45,7 @@ dyn_clone::clone_trait_object!(Gen);
 pub(crate) fn go(
     pkg: &Pkg,
     gen: Box<dyn Gen>,
-    templates_path: Option<PathBuf>,
+    templates_path: &Option<PathBuf>,
     context: Context,
 ) -> HashMap<PathBuf, String> {
     let mut handlebars = Handlebars::new();
@@ -91,8 +91,11 @@ pub(crate) fn go(
     handlebars_misc_helpers::setup_handlebars(&mut handlebars);
     handlebars.set_strict_mode(false);
 
-    let mut merged_templates: HashMap<_, _> = templates(default_templates_path(gen.clone()));
-    let templates = templates_path.map(templates).unwrap_or(HashMap::new());
+    let mut merged_templates: HashMap<_, _> = templates(&default_templates_path(gen.clone()));
+    let templates: HashMap<String, String> = templates_path
+        .as_ref()
+        .map(templates)
+        .unwrap_or(Default::default());
     merged_templates.extend(templates);
 
     merged_templates.iter().for_each(|(name, template)| {
@@ -135,20 +138,20 @@ pub(crate) fn dto_name(string: String, lang: Box<dyn Lang>) -> String {
         .unwrap()
 }
 
-fn templates(path: PathBuf) -> HashMap<String, String> {
+fn templates(path: &PathBuf) -> HashMap<String, String> {
     fs::read_dir(path)
         .unwrap()
         .map(|entry| {
-            let path = entry.unwrap().path().clone();
+            let path = entry.unwrap().path();
             (
                 path.file_stem().unwrap().to_string_lossy().to_string(),
-                template(path),
+                template(&path),
             )
         })
         .collect()
 }
 
-fn template(path: PathBuf) -> String {
+fn template(path: &PathBuf) -> String {
     read(path)
 }
 

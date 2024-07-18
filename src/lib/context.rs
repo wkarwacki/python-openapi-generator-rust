@@ -9,21 +9,21 @@ pub(crate) struct Context {
 }
 
 impl Context {
-    pub(crate) fn of(path: PathBuf) -> Context {
+    pub(crate) fn of(path: &PathBuf) -> Context {
         let mut map = HashMap::new();
-        let value: Value = read_t(path.clone());
+        let value: Value = read_t(path);
         map.insert(None, value.clone());
         let base = path.parent().unwrap().to_path_buf();
         Self {
             _base: fs::canonicalize(base.clone()).unwrap(),
-            val: Self::get_of(value, base, map),
+            val: Self::get_of(&value, &base, &map),
         }
     }
 
     fn get_of(
-        value: Value,
-        base: PathBuf,
-        map: HashMap<Option<String>, Value>,
+        value: &Value,
+        base: &PathBuf,
+        map: &HashMap<Option<String>, Value>,
     ) -> HashMap<Option<String>, Value> {
         match value {
             Value::Mapping(mapping) => {
@@ -34,24 +34,22 @@ impl Context {
                     let mut new_map = map.clone();
                     new_map.insert(Some(src.to_string()), {
                         let value: Value =
-                            read_t((base.to_string_lossy().to_string() + "/" + src).into());
+                            read_t(&(base.to_string_lossy().to_string() + "/" + src).into());
                         value
                     });
                     new_map
                 } else {
                     mapping
                         .iter()
-                        .flat_map(|(_key, value)| {
-                            Self::get_of(value.clone(), base.clone(), map.clone())
-                        })
+                        .flat_map(|(_key, value)| Self::get_of(value, base, map))
                         .collect()
                 }
             }
             Value::Sequence(sequence) => sequence
                 .iter()
-                .flat_map(|value| Self::get_of(value.clone(), base.clone(), map.clone()))
+                .flat_map(|value| Self::get_of(value, base, map))
                 .collect::<HashMap<_, _>>(),
-            _ => map,
+            _ => map.clone(),
         }
     }
     pub(crate) fn resolve(&self, r#ref: Ref) -> Def {
