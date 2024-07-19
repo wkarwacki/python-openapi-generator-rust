@@ -172,13 +172,13 @@ pub fn do_main(cli: Cli) {
                         .as_str();
                 let path = Path::new(p.as_str());
                 fs::create_dir_all(path.parent().unwrap()).unwrap();
-                write(pkg, path.into());
+                write(pkg, &path.into());
             });
         }
         Cmd::ToOpenApi { input } => {
             let open_api = to_open_api(&input);
 
-            write(open_api, "out.yml".into())
+            write(open_api, &"out.yml".into())
         }
         Cmd::Generate {
             lang,

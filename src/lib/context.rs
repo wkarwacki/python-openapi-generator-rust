@@ -52,7 +52,7 @@ impl Context {
             _ => map.clone(),
         }
     }
-    pub(crate) fn resolve(&self, r#ref: Ref) -> Def {
+    pub(crate) fn resolve(&self, r#ref: &Ref) -> Def {
         let (src, path) = r#ref.src_and_path();
         let value = path
             .iter()

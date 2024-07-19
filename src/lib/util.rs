@@ -16,7 +16,7 @@ where
     serde_yaml::from_str(&content).unwrap()
 }
 
-pub(crate) fn write<T>(t: T, path: PathBuf)
+pub(crate) fn write<T>(t: T, path: &PathBuf)
 where
     T: Serialize,
 {

@@ -44,8 +44,7 @@ impl HelperDef for Resolve {
         _: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
         if let Ok(Desc::Ref(r#ref)) = serde_json::from_value(h.param(0).unwrap().value().clone()) {
-            let mut value: Value =
-                serde_json::to_value(self.context.resolve(r#ref.clone())).unwrap();
+            let mut value: Value = serde_json::to_value(self.context.resolve(&r#ref)).unwrap();
             value
                 .as_object_mut()
                 .unwrap()

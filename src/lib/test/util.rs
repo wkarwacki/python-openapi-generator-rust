@@ -17,7 +17,7 @@ pub(crate) fn from_open_api_test_fn(name: &str) {
 
     write(
         pkg,
-        ("test/default/spec/".to_string() + name + "-from-open-api.yml").into(),
+        &("test/default/spec/".to_string() + name + "-from-open-api.yml").into(),
     );
 
     let expected: Pkg = read_t(&("src/lib/test/".to_string() + name + "-trust.yml").into());
@@ -31,7 +31,7 @@ pub(crate) fn to_open_api_test_fn(name: &str) {
 
     write(
         open_api.clone(),
-        ("test/default/spec/".to_string() + name + "-to-open-api.yml").into(),
+        &("test/default/spec/".to_string() + name + "-to-open-api.yml").into(),
     );
 
     let expected: OpenApi = read_t(&("src/lib/test/".to_string() + name + "-open-api.yml").into());
@@ -45,7 +45,7 @@ pub(crate) fn trust_only_test_fn(name: &str) {
 
     write(
         &pkg,
-        ("test/default/spec/".to_string() + name + "-trust-only.yml").into(),
+        &("test/default/spec/".to_string() + name + "-trust-only.yml").into(),
     );
 
     let expected: Pkg = read_t(&("src/lib/test/".to_string() + name + "-trust-only.yml").into());
