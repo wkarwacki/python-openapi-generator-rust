@@ -25,17 +25,17 @@ pub(crate) trait Gen: DynClone + Send + Sync {
     fn lang(&self) -> Box<dyn Lang>;
     fn dtos(
         &self,
-        handlebars: Handlebars,
+        handlebars: &Handlebars,
         pkg: &Pkg,
         context: &Context,
-        templates: HashMap<String, String>,
+        templates: &HashMap<String, String>,
     ) -> HashMap<PathBuf, String>;
     fn ops(
         &self,
-        handlebars: Handlebars,
+        handlebars: &Handlebars,
         pkg: &Pkg,
         context: &Context,
-        templates: HashMap<String, String>,
+        templates: &HashMap<String, String>,
     ) -> HashMap<PathBuf, String>;
     fn src_dir(&self) -> PathBuf;
 }
@@ -113,12 +113,12 @@ pub(crate) fn go(
             .clone(),
     );
 
-    let dtos = gen.dtos(handlebars.clone(), pkg, context, merged_templates.clone());
+    let dtos = gen.dtos(&handlebars, pkg, context, &merged_templates);
 
     if pkg.ops.is_empty() {
         dtos
     } else {
-        let ops = gen.ops(handlebars, pkg, context, merged_templates);
+        let ops = gen.ops(&handlebars, pkg, context, &merged_templates);
         let mut result = dtos;
         ops.iter().for_each(|op| {
             result.insert(op.0.clone(), op.1.clone());

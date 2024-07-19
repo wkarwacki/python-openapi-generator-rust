@@ -27,10 +27,10 @@ impl Gen for GenPythonHttpServer {
     }
     fn dtos(
         &self,
-        handlebars: Handlebars,
+        handlebars: &Handlebars,
         pkg: &Pkg,
         context: &Context,
-        templates: HashMap<String, String>,
+        templates: &HashMap<String, String>,
     ) -> HashMap<PathBuf, String> {
         let out_dir = self.lang.out_dir().to_string_lossy().to_string();
         let mut defs: Vec<(String, Def, bool)> = Vec::new();
@@ -190,14 +190,14 @@ impl Gen for GenPythonHttpServer {
 
     fn ops(
         &self,
-        handlebars: Handlebars,
+        handlebars: &Handlebars,
         pkg: &Pkg,
         context: &Context,
-        templates: HashMap<String, String>,
+        templates: &HashMap<String, String>,
     ) -> HashMap<PathBuf, String> {
         let mut result = HashMap::new();
 
-        let dtos = self.dtos(handlebars.clone(), pkg, context, templates.clone());
+        let dtos = self.dtos(handlebars, pkg, context, templates);
         let imports = dtos
             .clone()
             .keys()
