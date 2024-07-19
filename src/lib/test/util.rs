@@ -54,7 +54,7 @@ pub(crate) fn trust_only_test_fn(name: &str) {
 }
 
 #[allow(dead_code)]
-pub(crate) fn gen_test(generator: Lang, role: Role, input: String) {
+pub(crate) fn gen_test(generator: Lang, role: Role, input: &str) {
     match generator {
         Lang::Kotlin => {}
         Lang::Python => do_gen_test(generator, role, input),
@@ -64,10 +64,10 @@ pub(crate) fn gen_test(generator: Lang, role: Role, input: String) {
 }
 
 #[allow(dead_code)]
-pub(crate) fn do_gen_test(generator: Lang, role: Role, input: String) {
+pub(crate) fn do_gen_test(lang: Lang, role: Role, input: &str) {
     let role_str: &str = role.clone().into();
     let output = "test/default/gens/".to_string()
-        + match generator {
+        + match lang {
             Lang::Kotlin => "kotlin/src/main/kotlin".to_string(),
             Lang::Python => "python/".to_string() + role_str.to_case(Case::Lower).as_str() + "/src",
             Lang::Scala => "scala/src/main/scala".to_string(),
@@ -76,7 +76,7 @@ pub(crate) fn do_gen_test(generator: Lang, role: Role, input: String) {
         .as_str();
     do_main(Cli {
         cmd: Cmd::Generate {
-            lang: generator,
+            lang,
             role,
             input: format!("src/lib/test/{input}").into(),
             output: output.into(),

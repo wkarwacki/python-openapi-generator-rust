@@ -17,11 +17,11 @@ mod req_res {
 
     #[test]
     fn gen_python_client_test() {
-        gen_test(Lang::Python, Role::Client, "req-res-trust.yml".to_string());
+        gen_test(Lang::Python, Role::Client, "req-res-trust.yml");
     }
 
     #[test]
     fn gen_python_server_test() {
-        gen_test(Lang::Python, Role::Server, "req-res-trust.yml".to_string());
+        gen_test(Lang::Python, Role::Server, "req-res-trust.yml");
     }
 }

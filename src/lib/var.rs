@@ -10,5 +10,3 @@ pub(crate) struct Var {
     #[serde(skip_serializing_if = "<&bool>::not")]
     pub opt: bool,
 }
-
-impl Var {}

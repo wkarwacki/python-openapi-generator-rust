@@ -17,19 +17,11 @@ mod op_params {
 
     #[test]
     fn gen_python_client_test() {
-        gen_test(
-            Lang::Python,
-            Role::Client,
-            "op-params-trust.yml".to_string(),
-        );
+        gen_test(Lang::Python, Role::Client, "op-params-trust.yml");
     }
 
     #[test]
     fn gen_python_server_test() {
-        gen_test(
-            Lang::Python,
-            Role::Server,
-            "op-params-trust.yml".to_string(),
-        );
+        gen_test(Lang::Python, Role::Server, "op-params-trust.yml");
     }
 }

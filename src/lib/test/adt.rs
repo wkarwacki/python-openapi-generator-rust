@@ -17,58 +17,26 @@ mod adt {
 
     #[test]
     fn gen_kotlin_test() {
-        gen_test(
-            Lang::Kotlin,
-            Role::Server,
-            "adt-from-open-api-trust.yml".to_string(),
-        );
-        gen_test(
-            Lang::Kotlin,
-            Role::Server,
-            "adt-to-open-api-trust.yml".to_string(),
-        );
+        gen_test(Lang::Kotlin, Role::Server, "adt-from-open-api-trust.yml");
+        gen_test(Lang::Kotlin, Role::Server, "adt-to-open-api-trust.yml");
     }
 
     #[test]
     fn gen_python_client_test() {
-        gen_test(
-            Lang::Python,
-            Role::Client,
-            "adt-from-open-api-trust.yml".to_string(),
-        );
-        gen_test(
-            Lang::Python,
-            Role::Client,
-            "adt-to-open-api-trust.yml".to_string(),
-        );
+        gen_test(Lang::Python, Role::Client, "adt-from-open-api-trust.yml");
+        gen_test(Lang::Python, Role::Client, "adt-to-open-api-trust.yml");
     }
 
     #[test]
     fn gen_python_server_test() {
-        gen_test(
-            Lang::Python,
-            Role::Server,
-            "adt-from-open-api-trust.yml".to_string(),
-        );
-        gen_test(
-            Lang::Python,
-            Role::Server,
-            "adt-to-open-api-trust.yml".to_string(),
-        );
+        gen_test(Lang::Python, Role::Server, "adt-from-open-api-trust.yml");
+        gen_test(Lang::Python, Role::Server, "adt-to-open-api-trust.yml");
     }
 
     #[test]
     fn gen_scala_test() {
-        gen_test(
-            Lang::Scala,
-            Role::Server,
-            "adt-from-open-api-trust.yml".to_string(),
-        );
-        gen_test(
-            Lang::Scala,
-            Role::Server,
-            "adt-to-open-api-trust.yml".to_string(),
-        );
+        gen_test(Lang::Scala, Role::Server, "adt-from-open-api-trust.yml");
+        gen_test(Lang::Scala, Role::Server, "adt-to-open-api-trust.yml");
     }
 
     #[test]
@@ -76,12 +44,8 @@ mod adt {
         gen_test(
             Lang::TypeScript,
             Role::Server,
-            "adt-from-open-api-trust.yml".to_string(),
+            "adt-from-open-api-trust.yml",
         );
-        gen_test(
-            Lang::TypeScript,
-            Role::Server,
-            "adt-to-open-api-trust.yml".to_string(),
-        );
+        gen_test(Lang::TypeScript, Role::Server, "adt-to-open-api-trust.yml");
     }
 }
