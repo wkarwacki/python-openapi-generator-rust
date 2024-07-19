@@ -27,14 +27,14 @@ pub(crate) trait Gen: DynClone + Send + Sync {
         &self,
         handlebars: Handlebars,
         pkg: &Pkg,
-        context: Context,
+        context: &Context,
         templates: HashMap<String, String>,
     ) -> HashMap<PathBuf, String>;
     fn ops(
         &self,
         handlebars: Handlebars,
         pkg: &Pkg,
-        context: Context,
+        context: &Context,
         templates: HashMap<String, String>,
     ) -> HashMap<PathBuf, String>;
     fn src_dir(&self) -> PathBuf;
@@ -44,9 +44,9 @@ dyn_clone::clone_trait_object!(Gen);
 
 pub(crate) fn go(
     pkg: &Pkg,
-    gen: Box<dyn Gen>,
+    gen: &Box<dyn Gen>,
     templates_path: &Option<PathBuf>,
-    context: Context,
+    context: &Context,
 ) -> HashMap<PathBuf, String> {
     let mut handlebars = Handlebars::new();
 
@@ -91,7 +91,7 @@ pub(crate) fn go(
     handlebars_misc_helpers::setup_handlebars(&mut handlebars);
     handlebars.set_strict_mode(false);
 
-    let mut merged_templates: HashMap<_, _> = templates(&default_templates_path(gen.clone()));
+    let mut merged_templates: HashMap<_, _> = templates(&default_templates_path(gen));
     let templates: HashMap<String, String> = templates_path
         .as_ref()
         .map(templates)
@@ -113,12 +113,7 @@ pub(crate) fn go(
             .clone(),
     );
 
-    let dtos = gen.dtos(
-        handlebars.clone(),
-        pkg,
-        context.clone(),
-        merged_templates.clone(),
-    );
+    let dtos = gen.dtos(handlebars.clone(), pkg, context, merged_templates.clone());
 
     if pkg.ops.is_empty() {
         dtos
@@ -132,9 +127,9 @@ pub(crate) fn go(
     }
 }
 
-pub(crate) fn dto_name(string: String, lang: Box<dyn Lang>) -> String {
+pub(crate) fn dto_name(str: &str, lang: &Box<dyn Lang>) -> String {
     lang.handlebars()
-        .render(DTO_NAME_TEMPLATE_NAME, &json!({ "val": string }))
+        .render(DTO_NAME_TEMPLATE_NAME, &json!({ "val": str }))
         .unwrap()
 }
 
@@ -155,7 +150,7 @@ fn template(path: &PathBuf) -> String {
     read(path)
 }
 
-fn default_templates_path(gen: Box<dyn Gen>) -> PathBuf {
+fn default_templates_path(gen: &Box<dyn Gen>) -> PathBuf {
     ("src/lib/gen/".to_string()
         + gen.src_dir().to_string_lossy().to_string().as_str()
         + "/templates")

@@ -29,7 +29,7 @@ impl Gen for GenPythonHttpClient {
         &self,
         handlebars: Handlebars,
         pkg: &Pkg,
-        context: Context,
+        context: &Context,
         templates: HashMap<String, String>,
     ) -> HashMap<PathBuf, String> {
         let out_dir = self.lang.out_dir().to_string_lossy().to_string();
@@ -136,7 +136,7 @@ impl Gen for GenPythonHttpClient {
         let dtos: HashMap<PathBuf, _> = defs.iter().map(|(def_name, def, form_like)| {
             let dto_template = templates.get("dtoFile").unwrap();
             let dto_path = def_name.to_case(Case::Snake).to_string() + ".py";
-            let dto = handlebars.render_template(dto_template.as_str(), &json!({"key": dto_name(def_name.clone().as_mut_str().to_owned(), self.lang()), "val": def, "formLike": form_like})).unwrap();
+            let dto = handlebars.render_template(dto_template.as_str(), &json!({"key": dto_name(def_name, &self.lang()), "val": def, "formLike": form_like})).unwrap();
             ({
                  let dto_path_str = dto_path.as_str();
                  format!("{out_dir}/{dto_path_str}").into()
@@ -192,7 +192,7 @@ impl Gen for GenPythonHttpClient {
         &self,
         handlebars: Handlebars,
         pkg: &Pkg,
-        context: Context,
+        context: &Context,
         templates: HashMap<String, String>,
     ) -> HashMap<PathBuf, String> {
         let mut result = HashMap::new();
