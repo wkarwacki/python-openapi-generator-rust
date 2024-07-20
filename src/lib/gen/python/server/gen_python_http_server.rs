@@ -41,14 +41,16 @@ impl Gen for GenPythonHttpServer {
             .flat_map(|op| {
                 let req_dto = op.req.clone().map(|req| {
                     (
-                        self.lang.fmt_class(op.name.clone() + "Req", None),
+                        self.lang
+                            .fmt_class((op.name.clone() + "Req").as_str(), &None),
                         req.desc,
                         req.form,
                     )
                 });
                 let res_dto = op.res.clone().map(|res| {
                     (
-                        self.lang.fmt_class(op.name.clone() + "Res", None),
+                        self.lang
+                            .fmt_class((op.name.clone() + "Res").as_str(), &None),
                         res.desc,
                         res.form,
                     )
@@ -88,14 +90,16 @@ impl Gen for GenPythonHttpServer {
             .flat_map(|op| {
                 let req_dto = op.req.clone().map(|req| {
                     (
-                        self.lang.fmt_class(op.name.clone() + "Req", None),
+                        self.lang
+                            .fmt_class((op.name.clone() + "Req").as_str(), &None),
                         req.desc,
                         req.form,
                     )
                 });
                 let res_dto = op.res.clone().map(|res| {
                     (
-                        self.lang.fmt_class(op.name.clone() + "Res", None),
+                        self.lang
+                            .fmt_class((op.name.clone() + "Res").as_str(), &None),
                         res.desc,
                         res.form,
                     )
@@ -152,7 +156,7 @@ impl Gen for GenPythonHttpServer {
                         + "."
                         + match src {
                             None => self.lang.feature.clone().to_case(Case::Snake),
-                            Some(src) => self.lang.fmt_src(src.clone()),
+                            Some(src) => self.lang.fmt_src(src),
                         }
                         .as_str()
                         + " import "

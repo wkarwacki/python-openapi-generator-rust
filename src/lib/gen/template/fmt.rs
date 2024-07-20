@@ -26,10 +26,8 @@ impl HelperDef for FmtClass {
             self.gen
                 .lang()
                 .fmt_class(
-                    class.value().render(),
-                    origin
-                        .and_then(|param| param.value().as_str())
-                        .map(|str| str.to_string()),
+                    &class.value().render(),
+                    &origin.and_then(|param| param.value().as_str().map(str::to_string)),
                 )
                 .as_str(),
         )?;
@@ -53,7 +51,7 @@ impl HelperDef for FmtEnum {
     ) -> HelperResult {
         let param = h.param(0).unwrap();
 
-        out.write(self.gen.lang().fmt_enum(param.value().render()).as_str())
+        out.write(self.gen.lang().fmt_enum(&param.value().render()).as_str())
             .unwrap();
         Ok(())
     }
@@ -75,7 +73,7 @@ impl HelperDef for FmtName {
     ) -> HelperResult {
         let param = h.param(0).unwrap();
 
-        out.write(self.gen.lang().fmt_name(param.value().render()).as_str())
+        out.write(self.gen.lang().fmt_name(&param.value().render()).as_str())
             .unwrap();
         Ok(())
     }
@@ -97,7 +95,7 @@ impl HelperDef for FmtOpt {
     ) -> HelperResult {
         let param = h.param(0).unwrap();
         Ok(out
-            .write(self.gen.lang().fmt_opt(param.value().render()).as_str())
+            .write(self.gen.lang().fmt_opt(&param.value().render()).as_str())
             .unwrap())
     }
 }
@@ -117,11 +115,9 @@ impl HelperDef for FmtSrcIfPresent {
     ) -> Result<ScopedJson<'rc>, RenderError> {
         let param = h.param(0).unwrap();
         match param.value().as_str() {
-            Some(str) => Ok(
-                serde_json::to_value(self.gen.lang().fmt_src(str.to_string()))
-                    .unwrap()
-                    .into(),
-            ),
+            Some(str) => Ok(serde_json::to_value(self.gen.lang().fmt_src(str))
+                .unwrap()
+                .into()),
             None => Ok(Value::Null.into()),
         }
     }
@@ -144,14 +140,17 @@ impl HelperDef for FmtType {
         let desc: Desc = serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
         let name: Option<String> = h
             .param(1)
-            .and_then(|param| param.value().clone().as_str().map(|str| str.to_string()));
+            .and_then(|param| param.value().as_str().map(str::to_string));
 
         Ok(out
             .write(
                 match desc {
-                    Desc::Def(def) => self.gen.lang().fmt_type(def, name),
-                    Desc::Ref(r#ref) => self.gen.lang().fmt_ref(r#ref),
-                    Desc::TypeParam { param } => param,
+                    Desc::Def(def) => {
+                        let formatted_name = name.map(|n| n.to_string());
+                        self.gen.lang().fmt_type(&def, &formatted_name.as_deref())
+                    }
+                    Desc::Ref(r#ref) => self.gen.lang().fmt_ref(&r#ref),
+                    Desc::TypeParam { param } => param.clone(),
                 }
                 .as_str(),
             )
@@ -173,7 +172,7 @@ impl HelperDef for FmtValue {
         _: &mut RenderContext,
         out: &mut dyn Output,
     ) -> HelperResult {
-        let json_value: JsonValue = h.param(0).unwrap().value().clone();
+        let json_value: &JsonValue = h.param(0).unwrap().value();
         Ok(out
             .write(self.gen.lang().fmt_value(json_value).as_str())
             .unwrap())

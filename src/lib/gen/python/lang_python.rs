@@ -68,23 +68,23 @@ impl Lang for LangPython {
         self.module() + "." + self.feature.as_str()
     }
 
-    fn fmt_class(&self, class: String, _origin: Option<String>) -> String {
+    fn fmt_class(&self, class: &str, _origin: &Option<String>) -> String {
         Ref {
             src: None,
-            path: class,
+            path: class.to_string(),
         }
         .class_name()
         .to_case(Case::UpperCamel)
     }
 
-    fn fmt_enum(&self, val: String) -> String {
+    fn fmt_enum(&self, val: &str) -> String {
         match val.parse::<i64>() {
-            Ok(_) => "_".to_string() + val.as_str().to_case(Case::UpperSnake).as_str(),
+            Ok(_) => "_".to_string() + val.to_case(Case::UpperSnake).as_str(),
             _ => val.to_case(Case::UpperSnake),
         }
     }
 
-    fn fmt_name(&self, name: String) -> String {
+    fn fmt_name(&self, name: &str) -> String {
         let formatted = name.split(".").last().unwrap().to_case(Case::Snake);
 
         if LangPython::reserved_names().contains(&formatted.as_str()) {
@@ -94,11 +94,11 @@ impl Lang for LangPython {
         }
     }
 
-    fn fmt_opt(&self, string: String) -> String {
-        string + " | None"
+    fn fmt_opt(&self, str: &str) -> String {
+        str.to_string() + " | None"
     }
 
-    fn fmt_ref(&self, r#ref: Ref) -> String {
+    fn fmt_ref(&self, r#ref: &Ref) -> String {
         // FIXME_LATER: such implementation is strongly coupled with current python gens
         dto_name(
             &(r#ref.class_name().to_case(Case::Snake)
@@ -108,7 +108,7 @@ impl Lang for LangPython {
         )
     }
 
-    fn fmt_src(&self, src: String) -> String {
+    fn fmt_src(&self, src: &str) -> String {
         PathBuf::from(src)
             .file_stem()
             .unwrap()
@@ -117,52 +117,68 @@ impl Lang for LangPython {
             .to_case(Case::Snake)
     }
 
-    fn fmt_type(&self, def: Def, name: Option<String>) -> String {
+    fn fmt_type(&self, def: &Def, name: &Option<&str>) -> String {
         match def {
-            Def::Alias(alias) => self.fmt_ref(alias.r#ref),
+            Def::Alias(alias) => self.fmt_ref(&alias.r#ref),
             Def::Bool(_) => "bool".to_string(),
             Def::Const(r#const) => r#const
                 .desc
+                .clone()
                 .map(|desc| match *desc {
-                    Desc::Def(def) => self.fmt_type(def.clone(), name),
-                    Desc::Ref(r#ref) => self.fmt_ref(r#ref),
+                    Desc::Def(def) => self.fmt_type(&def, name),
+                    Desc::Ref(r#ref) => self.fmt_ref(&r#ref),
                     Desc::TypeParam { .. } => unimplemented!("Type parameter not supported yet."),
                 })
                 .unwrap_or("const".to_string()),
             Def::Dec(_) => "float".to_string(),
             Def::Enum(Enum { vals, null: _ }) => match vals {
                 EnumVals::Int { .. } => "int".to_string(),
-                EnumVals::Str { .. } => name.unwrap_or("str".to_string()),
+                EnumVals::Str { .. } => name.unwrap_or("str").to_string(),
             },
             Def::Int(_) => "int".to_string(),
             Def::Map(map) => {
-                let key = inner(map.key, "Key", name.clone(), Box::new(self.clone()));
-                let val = inner(map.val, "Value", name, Box::new(self.clone()));
+                let key = inner(
+                    &map.key,
+                    "Key",
+                    name,
+                    &(Box::new(self.clone()) as Box<dyn Lang>),
+                );
+                let val = inner(
+                    &map.val,
+                    "Value",
+                    name,
+                    &(Box::new(self.clone()) as Box<dyn Lang>),
+                );
                 "dict[".to_string() + key.as_str() + ", " + val.as_str() + "]"
             }
-            Def::Obj(_) => name.unwrap(),
+            Def::Obj(_) => name.unwrap().to_string(),
             Def::Seq(seq) => {
-                let item = inner(seq.item, "Item", name, Box::new(self.clone()));
+                let item = inner(
+                    &seq.item,
+                    "Item",
+                    name,
+                    &(Box::new(self.clone()) as Box<dyn Lang>),
+                );
                 "list[".to_string() + item.as_str() + "]"
             }
             Def::Str(_) => name
-                .and_then(|n| self.gen_cfg.type_mapping.get(n.as_str()))
+                .and_then(|n| self.gen_cfg.type_mapping.get(n))
                 .unwrap_or(&"str".to_string())
                 .clone(),
             Def::Struct(_) => "Any".to_string(),
         }
     }
 
-    fn fmt_value(&self, json_value: Value) -> String {
+    fn fmt_value(&self, json_value: &Value) -> String {
         match json_value {
             Value::Bool(val) => val.to_string(),
             Value::Number(val) => val.to_string(),
-            Value::String(val) => val,
+            Value::String(val) => val.clone(),
             Value::Array(val) => {
                 "[".to_string()
                     + val
                         .iter()
-                        .map(|json_value| self.fmt_value(json_value.clone()))
+                        .map(|json_value| self.fmt_value(json_value))
                         .collect::<Vec<String>>()
                         .join(", ")
                         .as_str()
@@ -170,9 +186,7 @@ impl Lang for LangPython {
             }
             Value::Object(val) => val
                 .iter()
-                .map(|(key, json_value)| {
-                    key.clone() + ": " + self.fmt_value(json_value.clone()).as_str()
-                })
+                .map(|(key, json_value)| key.clone() + ": " + self.fmt_value(json_value).as_str())
                 .collect::<Vec<String>>()
                 .join(", "),
             Value::Null => "None".to_string(),

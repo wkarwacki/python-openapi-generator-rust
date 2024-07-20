@@ -7,29 +7,34 @@ pub(crate) trait Lang {
     fn out_dir(&self) -> PathBuf;
     fn module(&self) -> String;
     fn pkg_name(&self) -> String;
-    fn fmt_class(&self, class: String, origin: Option<String>) -> String;
-    fn fmt_enum(&self, val: String) -> String;
-    fn fmt_name(&self, name: String) -> String;
-    fn fmt_opt(&self, string: String) -> String;
-    fn fmt_ref(&self, r#ref: Ref) -> String;
-    fn fmt_src(&self, src: String) -> String;
-    fn fmt_type(&self, def: Def, name: Option<String>) -> String;
-    fn fmt_value(&self, json_value: JsonValue) -> String;
+    fn fmt_class(&self, class: &str, origin: &Option<String>) -> String;
+    fn fmt_enum(&self, val: &str) -> String;
+    fn fmt_name(&self, name: &str) -> String;
+    fn fmt_opt(&self, string: &str) -> String;
+    fn fmt_ref(&self, r#ref: &Ref) -> String;
+    fn fmt_src(&self, src: &str) -> String;
+    fn fmt_type(&self, def: &Def, name: &Option<&str>) -> String;
+    fn fmt_value(&self, json_value: &JsonValue) -> String;
 }
 
 pub static DTO_NAME_TEMPLATE_NAME: &str = "dtoName";
 
-pub(crate) fn inner(desc: Desc, suffix: &str, name: Option<String>, lang: Box<dyn Lang>) -> String {
+pub(crate) fn inner(
+    desc: &Desc,
+    suffix: &str,
+    name: &Option<&str>,
+    lang: &Box<dyn Lang>,
+) -> String {
     match desc {
-        Desc::Def(def) => lang.fmt_opt(
-            lang.fmt_type(
-                def.clone(),
-                name.clone()
-                    .map(|n| n + suffix)
-                    .or(Some(suffix.to_string())),
-            )
-            .replace((suffix.to_string() + suffix).as_str(), suffix),
-        ),
+        Desc::Def(def) => {
+            let name_with_suffix = name
+                .map(|n| n.to_string() + suffix)
+                .unwrap_or_else(|| suffix.to_string());
+            let formatted_type = lang.fmt_type(def, &Some(name_with_suffix.as_str()));
+            let formatted_type_replaced =
+                formatted_type.replace(&(suffix.to_string() + suffix), suffix);
+            lang.fmt_opt(&formatted_type_replaced)
+        }
         Desc::Ref(r#ref) => lang.fmt_ref(r#ref),
         Desc::TypeParam { .. } => unimplemented!("Type parameter not supported yet."),
     }
