@@ -11,7 +11,7 @@ use convert_case::{Case, Casing};
 pub(crate) fn from_open_api_test_fn(name: &str) {
     let pkgs = from_open_api(
         &("src/lib/test/".to_string() + name + "-open-api.yml").into(),
-        Layout::Default,
+        &Layout::Default,
     );
     let pkg = pkgs.get(&None).unwrap();
 

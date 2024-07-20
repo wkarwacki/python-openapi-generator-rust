@@ -161,7 +161,7 @@ pub fn do_main(cli: Cli) {
             output,
             layout,
         } => {
-            let pkgs = from_open_api(&input, layout);
+            let pkgs = from_open_api(&input, &layout);
 
             pkgs.iter().for_each(|(src, pkg)| {
                 let p = output.to_string_lossy().to_string()
@@ -219,7 +219,7 @@ pub fn do_main(cli: Cli) {
     }
 }
 
-fn from_open_api(input: &PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg> {
+fn from_open_api(input: &PathBuf, layout: &Layout) -> HashMap<Option<String>, Pkg> {
     let context = open_api::context::Context::of(input);
     context
         .val
@@ -227,7 +227,7 @@ fn from_open_api(input: &PathBuf, layout: Layout) -> HashMap<Option<String>, Pkg
         .flat_map(|(src, value)| {
             // TIDY: hide processing behind trait
             let open_api: OpenApi = serde_yaml::from_value(value.clone()).unwrap();
-            if layout == Layout::Tag {
+            if layout == &Layout::Tag {
                 let tag_and_path_with_its_name_and_used_refs_within: Vec<_> = open_api
                     .paths
                     .iter()
