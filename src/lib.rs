@@ -195,7 +195,7 @@ pub fn do_main(cli: Cli) {
                     module: None,
                     dto_name: None,
                 });
-            gen(&input, lang, role, generator_config, &templates_path)
+            gen(&input, &lang, &role, &generator_config, &templates_path)
                 .iter()
                 .for_each(|(path, content)| {
                     let full_path = output.to_string_lossy().to_string()
@@ -208,7 +208,7 @@ pub fn do_main(cli: Cli) {
                             .unwrap(),
                     )
                     .unwrap();
-                    let mut out = std::fs::OpenOptions::new()
+                    let mut out = fs::OpenOptions::new()
                         .write(true)
                         .create(true)
                         .open(full_path)
@@ -286,7 +286,7 @@ fn from_open_api(input: &PathBuf, layout: &Layout) -> HashMap<Option<String>, Pk
                             serde_yaml::from_value(open_api_with_all_refs_rec_value.clone())
                                 .unwrap();
                         let open_api_for_tag = OpenApi {
-                            paths: paths,
+                            paths,
                             components: open_api_with_all_refs_rec.components,
                         };
                         let pkg = open_api_for_tag.pkg(&context);
@@ -310,20 +310,20 @@ fn to_open_api(input: &PathBuf) -> OpenApi {
 
 fn gen(
     input: &PathBuf,
-    lang: Lang,
-    role: Role,
-    gen_cfg: GenCfg,
+    lang: &Lang,
+    role: &Role,
+    gen_cfg: &GenCfg,
     templates_path: &Option<PathBuf>,
 ) -> HashMap<PathBuf, String> {
     let pkg: Pkg = read_t(input);
     let context = Context::of(input);
 
-    let gen = get_gen(lang, gen_cfg.clone(), input.clone(), role.clone());
+    let gen = get_gen(lang, gen_cfg, input, role);
 
     gen::gen::go(&pkg, &gen, templates_path, &context)
 }
 
-fn get_gen(lang: Lang, gen_cfg: GenCfg, input: PathBuf, role: Role) -> Box<dyn Gen> {
+fn get_gen(lang: &Lang, gen_cfg: &GenCfg, input: &PathBuf, role: &Role) -> Box<dyn Gen> {
     match lang {
         Lang::Kotlin => unimplemented!("not supported yet")/*Box::new(Kotlin {
             gen_cfg,
@@ -334,16 +334,16 @@ fn get_gen(lang: Lang, gen_cfg: GenCfg, input: PathBuf, role: Role) -> Box<dyn G
             handlebars.register_template_string(DTO_NAME_TEMPLATE_NAME, gen_cfg.clone().dto_name.unwrap_or(LangPython::dto_name_template())).unwrap();
 
             let lang = LangPython {
-                gen_cfg,
+                gen_cfg: gen_cfg.clone(),
                 feature: input.file_stem().unwrap().to_str().unwrap().to_string(),
-                handlebars: handlebars,
+                handlebars,
             };
             match role {
                 Role::Client => Box::new(GenPythonHttpClient {
-                    lang: lang
+                    lang
                 }),
                 Role::Server => Box::new(GenPythonHttpServer {
-                    lang: lang
+                    lang
                 })
             }
         }
