@@ -35,11 +35,7 @@ impl Def {
         match self {
             Def::Alias(alias) => vec![alias.r#ref.clone()],
             Def::Map(map) => map.key.refs().into_iter().chain(map.val.refs()).collect(),
-            Def::Obj(obj) => obj
-                .vars
-                .iter()
-                .flat_map(|(_name, var)| var.desc.refs())
-                .collect(),
+            Def::Obj(obj) => obj.refs(),
             Def::Seq(seq) => seq.item.refs(),
             _ => Default::default(),
         }
@@ -120,6 +116,21 @@ pub(crate) struct Obj {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
     pub null: bool,
+}
+
+impl Obj {
+    pub(crate) fn refs(&self) -> Vec<Ref> {
+        self.mix
+            .iter()
+            .cloned()
+            .chain(self.vars.values().flat_map(|var| var.desc.refs()))
+            .chain(
+                self.adt
+                    .iter()
+                    .flat_map(|adt| adt.map.values().flat_map(|value| value.refs())),
+            )
+            .collect::<Vec<_>>()
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
