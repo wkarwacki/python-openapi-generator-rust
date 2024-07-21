@@ -10,6 +10,7 @@ use crate::lib::{
 };
 use convert_case::{Case, Casing};
 use handlebars::Handlebars;
+use itertools::Itertools;
 use serde_json::json;
 use std::{collections::HashMap, path::PathBuf};
 
@@ -137,41 +138,37 @@ impl Gen for GenPythonHttpServer {
                 form_refs.contains(def_name) // FIXME: take src into account as well
             })
         }));
-        let dtos: HashMap<PathBuf, _> = defs.iter().map(|(def_name, def, form_like)| {
+        let mut dtos: HashMap<PathBuf, _> = defs.iter().map(|(def_name, def, form_like)| {
             let dto_template = templates.get("dtoFile").unwrap();
             let dto_path = def_name.to_case(Case::Snake).to_string() + ".py";
-            let dto = handlebars.render_template(dto_template.as_str(), &json!({"key": dto_name(def_name, &self.lang()), "val": def, "formLike": form_like})).unwrap();
+            let imports = context
+                .refs(def)
+                .iter()
+                .flat_map(|(src, defs)| {
+                    defs.iter().map(move |def| {
+                        "from ".to_string()
+                            + self.lang.module().as_str()
+                            + "."
+                            + match src {
+                            None => self.lang.feature.clone().to_case(Case::Snake),
+                            Some(src) => self.lang.fmt_src(src),
+                        }
+                            .as_str()
+                            + " import "
+                            + def.to_case(Case::Snake).as_str()
+                    })
+                })
+                .collect::<Vec<_>>()
+                .join("\n");
+            let dto = handlebars.render_template(dto_template.as_str(), &json!({"key": dto_name(def_name, &self.lang()), "val": def, "formLike": form_like, "imports": imports})).unwrap();
             ({
                  let dto_path_str = dto_path.as_str();
                  format!("{out_dir}/{dto_path_str}").into()
              }, dto)
         }).collect();
-        let imports = context
-            .defs()
-            .iter()
-            .flat_map(|(src, defs)| {
-                defs.iter().map(move |def| {
-                    "from ".to_string()
-                        + self.lang.module().as_str()
-                        + "."
-                        + match src {
-                            None => self.lang.feature.clone().to_case(Case::Snake),
-                            Some(src) => self.lang.fmt_src(src),
-                        }
-                        .as_str()
-                        + " import "
-                        + def.to_case(Case::Snake).as_str()
-                })
-            })
-            .collect::<Vec<_>>()
-            .join("\n");
-        let mut dtos_with_imports: HashMap<_, _> = dtos
-            .iter()
-            .map(|(path, content)| (path.clone(), imports.clone() + "\n" + content))
-            .collect();
-        dtos_with_imports.insert((out_dir.clone() + "/__init__.py").into(), "".into());
+        dtos.insert((out_dir.clone() + "/__init__.py").into(), "".into());
         let trust_mod_template = templates.get("trustMod").unwrap();
-        dtos_with_imports.insert(
+        dtos.insert(
             (self.lang.module() + "/__init__.py").into(),
             trust_mod_template.clone(),
         );
@@ -184,12 +181,12 @@ impl Gen for GenPythonHttpServer {
                         str.to_string() + "/" + os_str.to_string_lossy().to_string().as_str()
                     }
                 };
-                dtos_with_imports.insert((p.clone() + "/__init__.py").into(), "".into());
+                dtos.insert((p.clone() + "/__init__.py").into(), "".into());
                 Some(p)
             });
         });
 
-        dtos_with_imports
+        dtos
     }
 
     fn ops(
@@ -215,6 +212,7 @@ impl Gen for GenPythonHttpServer {
                     + " import "
                     + path.to_case(Case::Snake).as_str()
             })
+            .unique()
             .collect::<Vec<_>>()
             .join("\n");
 

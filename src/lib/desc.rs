@@ -10,6 +10,13 @@ pub(crate) enum Desc {
 }
 
 impl Desc {
+    pub(crate) fn refs(&self) -> Vec<Ref> {
+        match self {
+            Desc::Def(def) => def.refs(),
+            Desc::Ref(r#ref) => vec![r#ref.clone()],
+            _ => Vec::new(),
+        }
+    }
     pub(crate) fn def(&self) -> Option<&Def> {
         match self {
             Desc::Def(def) => Some(def),

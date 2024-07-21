@@ -30,6 +30,20 @@ impl Def {
             _ => None,
         }
     }
+
+    pub(crate) fn refs(&self) -> Vec<Ref> {
+        match self {
+            Def::Alias(alias) => vec![alias.r#ref.clone()],
+            Def::Map(map) => map.key.refs().into_iter().chain(map.val.refs()).collect(),
+            Def::Obj(obj) => obj
+                .vars
+                .iter()
+                .flat_map(|(_name, var)| var.desc.refs())
+                .collect(),
+            Def::Seq(seq) => seq.item.refs(),
+            _ => Default::default(),
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
