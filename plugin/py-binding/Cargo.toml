@@ -1,0 +1,13 @@
+[package]
+name = "trustpy"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "trustpy"
+crate-type = ["cdylib"]
+
+[dependencies]
+clap = { version = "4.5.1", features = ["derive"] }
+pyo3 = "0.21.1"
+trust = { path = "../../" }

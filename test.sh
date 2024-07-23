@@ -10,4 +10,8 @@ mkdir -p test/default/spec
 
 cargo test -- --nocapture
 
-TESTS=openapi,openapi_fastapi python test/integration/test.py
+bash test/integration/test.sh
+
+bash test/py/test.sh
+
+echo ok

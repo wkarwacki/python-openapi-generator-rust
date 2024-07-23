@@ -1,4 +1,5 @@
 import os
+import pathlib
 import shutil
 import subprocess
 from distutils.dir_util import copy_tree
@@ -40,7 +41,8 @@ specs = [
     ),
 ]
 
-test_integration_path = "test/integration"
+test_integration_path = pathlib.Path(__file__).parent.resolve()
+os.chdir(test_integration_path.parent.parent)
 
 shutil.rmtree(f"{test_integration_path}/run", ignore_errors=True)
 
@@ -61,10 +63,11 @@ for spec in specs:
         subprocess.run(["cargo", "run", "from-open-api", f"{test_integration_path}/specs/{spec.name}/{spec.entrypoint}", trust_path, *spec.params])
         for gen in gens:
             run_path = f"{test_integration_path}/run/{spec.name}/{gen.lang}/{gen.role}"
-            os.makedirs(run_path)
-    
+
+            out_path = f"{run_path}/{gen.out_dir}"
+            os.makedirs(out_path)
+
             for trust_file in os.listdir(trust_path):
-                out_path = f"{run_path}/{gen.out_dir}"
                 subprocess.run(["cargo", "run", "generate", gen.lang, gen.role, f"{trust_path}/{trust_file}", out_path])
     
             gen_path=f"{test_integration_path}/gens/{gen.lang}/{gen.role}"

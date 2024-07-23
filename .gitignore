@@ -1,4 +1,5 @@
 .bsp
+*.egg-info
 .gradle
 .idea
 *.iml
@@ -8,32 +9,9 @@ __pycache__
 
 build/
 target/
-test_debug/*.yml
-
-!test_debug/gen/kotlin
-test_debug/gen/kotlin/src
-
-!test_debug/gen/python
-test_debug/gen/python/client/src
-test_debug/gen/python/server/src
-
-!test_debug/gen/scala
-test_debug/gen/scala/src
-
-!test_debug/dd
-test_debug/dd/kotlin/src
-test_debug/dd/python/client/src/trust
-test_debug/dd/python/server/src/trust
-test_debug/dd/scala/src
-test_debug/dd/trust
-
-!test_debug/dd2
-test_debug/dd2/kotlin/src
-test_debug/dd2/python/client/src/trust
-test_debug/dd2/python/server/src/trust
-test_debug/dd2/scala/src
-test_debug/dd2/trust
 
 test/default
 test/integration/log
 test/integration/run
+
+

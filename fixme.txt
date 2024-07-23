@@ -3,6 +3,7 @@
 === gen
 
 === other
+default_templates_path is relative to repo root
 
 === known-bugs/limitations:
 tristate (opt/null) is not handled corretly in any gen
