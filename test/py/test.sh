@@ -12,4 +12,4 @@ cd ../../wrapper/py
 bash build_install.sh
 
 cd $SCRIPT_DIR
-trust
+trust help
