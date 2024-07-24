@@ -10,6 +10,30 @@ Trust specification aims to be an improvement of the current integration standar
 - **It is focused on integration of web systems** - if you need to seamlessly integrate two systems in a typesafe way, you will find Trust spec more useful than OpenAPI
 - **It is widely customizable** - by providing a broad set of [handlebars](https://github.com/sunng87/handlebars-rust) helpers you may modify the templates upon which the code is generated to suit your needs
 - **It is protocol-agnostic** - although it is designed with HTTP in mind, it can be used to describe any kind of API
+
+Moreover it addresses particular issues with OpenAPI:
+- **enclosed Algebraic Data Types** - by design all subtypes of an ADT are kept together, in one `adt` node
+
+## Overview
+(Usage of all below examples and more may be found in [tests](https://github.com/ramencloud/trust/tree/master/src/lib/test))
+
+When it comes to describing API schemas, Trust spec offers the following data types:
+* simple types:
+  * `type: bool`, equivalent of `type: boolean` in OpenAPI
+  * `type: int`, equivalent of `type: integer` with `format: int64` in OpenAPI
+  * `type: dec`, equivalent of `type: number` in OpenAPI
+  * `type: str`, equivalent of `type: string` in OpenAPI
+  * `type: enum`, equivalent of `type: string` with `enum` in OpenAPI
+* complex types:
+  * `type: obj`, equivalent of `type: object` in OpenAPI
+  * `type: seq`, equivalent of `type: array` in OpenAPI
+  * `type: map`, equivalent of `type: object` with `additionalProperties` in OpenAPI
+* special types:
+  * `type: alias`, equivalent of `$ref` in OpenAPI
+  * `type: struct`, equivalent of OpenAPI empty schema i.e. `{}`
+  * `type: const`, equivalent of OpenAPI `const` feature
+
+
 ## Server and Client code generation
 
 ### Currently supported generators:
