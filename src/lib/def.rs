@@ -93,11 +93,25 @@ pub(crate) struct Int {
 // TODO_LATER: for http gen, validation, whether a key is string-like
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
 pub(crate) struct Map {
+    #[serde(default = "Map::default_key", skip_serializing_if = "Map::is_desc_str")]
     pub key: Desc,
     pub val: Desc,
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
     pub null: bool,
+}
+
+impl Map {
+    fn default_key() -> Desc {
+        Desc::Def(Def::Str(Str { null: false }))
+    }
+
+    fn is_desc_str(desc: &Desc) -> bool {
+        match desc {
+            Desc::Def(Def::Str(_)) => true,
+            _ => false,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
