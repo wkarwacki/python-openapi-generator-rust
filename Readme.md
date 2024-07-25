@@ -4,15 +4,14 @@ Web integration specification and a set of code generators.
 
 ## Table of Contents
 - [Specification](#specification)
-- [Overview](#overview)
+  - [Overview](#overview)
   - [Common use cases](#common-use-cases)
-- [Server and Client code generation](#server-and-client-code-generation)
-  - [Currently supported generators](#currently-supported-generators)
-  - [Experimental generators](#experimental-not-fully-implemented-use-at-your-own-risk-generators)
-  - [Getting started](#getting-started)
-    - [Prerequisites](#prerequisites)
-  - [Main use cases](#main-use-cases)
+- [**Server and Client code generation**](#server-and-client-code-generation)
   - [Usage](#usage)
+    - [With Docker](#with-docker)
+    - [Run from source](#run-from-source)
+  - [Currently supported generators](#currently-supported-generators)
+    - [Experimental generators](#experimental-generators)
 
 ## Specification
 Trust specification aims to be an improvement of the current integration standards, [OpenAPI](https://github.com/OAI/OpenAPI-Specification) mostly. The main advantages of Trust spec include:
@@ -26,7 +25,7 @@ Trust specification aims to be an improvement of the current integration standar
 Moreover it addresses particular issues existing inherently in OpenAPI with:
 - **enclosed Algebraic Data Types** - by design all subtypes of an ADT are kept together, in a single `adt` node
 
-## Overview
+### Overview
 (Usage of all below examples and more may be found in [tests](https://github.com/ramencloud/trust/tree/master/src/lib/test))
 
 When it comes to describing API schemas, Trust spec offers the following data types:
@@ -168,34 +167,28 @@ When it comes to describing API schemas, Trust spec offers the following data ty
   in Java-like languages.
 ## Server and Client code generation
 
-### Currently supported generators:
-- Python Http Server ([fastapi](https://github.com/tiangolo/fastapi))
-- Python Http Client ([httpx](https://github.com/encode/httpx))
-
-### Experimental (not fully implemented, use at your own risk) generators:
-
-- Kotlin Http Server ([spring](https://github.com/spring-projects/spring-framework))
-- Scala Http Server ([cask](https://github.com/com-lihaoyi/cask))
-
-### Getting started
-
-#### Prerequisites
-
-* [Rust](https://www.rust-lang.org/tools/install) development environment
-* [Docker](https://docs.docker.com/engine/install/) engine
-
-### Main use cases
-
-Examples of usage may be found in [tests](https://github.com/ramencloud/trust/tree/master/src/lib/test).
-
 ### Usage
 
-* With cargo
-```shell
-$ cargo run trust
-```
-* With docker
+#### With Docker
+Prerequisites:
+- [Docker](https://docs.docker.com/engine/install/)
 ```shell
 $ ./docker/build.sh
 $ docker run trust
 ```
+#### Run from source
+Prerequisites:
+- [Rust](https://www.rust-lang.org/tools/install)
+```shell
+$ cargo run trust
+```
+
+### Currently supported generators:
+- Python Http Server ([fastapi](https://github.com/tiangolo/fastapi))
+- Python Http Client ([httpx](https://github.com/encode/httpx))
+
+#### Experimental generators:
+> [!WARNING]  not fully implemented, use at your own risk
+
+- Kotlin Http Server ([spring](https://github.com/spring-projects/spring-framework))
+- Scala Http Server ([cask](https://github.com/com-lihaoyi/cask))
