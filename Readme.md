@@ -11,8 +11,8 @@ Trust specification aims to be an improvement of the current integration standar
 - **It is widely customizable** - by providing a broad set of [handlebars](https://github.com/sunng87/handlebars-rust) helpers you may modify the templates upon which the code is generated to suit your needs
 - **It is protocol-agnostic** - although it is designed with HTTP in mind, it can be used to describe any kind of API
 
-Moreover it addresses particular issues with OpenAPI:
-- **enclosed Algebraic Data Types** - by design all subtypes of an ADT are kept together, in one `adt` node
+Moreover it addresses particular issues existing inherently in OpenAPI with:
+- **enclosed Algebraic Data Types** - by design all subtypes of an ADT are kept together, in a single `adt` node
 
 ## Overview
 (Usage of all below examples and more may be found in [tests](https://github.com/ramencloud/trust/tree/master/src/lib/test))
@@ -33,6 +33,64 @@ When it comes to describing API schemas, Trust spec offers the following data ty
   * `type: struct`, equivalent of OpenAPI empty schema i.e. `{}`
   * `type: const`, equivalent of OpenAPI `const` feature
 
+### Common use cases
+
+* Algebraic data type aka "Union type"
+```yaml
+  AdtType:
+    type: obj
+    vars: 
+      discriminatorVar:
+        type: str
+      someOtherVar:
+        type: dec
+    adt:
+      var: discriminatorVar
+      map:
+        firstSubtype:
+          vars:
+            firstSubtypeVar:
+              type: int
+        secondSubtype:
+          vars:
+            secondSubtypeVar:
+              type: bool
+```
+is interpreted as schema such that all of the following JSONs are compliant with it:
+```json
+{
+  "discriminatorVar": "firstSubtype",
+  "someOtherVar": 1.0,
+  "firstSubtypeVar": 1
+}
+```
+```json
+{
+  "discriminatorVar": "secondSubtype",
+  "someOtherVar": 1.0,
+  "secondSubtypeVar": true
+}
+```
+while the following are not:
+```json
+{
+  "discriminatorVar": "firstSubtype",
+  "someOtherVar": 1.0,
+}
+```
+```json
+{
+  "discriminatorVar": "nonExistentSubtype",
+  "someOtherVar": 1.0,
+  "secondSubtypeVar": true
+}
+```
+```json
+{
+  "discriminatorVar": "secondSubtype",
+  "secondSubtypeVar": true
+}
+```
 
 ## Server and Client code generation
 
