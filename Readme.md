@@ -35,8 +35,37 @@ When it comes to describing API schemas, Trust spec offers the following data ty
 
 ### Common use cases
 
+* Including vars from other types:
+  ```yaml
+  Parent:
+    type: obj
+    vars:
+      parentVar:
+        type: dec
+  AnotherParent:
+    type: obj
+    vars:
+      anotherParentVar:
+        type: bool
+  WithParentsVars:
+    type: obj
+    mix:
+      - path: "defs.Parent"
+      - path: "defs.AnotherParent"
+    vars:
+      ownVar:
+        type: int
+  ```
+  will produce a schema matching: 
+    ```json
+    {
+        "parentVar": 1.0,
+        "anotherParentVar": true,
+        "ownVar": 1
+    }
+    ```
 * Algebraic data type aka "Union type"
-```yaml
+  ```yaml
   AdtType:
     type: obj
     vars: 
@@ -55,43 +84,76 @@ When it comes to describing API schemas, Trust spec offers the following data ty
           vars:
             secondSubtypeVar:
               type: bool
-```
-is interpreted as schema such that all of the following JSONs are compliant with it:
-```json
-{
-  "discriminatorVar": "firstSubtype",
-  "someOtherVar": 1.0,
-  "firstSubtypeVar": 1
-}
-```
-```json
-{
-  "discriminatorVar": "secondSubtype",
-  "someOtherVar": 1.0,
-  "secondSubtypeVar": true
-}
-```
-while the following are not:
-```json
-{
-  "discriminatorVar": "firstSubtype",
-  "someOtherVar": 1.0,
-}
-```
-```json
-{
-  "discriminatorVar": "nonExistentSubtype",
-  "someOtherVar": 1.0,
-  "secondSubtypeVar": true
-}
-```
-```json
-{
-  "discriminatorVar": "secondSubtype",
-  "secondSubtypeVar": true
-}
-```
-
+  ```
+  is interpreted as schema matching:
+  ```json
+  {
+    "discriminatorVar": "firstSubtype",
+    "someOtherVar": 1.0,
+    "firstSubtypeVar": 1
+  }
+  ```
+  ```json
+  {
+    "discriminatorVar": "secondSubtype",
+    "someOtherVar": 1.0,
+    "secondSubtypeVar": true
+  }
+  ```
+  but not matching:
+  ```json
+  {
+    "discriminatorVar": "firstSubtype",
+    "someOtherVar": 1.0,
+  }
+  ```
+  ```json
+  {
+    "discriminatorVar": "nonExistentSubtype",
+    "someOtherVar": 1.0,
+    "secondSubtypeVar": true
+  }
+  ```
+  ```json
+  {
+    "discriminatorVar": "secondSubtype",
+    "secondSubtypeVar": true
+  }
+  ```
+* Generic types
+  ```yaml
+  defs:
+    SomeNamedString:
+      type: str
+    ParameterizedType:
+      type: obj
+      vars:
+        varOfParamAbcType:
+          param: ParamAbc # to declare a generic type, you need to simply use a 'param' keyword
+        varOfParamXyzType:
+          param: ParamXyz # similarly to the above, this time with a different name
+        anoterVarOfParamXyzType:
+          param: ParamXyz # similarly to the above, this time with a different name
+    SubtypeOfParameterizedType:
+      type: obj
+      ext: # extending a generic type
+        path: 'defs.ParameterizedType'
+        args: # with below type-arguments
+          ParamAbc:
+            type: bool
+          ParamXyz:
+            path: 'defs.SomeType'
+  ```
+  The above is interpreted as 
+  ```java
+  interface ParameterizedType<ParamAbc, ParamXyz> { 
+    ParamAbc varOfParamAbcType; 
+    ParamXyz varOfParamXyzType; 
+    ParamXyz anoterVarOfParamXyzType; 
+  }
+  interface SubtypeOfParameterizedType extends ParameterizedType<Boolean, SomeType> { }
+  ```
+   in Java-like languages.
 ## Server and Client code generation
 
 ### Currently supported generators:
