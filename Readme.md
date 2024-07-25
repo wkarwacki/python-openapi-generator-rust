@@ -2,6 +2,18 @@
 
 Web integration specification and a set of code generators.
 
+## Table of Contents
+- [Specification](#specification)
+- [Overview](#overview)
+  - [Common use cases](#common-use-cases)
+- [Server and Client code generation](#server-and-client-code-generation)
+  - [Currently supported generators](#currently-supported-generators)
+  - [Experimental generators](#experimental-not-fully-implemented-use-at-your-own-risk-generators)
+  - [Getting started](#getting-started)
+    - [Prerequisites](#prerequisites)
+  - [Main use cases](#main-use-cases)
+  - [Usage](#usage)
+
 ## Specification
 Trust specification aims to be an improvement of the current integration standards, [OpenAPI](https://github.com/OAI/OpenAPI-Specification) mostly. The main advantages of Trust spec include:
 - **Unambiguity of notation** - meaning that there is most likely only one way to model a given API and to only way to interpret the spec
@@ -56,7 +68,7 @@ When it comes to describing API schemas, Trust spec offers the following data ty
       ownVar:
         type: int
   ```
-  will produce a schema matching: 
+  will produce a schema matching:
     ```json
     {
         "parentVar": 1.0,
@@ -144,7 +156,7 @@ When it comes to describing API schemas, Trust spec offers the following data ty
           ParamXyz:
             path: 'defs.SomeType'
   ```
-  The above is interpreted as 
+  The above is interpreted as
   ```java
   interface ParameterizedType<ParamAbc, ParamXyz> { 
     ParamAbc varOfParamAbcType; 
@@ -153,7 +165,7 @@ When it comes to describing API schemas, Trust spec offers the following data ty
   }
   interface SubtypeOfParameterizedType extends ParameterizedType<Boolean, SomeType> { }
   ```
-   in Java-like languages.
+  in Java-like languages.
 ## Server and Client code generation
 
 ### Currently supported generators:
