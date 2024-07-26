@@ -3,19 +3,49 @@
 Web integration specification and a set of code generators.
 
 ## Table of Contents
+- [**tldr; I just want to glue my services together**](#i-just-want-to-glue-my-services-together)
 - [Specification](#specification)
   - [Overview](#overview)
   - [Common use cases](#common-use-cases)
-- [**Server and Client code generation**](#server-and-client-code-generation)
+  - [OpenAPI conversion](#openapi-conversion)
+- [Server and Client code generation](#server-and-client-code-generation)
   - [Usage](#usage)
     - [With Docker](#with-docker)
     - [Run from source](#run-from-source)
   - [Currently supported generators](#currently-supported-generators)
     - [Experimental generators](#experimental-generators)
 
+## I just want to glue my services together
+Install trust with
+```shell
+$ pip install trust-api
+```
+and then
+```shell
+$ trust
+
+Usage: trust <COMMAND>
+
+Commands:
+  from-open-api  
+  to-open-api    
+  generate       
+  help           Print this message or the help of the given subcommand(s)
+
+Options:
+  -h, --help  Print help
+```
+If you already have an OpenAPI spec:
+1. first convert it to Trust spec with `from-open-api` command
+2. and then generate the glue code with `generate` command. 
+
+> :exclamation: Note that you may easily automate the whole process combining the two steps above, however it is recommended to make a migration once and benefit from Trust spec expressiveness in the future.
+
+```shell
+
 ## Specification
 Trust specification aims to be an improvement of the current integration standards, [OpenAPI](https://github.com/OAI/OpenAPI-Specification) mostly. The main advantages of Trust spec include:
-- **Unambiguity of notation** - meaning that there is most likely only one way to model a given API and to only way to interpret the spec
+- **Unambiguity of notation** - meaning that there is most likely only one way to model a given API and only way to interpret the spec
 - **It supports generic types** - you may give your own types their own parameters and reuse them in different contexts with different arguments
 - **It is minimalistic** - not bloated with redundant useless features, keeps the language as simple as possible
 - **It is focused on integration of web systems** - if you need to seamlessly integrate two systems in a typesafe way, you will find Trust spec more useful than OpenAPI
@@ -188,7 +218,7 @@ $ cargo run trust
 - Python Http Client ([httpx](https://github.com/encode/httpx))
 
 #### Experimental generators:
-> [!WARNING]  not fully implemented, use at your own risk
+> :exclamation:  not fully implemented, use at your own risk
 
 - Kotlin Http Server ([spring](https://github.com/spring-projects/spring-framework))
 - Scala Http Server ([cask](https://github.com/com-lihaoyi/cask))
