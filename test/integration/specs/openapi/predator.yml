@@ -1,0 +1,194 @@
+paths:
+  /predators:
+    get:
+      tags:
+        - predator
+      operationId: getPredators
+      parameters:
+        - in: query
+          name: elephantId
+          schema:
+            $ref: 'elephant.yml#/components/schemas/ElephantId'
+          required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PredatorSummary'
+    post:
+      tags:
+        - predator
+      operationId: runPredator
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RunPredatorRequest'
+        required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PredatorId'
+  /predators/{predatorId}:
+    get:
+      tags:
+        - predator
+      operationId: getPredator
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/PredatorId'
+          name: predatorId
+          in: path
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Predator'
+  /predators/{predatorId}/results:
+    get:
+      tags:
+        - predator
+      operationId: getPredatorResults
+      parameters:
+        - required: true
+          schema:
+            $ref: 'predator.yml#/components/schemas/PredatorId'
+          name: predatorId
+          in: path
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PredatorResultsRow'
+components:
+  schemas:
+    PostponedCustomer:
+      type: string
+      enum:
+        - positive
+        - negative
+    Predator:
+      allOf:
+        - $ref: 'tiger.yml#/components/schemas/Tiger'
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/PredatorId'
+          required:
+            - id
+    PredatorId:
+      $ref: 'api.yml#/components/schemas/Id'
+    PredatorProgressedEvent:
+        oneOf:
+          - $ref: '#/components/schemas/PredatorProgressedEventStarted'
+          - $ref: '#/components/schemas/PredatorProgressedEventTransformersLoaded'
+          - $ref: '#/components/schemas/PredatorProgressedEventFlamingValuesGenerated'
+          - $ref: '#/components/schemas/PredatorProgressedEventPredatorDone'
+          - $ref: '#/components/schemas/PredatorProgressedEventPredatorResultsCollected'
+          - $ref: '#/components/schemas/PredatorProgressedEventFailed'
+        discriminator:
+          propertyName: type
+          mapping:
+            started: '#/components/schemas/PredatorProgressedEventStarted'
+            transformers-loaded: '#/components/schemas/PredatorProgressedEventTransformersLoaded'
+            flaming-values-generated: '#/components/schemas/PredatorProgressedEventFlamingValuesGenerated'
+            predator-done: '#/components/schemas/PredatorProgressedEventPredatorDone'
+            predator-results-collected: '#/components/schemas/PredatorProgressedEventPredatorResultsCollected'
+            failed: '#/components/schemas/PredatorProgressedEventFailed'
+    PredatorProgressedEventAbstraction:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/PredatorId'
+        progress:
+          $ref: 'tiger.yml#/components/schemas/Progress'
+      required:
+        - id
+        - progress
+    PredatorProgressedEventStarted:
+      allOf:
+        - $ref: '#/components/schemas/PredatorProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    PredatorProgressedEventTransformersLoaded:
+      allOf:
+        - $ref: '#/components/schemas/PredatorProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    PredatorProgressedEventFlamingValuesGenerated:
+      allOf:
+        - $ref: '#/components/schemas/PredatorProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    PredatorProgressedEventPredatorDone:
+      allOf:
+        - $ref: '#/components/schemas/PredatorProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    PredatorProgressedEventPredatorResultsCollected:
+      allOf:
+        - $ref: '#/components/schemas/PredatorProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    PredatorProgressedEventFailed:
+      allOf:
+        - $ref: '#/components/schemas/PredatorProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    PredatorResultsRow:
+      type: object
+      properties:
+        predatorScore:
+          type: number
+          format: double
+        postponedCustomer:
+          $ref: '#/components/schemas/PostponedCustomer'
+        primaryKey:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - predatorScore
+        - postponedCustomer
+        - primaryKey
+    PredatorSummary:
+      allOf:
+        - $ref: 'tiger.yml#/components/schemas/TigerSummary'
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/PredatorId'
+            name:
+              type: string
+            masterpieceName:
+              type: string
+            targetTransformerName:
+              type: string
+          required:
+            - id
+            - name
+            - masterpieceName
+            - targetTransformerName
+    RunPredatorRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        masterpieceId:
+          $ref: 'masterpiece.yml#/components/schemas/MasterpieceId'
+        transformers:
+          type: object
+          additionalProperties:
+            type: string
+      required:
+        - name
+        - masterpieceId
+        - transformers

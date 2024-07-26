@@ -1,0 +1,110 @@
+paths:
+  /flamings:
+    get:
+      tags:
+        - flaming
+      operationId: getFlamings
+      parameters:
+        - required: true
+          schema:
+            $ref: 'elephant.yml#/components/schemas/ElephantId'
+          name: elephantId
+          in: query
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/FlamingSummary"
+  /flamings/{flamingId}/ibiss:
+    get:
+      tags:
+        - flaming
+      operationId: getFlamingIbiss
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/FlamingId'
+          name: flamingId
+          in: path
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FlamingIbiss"
+components:
+  schemas:
+    FlamingId:
+      $ref: 'api.yml#/components/schemas/Id'
+    FlamingIbiss:
+      type: object
+      properties:
+        correcurrences:
+          type: array
+          items:
+            type: object
+            properties:
+              flamingId:
+                $ref: '#/components/schemas/FlamingId'
+              correcurrence:
+                type: number
+                format: double
+                minimum: 0
+                maximum: 1
+            required:
+              - flamingId
+              - correcurrence
+      required:
+        - correcurrences
+    FlamingSummary:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/FlamingId'
+        explanation:
+          type: string
+        group:
+          type: integer
+        museums:
+          $ref: '#/components/schemas/FlamingMuseums'
+      required:
+        - id
+        - explanation
+        - group
+        - museums
+    FlamingMuseums:
+      type: object
+      properties:
+        confidence:
+          type: number
+          format: double
+        min:
+          type: number
+          format: double
+        max:
+          type: number
+          format: double
+        mean:
+          type: number
+          format: double
+        stddev:
+          type: number
+          format: double
+        nullRatio:
+          type: number
+          format: double
+        zerosRatio:
+          type: number
+          format: double
+        flamingAuc:
+          type: number
+          format: double
+      required:
+        - confidence
+        - nullRatio
+        - zerosRatio

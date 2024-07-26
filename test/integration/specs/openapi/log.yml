@@ -1,0 +1,39 @@
+paths:
+  /elephants/{elephantId}/logs:
+    get:
+      tags:
+        - log
+      operationId: getElephantLogs
+      parameters:
+        - required: true
+          schema:
+            $ref: 'elephant.yml#/components/schemas/ElephantId'
+          name: elephantId
+          in: path
+      responses:
+        200:
+          description: ok
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary
+  /predators/{predatorId}/logs:
+    get:
+      tags:
+        - log
+      operationId: getPredatorLogs
+      parameters:
+        - required: true
+          schema:
+            $ref: 'predator.yml#/components/schemas/PredatorId'
+          name: predatorId
+          in: path
+      responses:
+        200:
+          description: ok
+          content:
+            text/plain:
+              schema:
+                type: string
+                format: binary

@@ -1,0 +1,236 @@
+paths:
+  /elephant/{elephantId}/confusion-hattrick:
+    get:
+      tags:
+        - ibis
+      summary: Get Turbulence Series Chart
+      operationId: getConfusionHattricks
+      parameters:
+        - name: elephantId
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Elephant Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfusionHattricks'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const:
+                  - private
+                  - immutransformer
+  /elephant/{elephantId}/lift:
+    get:
+      tags:
+        - ibis
+      summary: Get Lift
+      operationId: getLift
+      parameters:
+        - name: elephantId
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Elephant Id
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiftResponse'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const:
+                  - private
+                  - immutransformer
+  /elephant/{elephantId}/scatter-plot:
+    get:
+      tags:
+        - ibis
+      summary: Get Scatterplot
+      operationId: getScatterPlot
+      parameters:
+        - name: elephantId
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Elephant Id
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 100000
+            title: Limit
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const:
+                  - private
+                  - immutransformer
+  /elephant/{elephantId}/turbulence-series-chart:
+    get:
+      tags:
+        - ibis
+      summary: Get Turbulence Series Chart
+      operationId: getTurbulenceSeriesChart
+      parameters:
+        - name: elephantId
+          in: path
+          required: true
+          schema:
+            type: string
+            title: Elephant Id
+        - name: aggregation
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/TurbulenceSeriesChartAggregation'
+        - name: resolution
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/TurbulenceSeriesChartResolution'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TurbulenceSeriesChart'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+                const:
+                  - private
+                  - immutransformer
+components:
+  schemas:
+    ConfusionHattricks:
+      properties:
+        value:
+          items:
+            $ref: '#/components/schemas/ConfusionHattrick'
+          type: array
+          title: Value
+      type: object
+      required:
+        - value
+      title: ConfusionHattricks
+    ConfusionHattrick:
+      properties:
+        threshold:
+          type: number
+          title: Threshold
+        falseNeg:
+          type: integer
+          title: Falseneg
+        falsePos:
+          type: integer
+          title: Falsepos
+        trueNeg:
+          type: integer
+          title: Trueneg
+        truePos:
+          type: integer
+          title: Truepos
+      type: object
+      required:
+        - threshold
+        - falseNeg
+        - falsePos
+        - trueNeg
+        - truePos
+      title: ConfusionHattrick
+    LiftBucket:
+      properties:
+        population:
+          type: integer
+          title: Population
+        positiveTargets:
+          type: integer
+          title: Positivetargets
+      type: object
+      required:
+        - population
+        - positiveTargets
+      title: LiftBucket
+    LiftResponse:
+      properties:
+        buckets:
+          items:
+            $ref: '#/components/schemas/LiftBucket'
+          type: array
+          title: Buckets
+      type: object
+      required:
+        - buckets
+      title: LiftResponse
+    TurbulenceSeriesChart:
+      properties:
+        samples:
+          items:
+            $ref: '#/components/schemas/TurbulenceSeriesChartSample'
+          type: array
+          title: Samples
+      type: object
+      required:
+        - samples
+      title: TurbulenceSeriesChart
+    TurbulenceSeriesChartAggregation:
+      type: string
+      enum:
+        - avg
+        - sum
+      title: TurbulenceSeriesChartAggregation
+    TurbulenceSeriesChartResolution:
+      type: string
+      enum:
+        - millisecond
+        - second
+        - minute
+        - hour
+        - day
+        - week
+        - month
+        - quarter
+        - year
+      title: TurbulenceSeriesChartResolution
+    TurbulenceSeriesChartSample:
+      properties:
+        turbulence:
+          type: string
+          title: Turbulence
+        postponed:
+          type: number
+          title: Postponed
+        actual:
+          type: number
+          title: Actual
+      type: object
+      required:
+        - turbulence
+        - postponed
+        - actual
+      title: TurbulenceSeriesChartSample

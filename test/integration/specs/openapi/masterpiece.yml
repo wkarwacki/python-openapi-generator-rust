@@ -1,0 +1,120 @@
+paths:
+  /masterpieces:
+    get:
+      tags:
+        - masterpiece
+      operationId: getMasterpieces
+      parameters:
+        - required: true
+          schema:
+            $ref: 'elephant.yml#/components/schemas/ElephantId'
+          name: elephantId
+          in: query
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Masterpiece"
+components:
+  schemas:
+    Masterpiece:
+      oneOf:
+        - $ref: '#/components/schemas/MasterpieceCucumber'
+        - $ref: '#/components/schemas/MasterpieceReverted'
+      discriminator:
+        propertyName: type
+        mapping:
+          cucumber: '#/components/schemas/MasterpieceCucumber'
+          reverted: '#/components/schemas/MasterpieceReverted'
+    MasterpieceAbstraction:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/MasterpieceId'
+        name:
+          type: string
+      required:
+        - id
+        - name
+    MasterpieceCucumber:
+      allOf:
+        - $ref: '#/components/schemas/MasterpieceAbstraction'
+        - type: object
+          properties:
+            museums:
+              $ref: '#/components/schemas/MasterpieceCucumberMuseums'
+          required:
+            - museums
+      x-dotdata-discriminator: type
+    MasterpieceCucumberMuseums:
+      type: object
+      properties:
+        auc:
+          type: number
+          format: double
+        accuracy:
+          type: number
+          format: double
+        recall:
+          type: number
+          format: double
+        precision:
+          type: number
+          format: double
+        f1:
+          type: number
+          format: double
+        kappa:
+          type: number
+          format: double
+        mcc:
+          type: number
+          format: double
+      required:
+        - auc
+        - accuracy
+        - recall
+        - precision
+        - f1
+        - kappa
+        - mcc
+    MasterpieceId:
+      $ref: 'api.yml#/components/schemas/Id'
+    MasterpieceReverted:
+      allOf:
+        - $ref: '#/components/schemas/MasterpieceAbstraction'
+        - type: object
+          properties:
+            museums:
+              $ref: '#/components/schemas/MasterpieceRevertedMuseums'
+          required:
+            - museums
+      x-dotdata-discriminator: type
+    MasterpieceRevertedMuseums:
+      type: object
+      properties:
+        rmse:
+          type: number
+          format: double
+        mae:
+          type: number
+          format: double
+        r2:
+          type: number
+          format: double
+        rmsle:
+          type: number
+          format: double
+        mape:
+          type: number
+          format: double
+      required:
+        - rmse
+        - mae
+        - r2
+        - rmsle
+        - mape

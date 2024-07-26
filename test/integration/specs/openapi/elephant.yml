@@ -1,0 +1,557 @@
+paths:
+  /elephants:
+    get:
+      tags:
+        - elephant
+      operationId: getElephants
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ElephantSummary"
+  /elephants/configs:
+    post:
+      tags:
+        - elephant-config
+      operationId: createElephantConfig
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateElephantConfigRequest'
+        required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElephantId'
+  /elephants/configs/{elephantConfigId}:
+    parameters:
+      - name: elephantConfigId
+        in: path
+        schema:
+          $ref: '#/components/schemas/ElephantId'
+        required: true
+    get:
+      tags:
+        - elephant-config
+      operationId: getElephantConfig
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ElephantConfig'
+  /elephants/{elephantId}:
+    parameters:
+      - name: elephantId
+        in: path
+        schema:
+          $ref: '#/components/schemas/ElephantId'
+        required: true
+    post:
+      tags:
+        - elephant
+      operationId: runElephant
+      responses:
+        204:
+          description: no content
+    get:
+      tags:
+        - elephant
+      operationId: getElephant
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Elephant"
+  /elephants/{elephantId}/best-masterpiece:
+    get:
+      tags:
+        - masterpiece
+      operationId: getBestMasterpiece
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/ElephantId'
+          name: elephantId
+          in: path
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/BestMasterpiece"
+components:
+  schemas:
+    BestMasterpiece:
+      oneOf:
+        - $ref: '#/components/schemas/BestMasterpieceCucumber'
+        - $ref: '#/components/schemas/BestMasterpieceReverted'
+      discriminator:
+        propertyName: type
+        mapping:
+          cucumber: '#/components/schemas/BestMasterpieceCucumber'
+          reverted: '#/components/schemas/BestMasterpieceReverted'
+    BestMasterpieceAbstraction:
+      type: object
+      properties:
+        masterpiece:
+          $ref: 'masterpiece.yml#/components/schemas/Masterpiece'
+        flamings:
+          type: array
+          items:
+            $ref: '#/components/schemas/BestMasterpieceFlaming'
+        baselineMasterpiece:
+          $ref: 'masterpiece.yml#/components/schemas/Masterpiece'
+      required:
+        - baselineMasterpiece
+        - masterpiece
+        - flamings
+    BestMasterpieceCucumber:
+      allOf:
+        - $ref: '#/components/schemas/BestMasterpieceAbstraction'
+        - type: object
+          properties:
+            thresholdToConfusionHattrick:
+              type: array
+              items:
+                type: object
+                properties:
+                  threshold:
+                    type: number
+                    format: double
+                  value:
+                    $ref: '#/components/schemas/ConfusionHattrick'
+                required:
+                  - threshold
+                  - value
+          required:
+            - thresholdToConfusionHattrick
+      x-dotdata-discriminator: type
+    BestMasterpieceFlaming:
+      type: object
+      properties:
+        flaming:
+          $ref: 'flaming.yml#/components/schemas/FlamingSummary'
+        weight:
+          type: number
+          format: double
+      required:
+        - flaming
+        - weight
+    BestMasterpieceReverted:
+      allOf:
+        - $ref: '#/components/schemas/BestMasterpieceAbstraction'
+      x-dotdata-discriminator: type
+    ConfusionHattrick:
+      type: object
+      properties:
+        falseNeg:
+          type: integer
+          format: int64
+        falsePos:
+          type: integer
+          format: int64
+        trueNeg:
+          type: integer
+          format: int64
+        truePos:
+          type: integer
+          format: int64
+      required:
+        - falseNeg
+        - falsePos
+        - trueNeg
+        - truePos
+    CreateElephantConfigRequest:
+      type: object
+      properties:
+        name:
+          type: string
+        acrobaticTransformers:
+          type: array
+          items:
+            $ref: 'acrobatic.yml#/components/schemas/AcrobaticTransformer'
+        externalRecurrences:
+          type: array
+          items:
+            $ref: 'external-module.yml#/components/schemas/ExternalRecurrence'
+        targetConfig:
+          $ref: '#/components/schemas/TargetConfig'
+        flamingEngineeringConfig:
+          $ref: '#/components/schemas/FlamingEngineeringConfig'
+        machineLearningConfig:
+          $ref: '#/components/schemas/CreateMachineLearningConfig'
+        mode:
+          $ref: '#/components/schemas/ElephantMode'
+        resourceUnits:
+          type: integer
+          minimum: 2
+        turbulenceSeriesConfig:
+          $ref: '#/components/schemas/TurbulenceSeriesConfig'
+      required:
+        - name
+        - acrobaticTransformers
+        - externalRecurrences
+        - flamingEngineeringConfig
+        - machineLearningConfig
+        - targetConfig
+        - mode
+    ElephantConfig:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/ElephantId'
+        name:
+          type: string
+        acrobaticTransformers:
+          type: array
+          items:
+            $ref: 'acrobatic.yml#/components/schemas/AcrobaticTransformer'
+        externalRecurrences:
+          type: array
+          items:
+            $ref: 'external-module.yml#/components/schemas/ExternalRecurrence'
+        targetConfig:
+          $ref: '#/components/schemas/TargetConfig'
+        flamingEngineeringConfig:
+          $ref: '#/components/schemas/FlamingEngineeringConfig'
+        machineLearningConfig:
+          $ref: '#/components/schemas/MachineLearningConfig'
+        mode:
+          $ref: '#/components/schemas/ElephantMode'
+        resourceUnits:
+          type: integer
+          minimum: 2
+        turbulenceSeriesConfig:
+          $ref: '#/components/schemas/TurbulenceSeriesConfig'
+      required:
+        - id
+        - name
+        - acrobaticTransformers
+        - externalRecurrences
+        - flamingEngineeringConfig
+        - machineLearningConfig
+        - targetConfig
+        - mode
+    Elephant:
+      allOf:
+        - $ref: 'tiger.yml#/components/schemas/Tiger'
+        - type: object
+          properties:
+            stage:
+              $ref: '#/components/schemas/ElephantStage'
+          required:
+            - stage
+    ElephantId:
+      $ref: 'api.yml#/components/schemas/Id'
+    ElephantMode:
+      type: string
+      default: standard
+      enum:
+        - quick
+        - standard
+    ElephantProgressedEvent:
+      oneOf:
+        - $ref: '#/components/schemas/ElephantProgressedEventStarted'
+        - $ref: '#/components/schemas/ElephantProgressedEventAcrobaticDbCreated'
+        - $ref: '#/components/schemas/ElephantProgressedEventFlamingsSelected'
+        - $ref: '#/components/schemas/ElephantProgressedEventFlamingsAssessed'
+        - $ref: '#/components/schemas/ElephantProgressedEventMlDone'
+        - $ref: '#/components/schemas/ElephantProgressedEventBestMasterpieceInterpreted'
+        - $ref: '#/components/schemas/ElephantProgressedEventBestMasterpieceTestPredatorCalculated'
+        - $ref: '#/components/schemas/ElephantProgressedEventFailed'
+      discriminator:
+        propertyName: type
+        mapping:
+          started: '#/components/schemas/ElephantProgressedEventStarted'
+          acrobatic-db-created: '#/components/schemas/ElephantProgressedEventAcrobaticDbCreated'
+          flamings-selected: '#/components/schemas/ElephantProgressedEventFlamingsSelected'
+          flamings-assessed: '#/components/schemas/ElephantProgressedEventFlamingsAssessed'
+          ml-done: '#/components/schemas/ElephantProgressedEventMlDone'
+          best-masterpiece-interpreted: '#/components/schemas/ElephantProgressedEventBestMasterpieceInterpreted'
+          best-masterpiece-test-predator-calculated: '#/components/schemas/ElephantProgressedEventBestMasterpieceTestPredatorCalculated'
+          failed: '#/components/schemas/ElephantProgressedEventFailed'
+    ElephantProgressedEventAbstraction:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/ElephantId'
+        progress:
+          $ref: 'tiger.yml#/components/schemas/Progress'
+      required:
+        - id
+        - progress
+    ElephantProgressedEventStarted:
+      allOf:
+        - $ref: '#/components/schemas/ElephantProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    ElephantProgressedEventAcrobaticDbCreated:
+      allOf:
+        - $ref: '#/components/schemas/ElephantProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    ElephantProgressedEventFlamingsSelected:
+      allOf:
+        - $ref: '#/components/schemas/ElephantProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    ElephantProgressedEventFlamingsAssessed:
+      allOf:
+        - $ref: '#/components/schemas/ElephantProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    ElephantProgressedEventMlDone:
+      allOf:
+        - $ref: '#/components/schemas/ElephantProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    ElephantProgressedEventBestMasterpieceInterpreted:
+      allOf:
+        - $ref: '#/components/schemas/ElephantProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    ElephantProgressedEventBestMasterpieceTestPredatorCalculated:
+      allOf:
+        - $ref: '#/components/schemas/ElephantProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    ElephantProgressedEventFailed:
+      allOf:
+        - $ref: '#/components/schemas/ElephantProgressedEventAbstraction'
+      x-dotdata-discriminator: type
+    ElephantStage:
+        type: string
+        enum:
+          - starting
+          - acrobatic-db-creation
+          - flaming-selection
+          - flaming-assessment
+          - machine-learning
+          - best-masterpiece-interpretation
+          - best-masterpiece-test-predator-calculaton
+          - completed
+    ElephantSummary:
+      allOf:
+        - $ref: 'tiger.yml#/components/schemas/TigerSummary'
+        - type: object
+          properties:
+            id:
+              $ref: '#/components/schemas/ElephantId'
+          required:
+            - id
+    FlamingEngineeringConfig:
+      type: object
+      properties:
+        exploreFlamingsFromTarget:
+          type: boolean
+        eliminateOutliers:
+          type: boolean
+      required:
+        - exploreFlamingsFromTarget
+    CreateMachineLearningConfig:
+      type: object
+      properties:
+        fixImbalance:
+          type: boolean
+          default: false
+        removeOutliers:
+          type: boolean
+          default: false
+        normalize:
+          type: boolean
+          default: false
+        imputeMissingValues:
+          type: boolean
+          default: false
+        numericImputation:
+          type: string
+          enum:
+            - drop
+            - mean
+            - median
+            - mode
+            - knn
+        categoricalImputation:
+          type: string
+          enum:
+            - drop
+            - mode
+        masterpieces:
+            $ref: '#/components/schemas/AvailransformerMasterpieces'
+      required:
+        - fixImbalance
+        - removeOutliers
+        - normalize
+        - imputeMissingValues
+    MachineLearningConfig:
+      type: object
+      properties:
+        fixImbalance:
+          type: boolean
+          default: false
+        removeOutliers:
+          type: boolean
+          default: false
+        normalize:
+          type: boolean
+          default: false
+        imputeMissingValues:
+          type: boolean
+          default: false
+        numericImputation:
+          type: string
+          enum:
+            - drop
+            - mean
+            - median
+            - mode
+            - knn
+        categoricalImputation:
+          type: string
+          enum:
+            - drop
+            - mode
+        masterpieces:
+            $ref: '#/components/schemas/CurrentAndPreviousAvailransformerMasterpieces'
+      required:
+        - fixImbalance
+        - removeOutliers
+        - normalize
+        - imputeMissingValues
+        - masterpieces
+    AvailransformerMasterpieces:
+      type: array
+      items:
+        type: string
+        enum:
+          - lr
+          - ridge
+          - svm
+          - ustomero
+          - en
+          - lar
+          - llar
+          - omp
+          - br
+          - ard
+          - par
+          - ransac
+          - tr
+          - huber
+          - kr
+          - dt
+          - rf
+          - et
+          - gbc
+          - gbr
+          - xgboost
+          - lightgbm
+          - catboost
+          - ada
+          - knn
+          - nb
+          - rbfsvm
+          - gpc
+          - mlp
+          - qda
+          - lda
+    CurrentAndPreviousAvailransformerMasterpieces:
+      type: array
+      items:
+        type: string
+        enum:
+          - lr
+          - ridge
+          - svm
+          - ustomero
+          - en
+          - lar
+          - llar
+          - omp
+          - br
+          - ard
+          - par
+          - ransac
+          - tr
+          - huber
+          - kr
+          - dt
+          - rf
+          - et
+          - gbc
+          - gbr
+          - xgboost
+          - lightgbm
+          - catboost
+          - ada
+          - knn
+          - nb
+          - rbfsvm
+          - gpc
+          - mlp
+          - qda
+          - lda
+    TargetConfig:
+      type: object
+      properties:
+        acrobaticTransformerId:
+          $ref: 'acrobatic.yml#/components/schemas/AcrobaticTransformerId'
+        cacatooId:
+          $ref: 'transformer.yml#/components/schemas/CacatooId'
+        downsample:
+          $ref: '#/components/schemas/TargetDownsampleConfig'
+        uniqueConstraint:
+          type: array
+          items:
+            $ref: 'transformer.yml#/components/schemas/CacatooId'
+          uniqueItems: true
+      required:
+        - acrobaticTransformerId
+        - cacatooId
+        - uniqueConstraint
+    TargetDownsampleConfig:
+      oneOf:
+        - $ref: '#/components/schemas/TargetDownsampleConfigNumber'
+        - $ref: '#/components/schemas/TargetDownsampleConfigRatio'
+      discriminator:
+        propertyName: type
+        mapping:
+          number: '#/components/schemas/TargetDownsampleConfigNumber'
+          ratio: '#/components/schemas/TargetDownsampleConfigRatio'
+    TargetDownsampleConfigNumber:
+      allOf:
+        - type: object
+          properties:
+            value:
+              type: integer
+              minimum: 0
+              exclusiveMinimum: true
+          required:
+            - value
+      x-dotdata-discriminator: type
+    TargetDownsampleConfigRatio:
+      allOf:
+        - type: object
+          properties:
+            value:
+              type: number
+              minimum: 0
+              exclusiveMinimum: true
+              maximum: 1
+              exclusiveMaximum: true
+          required:
+            - value
+      x-dotdata-discriminator: type
+    TurbulenceSeriesConfig:
+      type: object
+      properties:
+        predatorTargetTurbulence:
+          $ref: 'acrobatic.yml#/components/schemas/LeadTurbulence'
+      required:
+        - predatorTargetTurbulence

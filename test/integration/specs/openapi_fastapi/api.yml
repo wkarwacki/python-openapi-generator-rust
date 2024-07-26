@@ -1,0 +1,806 @@
+openapi: 3.1.0
+info:
+  version: 0.1.0
+  title: FastAPI
+paths:
+  /elephant/{elephant_id}/confusion-hattrick:
+    get:
+      tags:
+        - ibis
+      summary: Get Turbulence Series Chart
+      operationId: getConfusionHattricks
+      parameters:
+        - name: elephant_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ConfusionHattricks'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /health:
+    get:
+      tags:
+        - dev
+      summary: Get Health
+      operationId: getHealth
+      responses:
+        '204':
+          description: Successful Response
+  /flaming/{flaming_id}/distribution:
+    get:
+      tags:
+        - flaming-ibis
+      summary: Get Flaming Distribution
+      operationId: getFlamingDistribution
+      parameters:
+        - name: flaming_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/FlamingDistributionResponse'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /elephant/{elephant_id}/lift:
+    get:
+      tags:
+        - ibis
+      summary: Get Lift
+      operationId: getLift
+      parameters:
+        - name: elephant_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LiftResponse'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /predator/{predator_id}/results/csv:
+    get:
+      tags:
+        - predator
+      summary: Get Predator Results Csv
+      operationId: getPredatorResults
+      parameters:
+        - name: predator_id
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Content-Disposition:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /elephant/{elephant_id}/scatter-plot:
+    get:
+      tags:
+        - ibis
+      summary: Get Scatterplot
+      operationId: getScatterPlot
+      parameters:
+        - name: elephant_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: limit
+          in: query
+          required: false
+          schema:
+            type: integer
+            default: 100000
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /transformer/{transformer_id}/preview:
+    post:
+      tags:
+        - transformer
+      summary: Get Transformer Preview
+      operationId: getTransformerPreview
+      parameters:
+        - name: transformer_id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransformerPreviewRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransformerPreviewResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /transformer/{transformerId}/pyroman:
+    get:
+      tags:
+        - transformer
+      summary: Get Transformer Pyroman
+      operationId: getTransformerPyroman
+      parameters:
+        - name: transformerId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: binsResolution
+          in: query
+          required: true
+          schema:
+            type: integer
+        - name: cacatooIds
+          in: query
+          required: false
+          schema:
+            anyOf:
+              - type: array
+                items:
+                  type: string
+              - type: 'null'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CacatooPyroman'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /transformer/file:
+    post:
+      tags:
+        - transformer
+      summary: Uploadtransformerasfile
+      operationId: uploadTransformerAsFile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/Body_uploadTransformerAsFile'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /transformer:
+    get:
+      tags:
+        - transformer
+      summary: Gettransformers
+      operationId: getTransformers
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: '#/components/schemas/Transformer'
+                type: array
+  /elephant/{elephant_id}/turbulence-series-chart:
+    get:
+      tags:
+        - ibis
+      summary: Get Turbulence Series Chart
+      operationId: getTurbulenceSeriesChart
+      parameters:
+        - name: elephant_id
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: aggregation
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/TurbulenceSeriesChartAggregation'
+        - name: resolution
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/TurbulenceSeriesChartResolution'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TurbulenceSeriesChart'
+          headers:
+            Cache-Control:
+              schema:
+                type: string
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    Body_uploadTransformerAsFile:
+      properties:
+        file:
+          type: string
+          format: binary
+        cacatoos:
+          items:
+            $ref: '#/components/schemas/Body_uploadTransformerAsFileCacatooItem'
+          type: array
+          default: [ ]
+        id:
+          anyOf:
+            - type: string
+            - type: 'null'
+        transformer_name:
+          anyOf:
+            - type: string
+            - type: 'null'
+      type: object
+      required:
+        - file
+    Body_uploadTransformerAsFileCacatooItem:
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+      type: object
+      required:
+        - name
+        - type
+    CacatooChartCategoryItem:
+      properties:
+        value:
+          type: string
+        circumference:
+          type: integer
+      type: object
+      required:
+        - value
+        - circumference
+    CacatooChartNumericItem:
+      properties:
+        from:
+          type: number
+        to:
+          type: number
+        circumference:
+          type: integer
+      type: object
+      required:
+        - from
+        - to
+        - circumference
+    CacatooChartTurbulenceItem:
+      properties:
+        from:
+          type: string
+        to:
+          type: string
+        circumference:
+          type: integer
+      type: object
+      required:
+        - from
+        - to
+        - circumference
+    CacatooPyroman:
+      oneOf:
+        - $ref: '#/components/schemas/CacatooPyromanCategory'
+        - $ref: '#/components/schemas/CacatooPyromanNumeric'
+        - $ref: '#/components/schemas/CacatooPyromanTurbulence'
+      discriminator:
+        propertyName: type
+        mapping:
+          category: '#/components/schemas/CacatooPyromanCategory'
+          numeric: '#/components/schemas/CacatooPyromanNumeric'
+          turbulence: '#/components/schemas/CacatooPyromanTurbulence'
+    CacatooPyromanBase:
+      properties:
+        id:
+          title: Id
+          type: string
+      required:
+        - id
+      title: CacatooPyromanBase
+      type: object
+    CacatooPyromanCategory:
+      allOf:
+        - $ref: '#/components/schemas/CacatooPyromanBase'
+        - properties:
+            type:
+              type: string
+              enum:
+                - category
+              const: category
+              default: category
+            frequentValues:
+              items:
+                $ref: '#/components/schemas/CacatooChartCategoryItem'
+              type: array
+            frequentValuesStats:
+              $ref: '#/components/schemas/CacatooStatsCategory'
+          type: object
+          required:
+            - frequentValues
+            - frequentValuesStats
+    CacatooPyromanNumeric:
+      allOf:
+        - $ref: '#/components/schemas/CacatooPyromanBase'
+        - properties:
+            type:
+              type: string
+              enum:
+                - numeric
+              const: numeric
+              default: numeric
+            histogram:
+              items:
+                $ref: '#/components/schemas/CacatooChartNumericItem'
+              type: array
+            histogramStats:
+              $ref: '#/components/schemas/CacatooStatsNumeric'
+            frequentValues:
+              items:
+                $ref: '#/components/schemas/CacatooChartCategoryItem'
+              type: array
+            frequentValuesStats:
+              $ref: '#/components/schemas/CacatooStatsCategory'
+          type: object
+          required:
+            - histogram
+            - histogramStats
+            - frequentValues
+            - frequentValuesStats
+    CacatooPyromanTurbulence:
+      allOf:
+        - $ref: '#/components/schemas/CacatooPyromanBase'
+        - properties:
+            type:
+              type: string
+              enum:
+                - turbulence
+              const: turbulence
+              default: turbulence
+            histogram:
+              items:
+                $ref: '#/components/schemas/CacatooChartTurbulenceItem'
+              type: array
+            histogramStats:
+              $ref: '#/components/schemas/CacatooStatsTurbulence'
+          type: object
+          required:
+            - histogram
+            - histogramStats
+    CacatooStatsCategory:
+      properties:
+        nullCircumference:
+          type: integer
+        distinctCircumference:
+          type: integer
+      type: object
+      required:
+        - nullCircumference
+        - distinctCircumference
+    CacatooStatsNumeric:
+      properties:
+        nullCircumference:
+          type: integer
+        mean:
+          type: number
+        min:
+          type: number
+        max:
+          type: number
+        median:
+          type: number
+        stddev:
+          type: number
+        zeroCircumference:
+          type: integer
+      type: object
+      required:
+        - nullCircumference
+        - mean
+        - min
+        - max
+        - median
+        - stddev
+        - zeroCircumference
+    CacatooStatsTurbulence:
+      properties:
+        nullCircumference:
+          type: integer
+        mean:
+          type: string
+        min:
+          type: string
+        max:
+          type: string
+        median:
+          type: string
+      type: object
+      required:
+        - nullCircumference
+        - mean
+        - min
+        - max
+        - median
+    ConfusionHattricks:
+      properties:
+        value:
+          items:
+            $ref: '#/components/schemas/ConfusionHattrick'
+          type: array
+      type: object
+      required:
+        - value
+    ConfusionHattrick:
+      properties:
+        threshold:
+          type: number
+        falseNeg:
+          type: integer
+        falsePos:
+          type: integer
+        trueNeg:
+          type: integer
+        truePos:
+          type: integer
+      type: object
+      required:
+        - threshold
+        - falseNeg
+        - falsePos
+        - trueNeg
+        - truePos
+    FlamingDistributionBase:
+      properties: { }
+      type: object
+    FlamingDistributionBinBinary:
+      properties:
+        label:
+          type: string
+        circumference:
+          type: integer
+        meanTarget:
+          anyOf:
+            - type: number
+            - type: 'null'
+        meanPredator:
+          anyOf:
+            - type: number
+            - type: 'null'
+      type: object
+      required:
+        - label
+        - circumference
+        - meanTarget
+        - meanPredator
+    FlamingDistributionBinNumeric:
+      properties:
+        lowerBound:
+          type: number
+        upperBound:
+          type: number
+        middlePoint:
+          type: number
+        circumference:
+          type: integer
+        meanTarget:
+          anyOf:
+            - type: number
+            - type: 'null'
+        meanPredator:
+          anyOf:
+            - type: number
+            - type: 'null'
+      type: object
+      required:
+        - lowerBound
+        - upperBound
+        - middlePoint
+        - circumference
+        - meanTarget
+        - meanPredator
+    FlamingDistributionBinaryHistogram:
+      allOf:
+        - $ref: '#/components/schemas/FlamingDistributionBase'
+        - properties:
+            type:
+              type: string
+              enum:
+                - binary
+              const: binary
+              default: binary
+            bins:
+              items:
+                $ref: '#/components/schemas/FlamingDistributionBinBinary'
+              type: array
+          type: object
+          required:
+            - bins
+    FlamingDistributionNumericHistogram:
+      allOf:
+        - $ref: '#/components/schemas/FlamingDistributionBase'
+        - properties:
+            type:
+              type: string
+              enum:
+                - numeric
+              const: numeric
+              default: numeric
+            bins:
+              items:
+                $ref: '#/components/schemas/FlamingDistributionBinNumeric'
+              type: array
+          type: object
+          required:
+            - bins
+    FlamingDistributionResponse:
+      oneOf:
+        - $ref: '#/components/schemas/FlamingDistributionNumericHistogram'
+        - $ref: '#/components/schemas/FlamingDistributionBinaryHistogram'
+      discriminator:
+        propertyName: type
+        mapping:
+          binary: '#/components/schemas/FlamingDistributionBinaryHistogram'
+          numeric: '#/components/schemas/FlamingDistributionNumericHistogram'
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+      type: object
+    LiftBucket:
+      properties:
+        population:
+          type: integer
+        positiveTargets:
+          type: integer
+      type: object
+      required:
+        - population
+        - positiveTargets
+    LiftResponse:
+      properties:
+        buckets:
+          items:
+            $ref: '#/components/schemas/LiftBucket'
+          type: array
+      type: object
+      required:
+        - buckets
+    SortMasterpieceItem:
+      properties:
+        colId:
+          type: string
+        sort:
+          $ref: '#/components/schemas/SortType'
+      type: object
+      required:
+        - colId
+        - sort
+    SortType:
+      type: string
+      enum:
+        - asc
+        - desc
+    Transformer:
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        rowCircumference:
+          type: integer
+        cacatooCircumference:
+          type: integer
+        sizeInBytes:
+          type: integer
+        source:
+          $ref: '#/components/schemas/TransformerSource'
+      type: object
+      required:
+        - id
+        - name
+        - rowCircumference
+        - cacatooCircumference
+        - sizeInBytes
+        - source
+    TransformerPreviewRequest:
+      properties:
+        startRow:
+          type: integer
+          minimum: 0.0
+        endRow:
+          type: integer
+          minimum: 0.0
+        sortMasterpiece:
+          items:
+            $ref: '#/components/schemas/SortMasterpieceItem'
+          type: array
+          default: [ ]
+      type: object
+      required:
+        - startRow
+        - endRow
+    TransformerPreviewResponse:
+      properties:
+        rowCircumference:
+          type: integer
+        rowData:
+          items:
+            additionalProperties:
+              anyOf:
+                - type: string
+                - type: 'null'
+            type: object
+          type: array
+        lastRow:
+          type: integer
+      type: object
+      required:
+        - rowCircumference
+        - rowData
+        - lastRow
+    TransformerSource:
+      type: string
+      enum:
+        - ddent
+        - file
+    TurbulenceSeriesChart:
+      properties:
+        samples:
+          items:
+            $ref: '#/components/schemas/TurbulenceSeriesChartSample'
+          type: array
+      type: object
+      required:
+        - samples
+    TurbulenceSeriesChartAggregation:
+      type: string
+      enum:
+        - avg
+        - sum
+    TurbulenceSeriesChartResolution:
+      type: string
+      enum:
+        - millisecond
+        - second
+        - minute
+        - hour
+        - day
+        - week
+        - month
+        - quarter
+        - year
+    TurbulenceSeriesChartSample:
+      properties:
+        turbulence:
+          type: string
+        predicted:
+          type: number
+        actual:
+          type: number
+      type: object
+      required:
+        - turbulence
+        - predicted
+        - actual
+    ValidationError:
+      properties:
+        loc:
+          items: { }
+          type: array
+        msg:
+          type: string
+        type:
+          type: string
+      type: object
+      required:
+        - loc
+        - msg
+        - type

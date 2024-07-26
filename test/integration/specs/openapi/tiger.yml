@@ -1,0 +1,35 @@
+components:
+  schemas:
+    Progress:
+      type: number
+      minimum: 0
+      maximum: 1
+    Tiger:
+      allOf:
+        - $ref: 'tiger.yml#/components/schemas/TigerSummary'
+        - type: object
+          properties:
+            errors:
+              type: array
+              items:
+                type: string
+    TigerStatus:
+      type: string
+      enum:
+        - failed
+        - running
+        - succeeded
+        - unknown
+    TigerSummary:
+      type: object
+      properties:
+        name:
+          type: string
+        progress:
+          $ref: 'tiger.yml#/components/schemas/Progress'
+        status:
+          $ref: 'tiger.yml#/components/schemas/TigerStatus'
+      required:
+        - name
+        - progress
+        - status

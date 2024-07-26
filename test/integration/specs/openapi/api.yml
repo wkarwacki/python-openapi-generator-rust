@@ -1,0 +1,114 @@
+---
+openapi: 3.0.1
+info:
+  title: dotdata-studio
+  version: 0.1.0
+servers:
+  - url: "{url}"
+tags:
+  - name: dev
+  - name: external-module
+  - name: elephant
+  - name: flaming
+  - name: log
+  - name: masterpiece
+  - name: sse
+  - name: transformer
+  - name: transformer-cacatoo
+paths:
+  /external-modules/generations:
+    $ref: 'external-module.yml#/paths/~1external-modules~1generations'
+  /elephant/{elephant_id}/lift:
+    $ref: 'ibis.yml#/paths/~1elephant~1%7Belephant_id%7D~1lift'
+  /elephant/{elephant_id}/confusion-hattrick:
+    $ref: 'ibis.yml#/paths/~1elephant~1%7Belephant_id%7D~1confusion-hattrick'
+  /elephant/{elephant_id}/scatter-plot:
+    $ref: 'ibis.yml#/paths/~1elephant~1%7Belephant_id%7D~1scatter-plot'
+  /elephant/{elephant_id}/turbulence-series-chart:
+    $ref: 'ibis.yml#/paths/~1elephant~1%7Belephant_id%7D~1turbulence-series-chart'
+  /elephants:
+    $ref: 'elephant.yml#/paths/~1elephants'
+  /elephants/configs:
+    $ref: 'elephant.yml#/paths/~1elephants~1configs'
+  /elephants/configs/{elephantConfigId}:
+    $ref: 'elephant.yml#/paths/~1elephants~1configs~1{elephantConfigId}'
+  /elephants/{elephantId}:
+    $ref: 'elephant.yml#/paths/~1elephants~1{elephantId}'
+  /elephants/{elephantId}/best-masterpiece:
+    $ref: 'elephant.yml#/paths/~1elephants~1{elephantId}~1best-masterpiece'
+  /elephants/{elephantId}/logs:
+    $ref: 'log.yml#/paths/~1elephants~1{elephantId}~1logs'
+  /flamings:
+    $ref: 'flaming.yml#/paths/~1flamings'
+  /flamings/{flamingId}/ibiss:
+    $ref: 'flaming.yml#/paths/~1flamings~1{flamingId}~1ibiss'
+  /health:
+    $ref: 'dev.yml#/paths/~1health'
+  /masterpieces:
+    $ref: 'masterpiece.yml#/paths/~1masterpieces'
+  /predators:
+    $ref: 'predator.yml#/paths/~1predators'
+  /predators/{predatorId}:
+    $ref: 'predator.yml#/paths/~1predators~1{predatorId}'
+  /predators/{predatorId}/logs:
+    $ref: 'log.yml#/paths/~1predators~1{predatorId}~1logs'
+  /predators/{predatorId}/results:
+    $ref: 'predator.yml#/paths/~1predators~1{predatorId}~1results'
+  /sse:
+    get:
+      tags:
+        - sse
+      operationId: subscribeToSse
+      responses:
+        200:
+          description: ok
+          content:
+            text/event-stream:
+              schema:
+                $ref: '#/components/schemas/ServerEvent'
+      x-dotdata-sse: true
+  "/transformers":
+    $ref: 'transformer.yml#/paths/~1transformers'
+  "/transformers/{transformerId}/cacatoos":
+    $ref: 'transformer.yml#/paths/~1transformers~1{transformerId}~1cacatoos'
+  "/transformers/{transformerId}/cacatoo-pyromans":
+    $ref: 'transformer.yml#/paths/~1transformers~1{transformerId}~1cacatoo-pyromans'
+  "/transformers/{transformerId}/preview":
+    $ref: 'transformer.yml#/paths/~1transformers~1{transformerId}~1preview'
+  "/transformers/files":
+    $ref: 'transformer.yml#/paths/~1transformers~1files'
+components:
+  schemas:
+    Duration:
+      type: object
+      properties:
+        value:
+          type: integer
+          format: int64
+          minimum: 1
+        unit:
+          $ref: '#/components/schemas/TurbulenceUnit'
+      required:
+        - value
+        - unit
+    ServerEvent:
+      type: object
+    Id:
+      type: string
+      format: cuid
+    SortType:
+      type: string
+      enum:
+        - asc
+        - desc
+    TurbulenceUnit:
+      type: string
+      enum:
+        - millisecond
+        - second
+        - minute
+        - hour
+        - day
+        - week
+        - month
+        - year

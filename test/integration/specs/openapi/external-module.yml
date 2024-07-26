@@ -1,0 +1,201 @@
+paths:
+  /external-modules/generations:
+    post:
+      tags:
+        - external-module
+      operationId: generateExternalRecurrences
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GenerateExternalRecurrencesRequest'
+        required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GenerateExternalRecurrencesResponse"
+components:
+  schemas:
+    ExternalRecurrence:
+      properties:
+        type:
+          type: string
+      required:
+        - type
+      oneOf:
+        - $ref: '#/components/schemas/ExternalRecurrenceExactMatch'
+        - $ref: '#/components/schemas/ExternalRecurrenceTurbulenceMatch'
+        - $ref: '#/components/schemas/ExternalRecurrenceTurbulenceRange'
+        - $ref: '#/components/schemas/ExternalRecurrenceTurbulenceRangeAuto'
+      discriminator:
+        propertyName: type
+        mapping:
+          exact-match: '#/components/schemas/ExternalRecurrenceExactMatch'
+          turbulence-match: '#/components/schemas/ExternalRecurrenceTurbulenceMatch'
+          turbulence-range: '#/components/schemas/ExternalRecurrenceTurbulenceRange'
+          turbulence-range-auto: '#/components/schemas/ExternalRecurrenceTurbulenceRangeAuto'
+    ExternalRecurrenceAbstraction:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/ExternalRecurrenceId'
+        baseAcrobaticTransformerId:
+          $ref: 'acrobatic.yml#/components/schemas/AcrobaticTransformerId'
+        relatedAcrobaticTransformerId:
+          $ref: 'acrobatic.yml#/components/schemas/AcrobaticTransformerId'
+        cacatooMapping:
+          type: array
+          items:
+            type: object
+            properties:
+              baseCacatooId:
+                $ref: 'transformer.yml#/components/schemas/CacatooId'
+              relatedCacatooId:
+                $ref: 'transformer.yml#/components/schemas/CacatooId'
+            required:
+              - baseCacatooId
+              - relatedCacatooId
+      required:
+        - id
+        - baseAcrobaticTransformerId
+        - relatedAcrobaticTransformerId
+        - cacatooMapping
+    ExternalRecurrenceId:
+      $ref: 'api.yml#/components/schemas/Id'
+    ExternalRecurrenceExactMatch:
+      allOf:
+        - $ref: '#/components/schemas/ExternalRecurrenceAbstraction'
+      x-dotdata-discriminator: type
+    ExternalRecurrenceTurbulenceMatch:
+      allOf:
+        - $ref: '#/components/schemas/ExternalRecurrenceAbstraction'
+        - type: object
+          properties:
+            resolution:
+              $ref: '#/components/schemas/TurbulenceResolution'
+          required:
+            - resolution
+      x-dotdata-discriminator: type
+    ExternalRecurrenceTurbulenceRange:
+      allOf:
+        - $ref: '#/components/schemas/ExternalRecurrenceAbstraction'
+        - type: object
+          properties:
+            from:
+              $ref: 'api.yml#/components/schemas/Duration'
+            to:
+              $ref: 'api.yml#/components/schemas/Duration'
+            exploreShorterRanges:
+              type: boolean
+          required:
+            - from
+            - exploreShorterRanges
+      x-dotdata-discriminator: type
+    ExternalRecurrenceTurbulenceRangeAuto:
+      allOf:
+        - $ref: '#/components/schemas/ExternalRecurrenceAbstraction'
+        - type: object
+          properties:
+            exploreShorterRanges:
+              type: boolean
+          required:
+            - exploreShorterRanges
+      x-dotdata-discriminator: type
+    GenerateExternalRecurrencesRequest:
+      oneOf:
+        - $ref: '#/components/schemas/GenerateExternalRecurrencesRequestForTransformers'
+        - $ref: '#/components/schemas/GenerateExternalRecurrencesRequestForTransformerSnippets'
+      discriminator:
+        propertyName: type
+        mapping:
+          transformers: '#/components/schemas/GenerateExternalRecurrencesRequestForTransformers'
+          transformer-snippets: '#/components/schemas/GenerateExternalRecurrencesRequestForTransformerSnippets'
+    GenerateExternalRecurrencesRequestAbstraction:
+      type: object
+      properties:
+        type:
+          type: string
+      required:
+        - type
+    GenerateExternalRecurrencesRequestForTransformers:
+      allOf:
+        - $ref: '#/components/schemas/GenerateExternalRecurrencesRequestAbstraction'
+        - type: object
+          properties:
+            transformers:
+              type: array
+              items:
+                $ref: 'transformer.yml#/components/schemas/TransformerId'
+          required:
+            - transformers
+    GenerateExternalRecurrencesRequestForTransformerSnippets:
+      allOf:
+        - $ref: '#/components/schemas/GenerateExternalRecurrencesRequestAbstraction'
+        - type: object
+          properties:
+            transformerSnippets:
+              type: array
+              items:
+                $ref: '#/components/schemas/TransformerSnippet'
+          required:
+            - transformerSnippets
+    GenerateExternalRecurrencesResponse:
+      type: object
+      properties:
+        externalRecurrences:
+          type: array
+          items:
+            type: object
+            properties:
+              leftTransformerCacatoo:
+                $ref: 'transformer.yml#/components/schemas/TransformerCacatoo'
+              rightTransformerCacatoo:
+                $ref: 'transformer.yml#/components/schemas/TransformerCacatoo'
+              cardinality:
+                type: string
+                enum:
+                  - one_to_one
+                  - one_to_many
+                  - many_to_one
+                  - many_to_many
+            required:
+              - leftTransformerCacatoo
+              - rightTransformerCacatoo
+              - cardinality
+      required:
+        - externalRecurrences
+    TransformerSnippet:
+      type: object
+      properties:
+        transformerName:
+          type: string
+        snippets:
+          type: array
+          items:
+            type: object
+            properties:
+              cacatoo:
+                type: string
+              vals:
+                type: array
+                items:
+                  type: string
+            required:
+              - cacatoo
+              - vals
+      required:
+        - transformerName
+        - snippets
+    TurbulenceResolution:
+      type: string
+      enum:
+        - millisecond
+        - second
+        - minute
+        - hour
+        - day
+        - month
+        - year

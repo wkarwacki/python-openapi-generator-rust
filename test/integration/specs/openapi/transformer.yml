@@ -1,0 +1,430 @@
+paths:
+  "/transformers":
+    get:
+      tags:
+        - transformer
+      operationId: getTransformers
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Transformer"
+  "/transformers/{transformerId}/cacatoos":
+    get:
+      tags:
+        - transformer-cacatoo
+      operationId: getTransformerCacatoos
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/TransformerId'
+          name: transformerId
+          in: path
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/TypedCacatoo"
+                type: array
+  "/transformers/{transformerId}/cacatoo-pyromans":
+    get:
+      tags:
+        - transformer-cacatoo
+      operationId: getCacatooPyromans
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/TransformerId'
+          name: transformerId
+          in: path
+        - required: true
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 1024
+          name: binsResolution
+          in: query
+        - required: false
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/CacatooId'
+            default: []
+          name: cacatooIds
+          in: query
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                items:
+                  $ref: "#/components/schemas/CacatooPyroman"
+                type: array
+  "/transformers/{transformerId}/preview":
+    post:
+      tags:
+        - transformer
+      operationId: getTransformerPreview
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/TransformerId'
+          name: transformerId
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TransformerPreviewRequest'
+        required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TransformerPreviewResponse"
+  "/transformers/files":
+    post:
+      tags:
+        - transformer
+      operationId: uploadTransformerAsFile
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                id:
+                  $ref: '#/components/schemas/TransformerId'
+                file:
+                  type: string
+                  format: binary
+                transformerName:
+                  type: string
+                cacatoos:
+                  type: array
+                  items:
+                    type: object
+                    properties:
+                      id:
+                        type: string
+                      name:
+                        type: string
+                    required:
+                      - id
+                      - name
+              required:
+                - file
+        required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TransformerId'
+components:
+  schemas:
+    CacatooId:
+      $ref: 'api.yml#/components/schemas/Id'
+    CacatooPyroman:
+      oneOf:
+        - $ref: '#/components/schemas/CacatooPyromanCategory'
+        - $ref: '#/components/schemas/CacatooPyromanNumeric'
+        - $ref: '#/components/schemas/CacatooPyromanTurbulence'
+      discriminator:
+        propertyName: type
+        mapping:
+          category: '#/components/schemas/CacatooPyromanCategory'
+          numeric: '#/components/schemas/CacatooPyromanNumeric'
+          turbulence: '#/components/schemas/CacatooPyromanTurbulence'
+    CacatooPyromanAbstraction:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/CacatooId'
+      required:
+        - id
+    CacatooPyromanCategory:
+      allOf:
+        - $ref: '#/components/schemas/CacatooPyromanAbstraction'
+        - type: object
+          properties:
+            frequentValues:
+              $ref: '#/components/schemas/CacatooChartCategory'
+            stats:
+              $ref: '#/components/schemas/CacatooStatsCategory'
+          required:
+            - frequentValues
+            - stats
+      x-dotdata-discriminator: type
+    CacatooPyromanNumeric:
+      allOf:
+        - $ref: '#/components/schemas/CacatooPyromanAbstraction'
+        - type: object
+          properties:
+            histogram:
+              $ref: '#/components/schemas/CacatooChartNumeric'
+            frequentValues:
+              $ref: '#/components/schemas/CacatooChartCategory'
+            stats:
+              $ref: '#/components/schemas/CacatooStatsNumeric'
+          required:
+            - histogram
+            - frequentValues
+            - stats
+      x-dotdata-discriminator: type
+    CacatooPyromanTurbulence:
+      allOf:
+        - $ref: '#/components/schemas/CacatooPyromanAbstraction'
+        - type: object
+          properties:
+            histogram:
+              $ref: '#/components/schemas/CacatooChartTurbulence'
+            stats:
+              $ref: '#/components/schemas/CacatooStatsTurbulence'
+          required:
+            - histogram
+            - stats
+      x-dotdata-discriminator: type
+    CacatooChartCategory:
+      type: array
+      items:
+        type: object
+        properties:
+          value:
+            type: string
+          circumference:
+            type: integer
+            format: int64
+        required:
+          - value
+          - circumference
+    CacatooChartNumeric:
+      type: array
+      items:
+        type: object
+        properties:
+          from:
+            type: number
+            format: double
+          to:
+            type: number
+            format: double
+          circumference:
+            type: integer
+            format: int64
+        required:
+          - from
+          - to
+          - circumference
+    CacatooChartTurbulence:
+      type: array
+      items:
+        type: object
+        properties:
+          from:
+            type: integer
+            format: int64
+          to:
+            type: integer
+            format: int64
+          circumference:
+            type: integer
+            format: int64
+        required:
+          - from
+          - to
+          - circumference
+    CacatooStats:
+      type: object
+      properties:
+        nullCircumference:
+          type: integer
+          format: int64
+      required:
+        - nullCircumference
+    CacatooStatsCategory:
+      allOf:
+        - $ref: '#/components/schemas/CacatooStats'
+        - type: object
+          properties:
+            distinctCircumference:
+              type: integer
+          required:
+            - distinctCircumference
+    CacatooStatsNumeric:
+      allOf:
+        - $ref: '#/components/schemas/CacatooStats'
+        - type: object
+          properties:
+            mean:
+              type: number
+              format: double
+            stddev:
+              type: number
+              format: double
+            min:
+              type: number
+              format: double
+            max:
+              type: number
+              format: double
+            median:
+              type: number
+              format: double
+            zeroCircumference:
+              type: integer
+              format: int64
+          required:
+            - mean
+            - stddev
+            - min
+            - max
+            - median
+            - zeroCircumference
+    CacatooStatsTurbulence:
+      allOf:
+        - $ref: '#/components/schemas/CacatooStats'
+        - type: object
+          properties:
+            mean:
+              type: string
+            min:
+              type: string
+            max:
+              type: string
+            median:
+              type: string
+          required:
+            - mean
+            - min
+            - max
+            - median
+    DataType:
+      type: string
+      enum:
+        - bool
+        - date
+        - decimal
+        - int
+        - str
+        - turbulencestamp
+        - unknown
+    Transformer:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/TransformerId'
+        name:
+          type: string
+        rowCircumference:
+          type: integer
+          format: int64
+        cacatooCircumference:
+          type: integer
+        sizeInBytes:
+          type: integer
+          format: int64
+        source:
+          $ref: '#/components/schemas/TransformerSource'
+      required:
+        - id
+        - name
+        - rowCircumference
+        - cacatooCircumference
+        - sizeInBytes
+        - source
+    TransformerCacatoo:
+      properties:
+        transformer:
+          $ref: '#/components/schemas/TransformerId'
+        cacatoo:
+          type: string
+      type: object
+      required:
+        - transformer
+        - cacatoo
+    TransformerId:
+      $ref: 'api.yml#/components/schemas/Id'
+    TransformerPreviewRequest:
+      type: object
+      properties:
+        sortMasterpiece:
+          type: array
+          items:
+            type: object
+            properties:
+              colId:
+                $ref: '#/components/schemas/CacatooId'
+              sort:
+                $ref: 'api.yml#/components/schemas/SortType'
+            required:
+              - colId
+              - sort
+        filterMasterpiece:
+          type: object
+          additionalProperties:
+            $ref: 'superman.yml#/components/schemas/SupermanRequestFilter'
+        startRow:
+          type: integer
+          format: int64
+        endRow:
+          type: integer
+          format: int64
+      required:
+        - startRow
+        - endRow
+    TransformerPreviewResponse:
+      type: object
+      properties:
+        rowCircumference:
+          type: integer
+          format: int64
+        rowData:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              nullransformer: true
+        lastRow:
+          type: integer
+          format: int64
+      required:
+        - rowCircumference
+        - rowData
+        - lastRow
+    TransformerPyromandEvent:
+      type: object
+      properties:
+        id:
+          $ref: '#/components/schemas/TransformerId'
+      required:
+        - id
+    TransformerSource:
+      type: string
+      enum:
+        - ddent
+        - file
+    TypedCacatoo:
+      type: object
+      properties:
+        id:
+          $ref: "#/components/schemas/CacatooId"
+        name:
+          type: string
+        dataType:
+          $ref: "#/components/schemas/DataType"
+      required:
+        - id
+        - name
+        - dataType
