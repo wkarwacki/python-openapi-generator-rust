@@ -4,6 +4,7 @@ Web integration specification and a set of code generators.
 
 ## Table of Contents
 - [**tldr; I just want to glue my services together**](#i-just-want-to-glue-my-services-together)
+  - 
 - [Specification](#specification)
   - [Overview](#overview)
   - [Common use cases](#common-use-cases)
@@ -16,7 +17,7 @@ Web integration specification and a set of code generators.
     - [Experimental generators](#experimental-generators)
 
 ## I just want to glue my services together
-Install trust with
+Install Trust with
 ```shell
 $ pip install trust-api
 ```
@@ -35,11 +36,17 @@ Commands:
 Options:
   -h, --help  Print help
 ```
-If you already have an OpenAPI spec:
-1. first convert it to Trust spec with `from-open-api` command
-2. and then generate the glue code with `generate` command. 
 
-> :exclamation: Note that you may easily automate the whole process combining the two steps above, however it is recommended to make a migration once and benefit from Trust spec expressiveness in the future.
+- If you already have an OpenAPI spec:
+  1. first convert it to Trust spec with `from-open-api` command
+  2. and then generate the glue code with `generate` command. 
+
+  > :exclamation: Note that you may easily automate the whole process combining the two steps above, however it is recommended to make a migration once and benefit from Trust spec expressiveness in the future.
+
+- If you don't have OpenAPI spec yet, you may start with Trust spec directly.
+
+- Alternatively, if you wish to keep generating code from OpenAPI spec, you may use Trust spec as an intermediate format. In this case, the `to-open-api` command will be useful.
+
 
 ## Specification
 Trust specification aims to be an improvement of the current integration standards, [OpenAPI](https://github.com/OAI/OpenAPI-Specification) mostly. The main advantages of Trust spec include:
