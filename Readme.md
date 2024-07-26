@@ -41,8 +41,6 @@ If you already have an OpenAPI spec:
 
 > :exclamation: Note that you may easily automate the whole process combining the two steps above, however it is recommended to make a migration once and benefit from Trust spec expressiveness in the future.
 
-```shell
-
 ## Specification
 Trust specification aims to be an improvement of the current integration standards, [OpenAPI](https://github.com/OAI/OpenAPI-Specification) mostly. The main advantages of Trust spec include:
 - **Unambiguity of notation** - meaning that there is most likely only one way to model a given API and only way to interpret the spec
