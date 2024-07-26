@@ -4,7 +4,6 @@ Web integration specification and a set of code generators.
 
 ## Table of Contents
 - [**tldr; I just want to glue my services together**](#i-just-want-to-glue-my-services-together)
-  - 
 - [Specification](#specification)
   - [Overview](#overview)
   - [Common use cases](#common-use-cases)
