@@ -1,4 +1,4 @@
-# Trust Api
+# Trust Spec
 
 Web integration specification and a set of code generators.
 
@@ -109,7 +109,7 @@ When it comes to describing API schemas, Trust spec offers the following data ty
         "ownVar": 1
     }
     ```
-* Algebraic data type aka "Union type"
+* Algebraic data type aka "union type"
   ```yaml
   AdtType:
     type: obj
