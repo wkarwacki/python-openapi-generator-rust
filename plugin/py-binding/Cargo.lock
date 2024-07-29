@@ -963,7 +963,7 @@ dependencies = [
 
 [[package]]
 name = "trustspecpy"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "clap",
  "pyo3",

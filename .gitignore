@@ -11,8 +11,10 @@ build/
 dist
 target/
 
+cli/py/README.md
+plugin/py-binding/README.md
+
 test/default
 test/integration/log
 test/integration/run
-
 

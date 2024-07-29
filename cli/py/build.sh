@@ -8,4 +8,7 @@ cd "$SCRIPT_DIR" || exit
 cd $SCRIPT_DIR
 rm -rf dist
 pip install poetry
+
+cp ../../README.md README.md
+
 poetry build

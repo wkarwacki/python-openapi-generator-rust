@@ -1,16 +1,20 @@
 [tool.poetry]
-name = "trustspecgen"
-version = "0.1.0"
-description = ""
+name = "trustspeccli"
+version = "0.1.1"
 authors = ["Wojciech Karwacki <karwacki.wojciech@gmail.com>"]
-packages = [{include = "trustspecgen", from="src"}]
+homepage = "https://github.com/wkarwacki/trust"
+repository = "https://github.com/wkarwacki/trust"
+documentation = "https://github.com/wkarwacki/trust"
+packages = [{include = "trustspeccli", from="src"}]
+readme = "README.md"
+description = ""
 
 [tool.poetry.dependencies]
 python = "^3.10"
 trustspecpy = "0.1.0"
 
 [tool.poetry.scripts]
-trust = "trustspecgen.main:run"
+trust = "trustspeccli.main:run"
 
 [build-system]
 requires = ["poetry-core"]

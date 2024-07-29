@@ -10,7 +10,7 @@ source .venv/bin/activate
 
 cd ../../cli/py
 bash build.sh
-pip install --force dist/trustspecgen-*-py3-none-any.whl
+pip install --force dist/trustspeccli-*-py3-none-any.whl
 
 cd $SCRIPT_DIR
 trust help
