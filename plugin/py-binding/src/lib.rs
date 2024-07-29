@@ -12,7 +12,7 @@ fn main(args: Vec<String>) {
 }
 
 #[pymodule]
-fn trustpy(m: &Bound<'_, PyModule>) -> PyResult<()> {
+fn trustspecpy(m: &Bound<'_, PyModule>) -> PyResult<()> {
     m.add_function(wrap_pyfunction!(main, m)?)?;
     Ok(())
 }

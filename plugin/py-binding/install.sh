@@ -8,6 +8,3 @@ cd "$SCRIPT_DIR" || exit
 cd ../../plugin/py-binding
 pip install maturin
 maturin develop
-
-cd $SCRIPT_DIR
-bash install.sh

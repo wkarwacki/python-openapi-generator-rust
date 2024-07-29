@@ -18,7 +18,7 @@ Web integration specification and a set of code generators.
 ## I just want to glue my services together
 Install Trust with
 ```shell
-$ pip install trust-api
+$ pip install trustspecgen
 ```
 and then
 ```shell

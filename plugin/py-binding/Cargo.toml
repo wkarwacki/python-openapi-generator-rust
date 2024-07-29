@@ -1,13 +1,19 @@
 [package]
-name = "trustpy"
+name = "trustspecpy"
 version = "0.1.0"
 edition = "2021"
 
 [lib]
-name = "trustpy"
+name = "trustspecpy"
 crate-type = ["cdylib"]
 
 [dependencies]
 clap = { version = "4.5.1", features = ["derive"] }
-pyo3 = "0.21.1"
 trust = { path = "../../" }
+
+[dependencies.pyo3]
+version = "0.22.2"
+
+[features]
+extension-module = ["pyo3/extension-module"]
+default = ["extension-module"]

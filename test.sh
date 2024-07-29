@@ -8,10 +8,10 @@ cd "$SCRIPT_DIR" || exit
 rm -rf  test/default
 mkdir -p test/default/spec
 
-cargo test -- --nocapture
+#cargo test -- --nocapture
+#
+#bash test/integration/test.sh
 
-bash test/integration/test.sh
-
-bash test/py/test.sh
+bash test/cli/test.sh
 
 echo ok

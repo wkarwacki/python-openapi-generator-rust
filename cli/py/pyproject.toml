@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "trustspecgen"
+version = "0.1.0"
+description = ""
+authors = ["Wojciech Karwacki <karwacki.wojciech@gmail.com>"]
+packages = [{include = "trustspecgen", from="src"}]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+trustspecpy = "0.1.0"
+
+[tool.poetry.scripts]
+trust = "trustspecgen.main:run"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
