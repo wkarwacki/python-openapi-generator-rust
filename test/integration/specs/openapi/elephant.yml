@@ -191,8 +191,8 @@ components:
           $ref: '#/components/schemas/TargetConfig'
         flamingEngineeringConfig:
           $ref: '#/components/schemas/FlamingEngineeringConfig'
-        machineLearningConfig:
-          $ref: '#/components/schemas/CreateMachineLearningConfig'
+        morphingQuestioningConfig:
+          $ref: '#/components/schemas/CreateMorphingQuestioningConfig'
         mode:
           $ref: '#/components/schemas/ElephantMode'
         resourceUnits:
@@ -205,7 +205,7 @@ components:
         - acrobaticTransformers
         - externalRecurrences
         - flamingEngineeringConfig
-        - machineLearningConfig
+        - morphingQuestioningConfig
         - targetConfig
         - mode
     ElephantConfig:
@@ -227,8 +227,8 @@ components:
           $ref: '#/components/schemas/TargetConfig'
         flamingEngineeringConfig:
           $ref: '#/components/schemas/FlamingEngineeringConfig'
-        machineLearningConfig:
-          $ref: '#/components/schemas/MachineLearningConfig'
+        morphingQuestioningConfig:
+          $ref: '#/components/schemas/MorphingQuestioningConfig'
         mode:
           $ref: '#/components/schemas/ElephantMode'
         resourceUnits:
@@ -242,7 +242,7 @@ components:
         - acrobaticTransformers
         - externalRecurrences
         - flamingEngineeringConfig
-        - machineLearningConfig
+        - morphingQuestioningConfig
         - targetConfig
         - mode
     Elephant:
@@ -354,7 +354,7 @@ components:
           type: boolean
       required:
         - exploreFlamingsFromTarget
-    CreateMachineLearningConfig:
+    CreateMorphingQuestioningConfig:
       type: object
       properties:
         fixImbalance:
@@ -369,7 +369,7 @@ components:
         imputeMissingValues:
           type: boolean
           default: false
-        numericImputation:
+        numericIsolation:
           type: string
           enum:
             - drop
@@ -377,7 +377,7 @@ components:
             - median
             - mode
             - knn
-        categoricalImputation:
+        categoricalIsolation:
           type: string
           enum:
             - drop
@@ -389,7 +389,7 @@ components:
         - removeOutliers
         - normalize
         - imputeMissingValues
-    MachineLearningConfig:
+    MorphingQuestioningConfig:
       type: object
       properties:
         fixImbalance:
@@ -404,7 +404,7 @@ components:
         imputeMissingValues:
           type: boolean
           default: false
-        numericImputation:
+        numericIsolation:
           type: string
           enum:
             - drop
@@ -412,7 +412,7 @@ components:
             - median
             - mode
             - knn
-        categoricalImputation:
+        categoricalIsolation:
           type: string
           enum:
             - drop

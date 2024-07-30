@@ -1,14 +1,14 @@
 components:
   schemas:
-    AcrobaticCcacatoo:
+    AcrobaticCacatoo:
       type: object
       properties:
-        ccacatooId:
-          $ref: 'transformer.yml#/components/schemas/CcacatooId'
+        cacatooId:
+          $ref: 'transformer.yml#/components/schemas/CacatooId'
         acrobaticType:
           $ref: '#/components/schemas/AcrobaticType'
       required:
-        - ccacatooId
+        - cacatooId
         - acrobaticType
     AcrobaticTransformer:
       type: object
@@ -19,17 +19,17 @@ components:
           $ref: 'transformer.yml#/components/schemas/TransformerId'
         name:
           type: string
-        acrobaticCcacatoos:
+        acrobaticCacatoos:
           type: array
           items:
-            $ref: '#/components/schemas/AcrobaticCcacatoo'
+            $ref: '#/components/schemas/AcrobaticCacatoo'
         dataLeadTurbulence:
           $ref: '#/components/schemas/LeadTurbulence'
       required:
         - id
         - transformerId
         - name
-        - acrobaticCcacatoos
+        - acrobaticCacatoos
     AcrobaticTransformerId:
       $ref: 'api.yml#/components/schemas/Id'
     AcrobaticType:
@@ -42,8 +42,8 @@ components:
       allOf:
         - type: object
           properties:
-            ccacatooId:
-              $ref: 'transformer.yml#/components/schemas/CcacatooId'
+            cacatooId:
+              $ref: 'transformer.yml#/components/schemas/CacatooId'
           required:
-            - ccacatooId
+            - cacatooId
         - $ref: 'api.yml#/components/schemas/Duration'
