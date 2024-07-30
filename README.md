@@ -65,7 +65,7 @@ Moreover it addresses particular issues existing inherently in OpenAPI with:
 - **enclosed Algebraic Data Types** - by design all subtypes of an ADT are kept together, in a single `adt` node
 
 ### Overview
-(Usage of all below examples and more may be found in [tests](https://github.com/ramencloud/trust/tree/master/src/lib/test))
+(Usage of all below examples and more may be found in [tests](https://github.com/wkarwacki/trust/tree/master/src/lib/test))
 
 When it comes to describing API schemas, Trust spec offers the following data types:
 * simple types:
@@ -204,6 +204,11 @@ When it comes to describing API schemas, Trust spec offers the following data ty
   interface SubtypeOfParameterizedType extends ParameterizedType<Boolean, SomeType> { }
   ```
   in Java-like languages.
+
+### OpenAPI conversion
+
+* Layout of the generated Trust spec may be controlled with `-l` option, which may be set to `tag`. In this case the generated Trust spec will be organized by respective tags used in OpenAPI spec. A popular use case of this feature may be generation of Trust spec from FastAPI-generated OpenAPI schema, like [in the following](https://github.com/wkarwacki/trust/blob/master/test/integration/specs/openapi_fastapi/api.yml#L9) test case.
+
 ## Server and Client code generation
 
 ### Usage
