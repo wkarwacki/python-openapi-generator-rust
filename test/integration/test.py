@@ -2,7 +2,6 @@ import os
 import pathlib
 import shutil
 import subprocess
-from distutils.dir_util import copy_tree
 from pydantic import BaseModel
 
 
@@ -72,7 +71,7 @@ for spec in specs:
     
             gen_path=f"{test_integration_path}/gens/{gen.lang}/{gen.role}"
             subprocess.run(f"{gen_path }/build.sh")
-            copy_tree(gen_path, run_path)
+            shutil.copytree(gen_path, run_path)
     
         for server in servers:
             for client in clients:
