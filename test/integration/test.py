@@ -71,7 +71,7 @@ for spec in specs:
     
             gen_path=f"{test_integration_path}/gens/{gen.lang}/{gen.role}"
             subprocess.run(f"{gen_path }/build.sh")
-            shutil.copytree(gen_path, run_path)
+            shutil.copytree(gen_path, run_path, dirs_exist_ok=True)
     
         for server in servers:
             for client in clients:
