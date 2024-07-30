@@ -5,7 +5,7 @@
 ---
 # Trust Spec
 
-Web integration specification and a set of code generators.
+Web integration specification and a set of code generators. The initiative aims to be replacement for OpenAPI, providing unified way to describe data transfer interface and _Trusted_ generation of modern and type-safe code.
 
 ## Table of Contents
 - [**tldr; I just want to glue my services together**](#i-just-want-to-glue-my-services-together)
@@ -194,7 +194,7 @@ When it comes to describing API schemas, Trust spec offers the following data ty
           ParamXyz:
             path: 'defs.SomeType'
   ```
-  The above is interpreted as
+  The above is interpreted as types that may be represented by:
   ```java
   interface ParameterizedType<ParamAbc, ParamXyz> { 
     ParamAbc varOfParamAbcType; 
