@@ -1,6 +1,7 @@
 use crate::lib::{
     context::Context,
     def::Def,
+    desc::Desc,
     gen::{
         gen::{dto_name, Gen},
         lang::Lang,
@@ -19,24 +20,9 @@ pub(crate) struct GenPythonHttpServer {
     pub lang: LangPython,
 }
 
-impl Gen for GenPythonHttpServer {
-    fn lang(&self) -> Box<dyn Lang> {
-        Box::new(self.lang.clone())
-    }
-    fn src_dir(&self) -> PathBuf {
-        "python/server".into()
-    }
-    fn dtos(
-        &self,
-        handlebars: &Handlebars,
-        pkg: &Pkg,
-        context: &Context,
-        templates: &HashMap<String, String>,
-    ) -> HashMap<PathBuf, String> {
-        let out_dir = self.lang.out_dir().to_string_lossy().to_string();
-        let mut defs: Vec<(String, Def, bool)> = Vec::new();
-        let inline_ops: Vec<_> = pkg
-            .ops
+impl GenPythonHttpServer {
+    fn descs_from_inline_ops(&self, pkg: &Pkg) -> Vec<(String, Desc, Option<String>)> {
+        pkg.ops
             .iter()
             .flat_map(|(_, ops)| ops)
             .flat_map(|op| {
@@ -72,8 +58,28 @@ impl Gen for GenPythonHttpServer {
                 vec
             })
             .filter(|(_, desc, _)| desc.def().is_some())
-            .collect();
-        defs.extend(inline_ops.iter().flat_map(|(name, desc, form)| {
+            .collect()
+    }
+}
+
+impl Gen for GenPythonHttpServer {
+    fn lang(&self) -> Box<dyn Lang> {
+        Box::new(self.lang.clone())
+    }
+    fn src_dir(&self) -> PathBuf {
+        "python/server".into()
+    }
+    fn dtos(
+        &self,
+        handlebars: &Handlebars,
+        pkg: &Pkg,
+        context: &Context,
+        templates: &HashMap<String, String>,
+    ) -> HashMap<PathBuf, String> {
+        let out_dir = self.lang.out_dir().to_string_lossy().to_string();
+        let mut defs: Vec<(String, Def, bool)> = Vec::new();
+        let descs_from_inline_ops: Vec<_> = self.descs_from_inline_ops(pkg);
+        defs.extend(descs_from_inline_ops.iter().flat_map(|(name, desc, form)| {
             desc.def().map(|def| {
                 (
                     name.clone(),
@@ -142,10 +148,10 @@ impl Gen for GenPythonHttpServer {
             let dto_template = templates.get("dtoFile").unwrap();
             let dto_path = def_name.to_case(Case::Snake).to_string() + ".py";
             let imports = context
-                .refs(def)
+                .def_refs(def)
                 .iter()
-                .flat_map(|(src, defs)| {
-                    defs.iter().map(move |def| {
+                .flat_map(|(src, names)| {
+                    names.iter().map(move |name| {
                         "from ".to_string()
                             + self.lang.module().as_str()
                             + "."
@@ -154,10 +160,13 @@ impl Gen for GenPythonHttpServer {
                             Some(src) => self.lang.fmt_src(src),
                         }
                             .as_str()
+                            + "."
+                            + name.to_case(Case::Snake).as_str()
                             + " import "
-                            + def.to_case(Case::Snake).as_str()
+                            + dto_name(self.lang.fmt_class(name, &None).as_str(), &self.lang()).as_str()
                     })
                 })
+                .unique()
                 .collect::<Vec<_>>()
                 .join("\n");
             let dto = handlebars.render_template(dto_template.as_str(), &json!({"key": dto_name(def_name, &self.lang()), "val": def, "formLike": form_like, "imports": imports})).unwrap();
@@ -198,21 +207,49 @@ impl Gen for GenPythonHttpServer {
     ) -> HashMap<PathBuf, String> {
         let mut result = HashMap::new();
 
-        let dtos = self.dtos(handlebars, pkg, context, templates);
-        let imports = dtos
-            .clone()
-            .keys()
-            .map(|path| path.file_stem().unwrap().to_string_lossy().to_string())
-            .filter(|path| path != "__init__")
-            .map(|path| {
+        let mut imports_vec = Vec::new();
+        pkg.ops
+            .iter()
+            .flat_map(|(_, ops)| ops.iter().flat_map(|op| context.op_refs(op)))
+            .flat_map(|(src, names)| {
+                names
+                    .iter()
+                    .map(move |name| {
+                        "from ".to_string()
+                            + self.lang.module().as_str()
+                            + "."
+                            + match &src {
+                                None => self.lang.feature.clone().to_case(Case::Snake),
+                                Some(src) => self.lang.fmt_src(src.as_str()),
+                            }
+                            .as_str()
+                            + "."
+                            + name.to_case(Case::Snake).as_str()
+                            + " import "
+                            + dto_name(self.lang.fmt_class(name, &None).as_str(), &self.lang())
+                                .as_str()
+                    })
+                    .collect::<Vec<_>>()
+            })
+            .for_each(|import| imports_vec.push(import));
+        self.descs_from_inline_ops(pkg)
+            .iter()
+            .map(|(name, _, _)| {
                 "from ".to_string()
                     + self.lang.module().as_str()
                     + "."
                     + self.lang.feature.clone().to_case(Case::Snake).as_str()
+                    + "."
+                    + name.to_case(Case::Snake).as_str()
                     + " import "
-                    + path.to_case(Case::Snake).as_str()
+                    + dto_name(self.lang.fmt_class(name, &None).as_str(), &self.lang()).as_str()
             })
+            .for_each(|import| imports_vec.push(import));
+
+        let imports = imports_vec
+            .iter()
             .unique()
+            .map(String::clone)
             .collect::<Vec<_>>()
             .join("\n");
 

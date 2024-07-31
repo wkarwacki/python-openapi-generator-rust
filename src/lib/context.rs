@@ -1,4 +1,4 @@
-use crate::lib::{def::Def, r#ref::Ref, util::read_t};
+use crate::lib::{def::Def, op::Op, r#ref::Ref, util::read_t};
 use itertools::Itertools;
 use serde_yaml::Value;
 use std::{collections::HashMap, fs, path::PathBuf};
@@ -61,7 +61,23 @@ impl Context {
         serde_yaml::from_value(value.clone()).unwrap()
     }
 
-    pub(crate) fn refs(&self, def: &Def) -> Vec<(Option<String>, Vec<String>)> {
+    pub(crate) fn op_refs(&self, op: &Op) -> Vec<(Option<String>, Vec<String>)> {
+        let refs = op.refs();
+        let grouped = refs.iter().into_group_map_by(|r#ref| r#ref.src.clone());
+        grouped
+            .iter()
+            .map(|(src, refs)| {
+                (
+                    src.clone(),
+                    refs.iter()
+                        .map(|r#ref| r#ref.class_name())
+                        .collect::<Vec<_>>(),
+                )
+            })
+            .collect()
+    }
+
+    pub(crate) fn def_refs(&self, def: &Def) -> Vec<(Option<String>, Vec<String>)> {
         let refs = def.refs();
         let grouped = refs.iter().into_group_map_by(|r#ref| r#ref.src.clone());
         grouped
