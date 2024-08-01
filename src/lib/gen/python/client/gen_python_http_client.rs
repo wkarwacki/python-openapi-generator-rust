@@ -235,7 +235,8 @@ impl Gen for GenPythonHttpClient {
             .for_each(|import| imports_vec.push(import));
         self.descs_from_inline_ops(pkg)
             .iter()
-            .map(|(name, _, _)| {
+            .flat_map(|(name, desc, _)| desc.refs().iter().map(|r#ref| r#ref.class_name()).chain(Some(name.clone()).into_iter()).collect::<Vec<_>>())
+            .map(|name| {
                 "from ".to_string()
                     + self.lang.module().as_str()
                     + "."
@@ -243,7 +244,8 @@ impl Gen for GenPythonHttpClient {
                     + "."
                     + name.to_case(Case::Snake).as_str()
                     + " import "
-                    + dto_name(self.lang.fmt_class(name, &None).as_str(), &self.lang()).as_str()
+                    + dto_name(self.lang.fmt_class(name.as_str(), &None).as_str(), &self.lang())
+                    .as_str()
             })
             .for_each(|import| imports_vec.push(import));
 
