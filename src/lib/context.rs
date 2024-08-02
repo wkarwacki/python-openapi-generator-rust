@@ -63,22 +63,15 @@ impl Context {
 
     pub(crate) fn op_refs(&self, op: &Op) -> Vec<(Option<String>, Vec<String>)> {
         let refs = op.refs();
-        let grouped = refs.iter().into_group_map_by(|r#ref| r#ref.src.clone());
-        grouped
-            .iter()
-            .map(|(src, refs)| {
-                (
-                    src.clone(),
-                    refs.iter()
-                        .map(|r#ref| r#ref.class_name())
-                        .collect::<Vec<_>>(),
-                )
-            })
-            .collect()
+        self.src_to_refs(refs);
     }
 
     pub(crate) fn def_refs(&self, def: &Def) -> Vec<(Option<String>, Vec<String>)> {
         let refs = def.refs();
+        self.src_to_refs(refs);
+    }
+
+    fn src_to_refs(&self, refs: &Vec<Ref>) -> Vec<(Option<String>, Vec<String>)> {
         let grouped = refs.iter().into_group_map_by(|r#ref| r#ref.src.clone());
         grouped
             .iter()
