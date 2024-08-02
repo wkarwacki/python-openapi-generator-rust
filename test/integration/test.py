@@ -75,4 +75,4 @@ for spec in specs:
     
         for server in servers:
             for client in clients:
-                subprocess.run([f"{test_integration_path}/run.sh", f"run/{spec.name}/{server.lang}/{server.role}/run.sh", f"run/{spec.name}/{client.lang}/{client.role}/run.sh"])
+                subprocess.run([f"{test_integration_path}/run.sh", f"run/{spec.name}/{server.lang}/{server.role}/run.sh", f"run/{spec.name}/{client.lang}/{client.role}/run.sh"], check=True)

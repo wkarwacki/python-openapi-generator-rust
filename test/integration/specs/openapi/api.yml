@@ -73,6 +73,8 @@ paths:
     $ref: 'transformer.yml#/paths/~1transformers~1{transformerId}~1cacatoos'
   "/transformers/{transformerId}/cacatoo-pyromans":
     $ref: 'transformer.yml#/paths/~1transformers~1{transformerId}~1cacatoo-pyromans'
+  "/tests/{testId}/preview":
+    $ref: 'test.yml#/paths/~1tests~1{testId}~1preview'
   "/transformers/{transformerId}/preview":
     $ref: 'transformer.yml#/paths/~1transformers~1{transformerId}~1preview'
   "/transformers/files":

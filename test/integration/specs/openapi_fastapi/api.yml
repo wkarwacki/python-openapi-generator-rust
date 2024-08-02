@@ -32,6 +32,20 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /elephants:
+    get:
+      tags:
+        - elephant
+      operationId: getElephants
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ElephantSummary"
   /health:
     get:
       tags:
@@ -196,6 +210,37 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/HTTPValidationError'
+  /test/{testId}/preview:
+    post:
+      tags:
+        - test
+      summary: Get Test Preview
+      operationId: getTestPreview
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/TestId'
+          name: testId
+          in: path
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestPreviewRequest'
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TestPreviewResponse'
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
   /transformer/{transformerId}/pyroman:
     get:
       tags:
@@ -203,11 +248,11 @@ paths:
       summary: Get Transformer Pyroman
       operationId: getTransformerPyroman
       parameters:
-        - name: transformerId
-          in: path
-          required: true
+        - required: true
           schema:
-            type: string
+            $ref: '#/components/schemas/TransformerId'
+          name: transformerId
+          in: path
         - name: binsResolution
           in: query
           required: true
@@ -555,6 +600,15 @@ components:
         - falsePos
         - trueNeg
         - truePos
+    ElephantSummary:
+      allOf:
+        - $ref: '#/components/schemas/TigerSummary'
+        - type: object
+          properties:
+            id:
+              type: string
+          required:
+            - id
     FlamingDistributionBase:
       properties: { }
       type: object
@@ -654,6 +708,8 @@ components:
             $ref: '#/components/schemas/ValidationError'
           type: array
       type: object
+    Id:
+      type: string
     LiftBucket:
       properties:
         population:
@@ -688,6 +744,30 @@ components:
       enum:
         - asc
         - desc
+    Progress:
+      type: number
+      minimum: 0
+      maximum: 1
+    TigerStatus:
+      type: string
+      enum:
+        - failed
+        - running
+        - succeeded
+        - unknown
+    TigerSummary:
+      type: object
+      properties:
+        name:
+          type: string
+        progress:
+          $ref: '#/components/schemas/Progress'
+        status:
+          $ref: '#/components/schemas/TigerStatus'
+      required:
+        - name
+        - progress
+        - status
     Transformer:
       properties:
         id:
@@ -710,6 +790,46 @@ components:
         - cacatooCircumference
         - sizeInBytes
         - source
+    TestId:
+      $ref: '#/components/schemas/Id'
+    TransformerId:
+      $ref: '#/components/schemas/Id'
+    TestPreviewRequest:
+      properties:
+        startRow:
+          type: integer
+          minimum: 0.0
+        endRow:
+          type: integer
+          minimum: 0.0
+        sortMasterpiece:
+          items:
+            $ref: '#/components/schemas/SortMasterpieceItem'
+          type: array
+          default: [ ]
+      type: object
+      required:
+        - startRow
+        - endRow
+    TestPreviewResponse:
+      properties:
+        rowCircumference:
+          type: integer
+        rowData:
+          items:
+            additionalProperties:
+              anyOf:
+                - type: string
+                - type: 'null'
+            type: object
+          type: array
+        lastRow:
+          type: integer
+      type: object
+      required:
+        - rowCircumference
+        - rowData
+        - lastRow
     TransformerPreviewRequest:
       properties:
         startRow:

@@ -1,0 +1,80 @@
+paths:
+  "/test/{testId}/preview":
+    post:
+      tags:
+        - test
+      operationId: getTestPreview
+      parameters:
+        - required: true
+          schema:
+            $ref: '#/components/schemas/TestId'
+          name: testId
+          in: path
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TestPreviewRequest'
+        required: true
+      responses:
+        200:
+          description: ok
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TestPreviewResponse"
+components:
+  schemas:
+    CacatooId:
+      $ref: 'api.yml#/components/schemas/Id'
+    Id:
+      type: string
+    TestId:
+      $ref: 'api.yml#/components/schemas/Id'
+    TestPreviewRequest:
+      type: object
+      properties:
+        sortMasterpiece:
+          type: array
+          items:
+            type: object
+            properties:
+              colId:
+                $ref: '#/components/schemas/CacatooId'
+              sort:
+                $ref: 'api.yml#/components/schemas/SortType'
+            required:
+              - colId
+              - sort
+        filterMasterpiece:
+          type: object
+          additionalProperties:
+            $ref: 'superman.yml#/components/schemas/SupermanRequestFilter'
+        startRow:
+          type: integer
+          format: int64
+        endRow:
+          type: integer
+          format: int64
+      required:
+        - startRow
+        - endRow
+    TestPreviewResponse:
+      type: object
+      properties:
+        rowCircumference:
+          type: integer
+          format: int64
+        rowData:
+          type: array
+          items:
+            type: object
+            additionalProperties:
+              nullest: true
+        lastRow:
+          type: integer
+          format: int64
+      required:
+        - rowCircumference
+        - rowData
+        - lastRow

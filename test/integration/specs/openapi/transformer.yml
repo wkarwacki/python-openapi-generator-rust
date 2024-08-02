@@ -68,7 +68,7 @@ paths:
                 items:
                   $ref: "#/components/schemas/CacatooPyroman"
                 type: array
-  "/transformers/{transformerId}/preview":
+  "/transformer/{transformerId}/preview":
     post:
       tags:
         - transformer

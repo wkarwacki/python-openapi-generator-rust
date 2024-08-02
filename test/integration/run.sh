@@ -13,7 +13,7 @@ rm -rf log
 mkdir -p log
 pm2 start $1 --name trust-server --log log/trust-server -f
 
-SERVER_BASE_URL=http://localhost:8000
+SERVER_BASE_URL=http://localhost:7999
 
 while true; do
     response=$(curl -s -o /dev/null -w "%{http_code}" $SERVER_BASE_URL/health || true)
