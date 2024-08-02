@@ -91,42 +91,8 @@ impl Gen for GenPythonHttpClient {
                 )
             })
         }));
-        let form_ops: Vec<_> = pkg
-            .ops
+        let form_ops: Vec<_> = descs_from_inline_ops
             .iter()
-            .flat_map(|(_, ops)| ops)
-            .flat_map(|op| {
-                let req_dto = op.req.clone().map(|req| {
-                    (
-                        self.lang
-                            .fmt_class((op.name.clone() + "Req").as_str(), &None),
-                        req.desc,
-                        req.form,
-                    )
-                });
-                let res_dto = op.res.clone().map(|res| {
-                    (
-                        self.lang
-                            .fmt_class((op.name.clone() + "Res").as_str(), &None),
-                        res.desc,
-                        res.form,
-                    )
-                });
-                let mut vec = Vec::new();
-                if let Some(tuple) = req_dto {
-                    tuple.1.clone().def().iter().for_each(|def| match def {
-                        Def::Obj(_) | Def::Seq(_) | Def::Map(_) => vec.push(tuple.clone()),
-                        _ => {}
-                    });
-                }
-                if let Some(tuple) = res_dto {
-                    tuple.1.clone().def().iter().for_each(|def| match def {
-                        Def::Obj(_) | Def::Seq(_) | Def::Map(_) => vec.push(tuple.clone()),
-                        _ => {}
-                    });
-                }
-                vec
-            })
             .filter(|(_, _, form)| {
                 form.clone()
                     .map(|f| f == "multipart/form-data")

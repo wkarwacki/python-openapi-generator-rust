@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 from fastapi import Depends
 from pydantic import BaseModel
-from typing import Generator, Tuple
+from typing import Any, Generator, Tuple
 
 class {{to_pascal_case feature}}Service(ABC):
 {{#each ops}}{{#each this}}    {{#if (filterNonconst this.res.meta)}}class {{to_pascal_case this.name}}Headers(BaseModel):
@@ -14,6 +14,6 @@ class {{to_pascal_case feature}}Service(ABC):
             }{{/if}}
 
     @abstractmethod
-    def {{to_snake_case this.name}}(self{{#if this.req}}, {{#if (eq this.req.form "multipart/form-data")}}{{fmtName (add this.name "Req")}}: {{>dtoName val=(fmtClass (add this.name "Req"))}}{{else if (or (eq this.req.type "obj") (eq this.req.type "seq") (eq this.req.type "map"))}}{{fmtName (add this.name "Req")}}: {{fmtName (add this.name "Req")}}.{{>dtoName val=(fmtClass (add this.name "Req"))}}{{else}}request: {{fmtType this.req}}{{/if}}{{/if}}{{#each this.params}}, {{to_snake_case this.name}}: {{#if this.opt}}{{fmtOpt (fmtType this)}}{{else}}{{fmtType this}}{{/if}}{{/each}}) -> {{#if this.res}}{{#if (filterNonconst this.res.meta)}}Tuple[{{/if}}{{#if (eq this.res.carrier "stream")}}Generator[{{fmtType this.res}}, None, None]{{else}}{{#if this.res.path}}{{fmtType this.res (to_pascal_case this.name)}}{{else if (or (eq this.res.type "obj") (eq this.res.type "seq") (eq this.res.type "map"))}}{{>dtoName val=(fmtClass (add this.name "Res"))}}{{else}}{{fmtType this.res}}{{/if}}{{/if}}{{#if this.res.meta}}{{#if (filterNonconst this.res.meta)}}, {{to_pascal_case this.name}}Headers]{{/if}}{{/if}}{{else}}None{{/if}}:
+    def {{to_snake_case this.name}}(self{{#if this.req}}, {{#if this.req.path}}{{fmtName this.req.path}}: {{>dtoName val=(fmtClass this.req.path)}}{{else}}{{#if (eq this.req.form "multipart/form-data")}}{{fmtName (add this.name "Req")}}: {{>dtoName val=(fmtClass (add this.name "Req"))}}{{else if (or (eq this.req.type "obj") (eq this.req.type "seq") (eq this.req.type "map"))}}{{fmtName (add this.name "Req")}}: {{fmtName (add this.name "Req")}}.{{>dtoName val=(fmtClass (add this.name "Req"))}}{{else}}request: {{fmtType this.req}}{{/if}}{{/if}}{{/if}}{{#each this.params}}, {{to_snake_case this.name}}: {{#if this.opt}}{{fmtOpt (fmtType this)}}{{else}}{{fmtType this}}{{/if}}{{/each}}) -> {{#if this.res}}{{#if (filterNonconst this.res.meta)}}Tuple[{{/if}}{{#if (eq this.res.carrier "stream")}}Generator[{{fmtType this.res}}, None, None]{{else}}{{#if this.res.path}}{{fmtType this.res (to_pascal_case this.name)}}{{else if (or (eq this.res.type "obj") (eq this.res.type "seq") (eq this.res.type "map"))}}{{>dtoName val=(fmtClass (add this.name "Res"))}}{{else}}{{fmtType this.res}}{{/if}}{{/if}}{{#if this.res.meta}}{{#if (filterNonconst this.res.meta)}}, {{to_pascal_case this.name}}Headers]{{/if}}{{/if}}{{else}}None{{/if}}:
         raise NotImplementedError
 {{/each}}{{/each}}
