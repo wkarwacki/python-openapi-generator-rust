@@ -63,12 +63,12 @@ impl Context {
 
     pub(crate) fn op_refs(&self, op: &Op) -> Vec<(Option<String>, Vec<String>)> {
         let refs = op.refs();
-        self.src_to_refs(refs);
+        self.src_to_refs(&refs)
     }
 
     pub(crate) fn def_refs(&self, def: &Def) -> Vec<(Option<String>, Vec<String>)> {
         let refs = def.refs();
-        self.src_to_refs(refs);
+        self.src_to_refs(&refs)
     }
 
     fn src_to_refs(&self, refs: &Vec<Ref>) -> Vec<(Option<String>, Vec<String>)> {
