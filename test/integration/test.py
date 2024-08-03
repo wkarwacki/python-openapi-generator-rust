@@ -54,25 +54,23 @@ for gen in gens:
     elif gen.role == "server":
         servers.append(gen)
         
-tests = os.environ["TESTS"].split(",")
 
 for spec in specs:
-    if spec.name in tests:
-        trust_path = f"{test_integration_path}/run/{spec.name}/trust"
-        subprocess.run(["cargo", "run", "from-open-api", f"{test_integration_path}/specs/{spec.name}/{spec.entrypoint}", trust_path, *spec.params])
-        for gen in gens:
-            run_path = f"{test_integration_path}/run/{spec.name}/{gen.lang}/{gen.role}"
+    trust_path = f"{test_integration_path}/run/{spec.name}/trust"
+    subprocess.run(["cargo", "run", "from-open-api", f"{test_integration_path}/specs/{spec.name}/{spec.entrypoint}", trust_path, *spec.params])
+    for gen in gens:
+        run_path = f"{test_integration_path}/run/{spec.name}/{gen.lang}/{gen.role}"
 
-            out_path = f"{run_path}/{gen.out_dir}"
-            os.makedirs(out_path)
+        out_path = f"{run_path}/{gen.out_dir}"
+        os.makedirs(out_path)
 
-            for trust_file in os.listdir(trust_path):
-                subprocess.run(["cargo", "run", "generate", gen.lang, gen.role, f"{trust_path}/{trust_file}", out_path])
-    
-            gen_path=f"{test_integration_path}/gens/{gen.lang}/{gen.role}"
-            subprocess.run(f"{gen_path }/build.sh")
-            shutil.copytree(gen_path, run_path, dirs_exist_ok=True)
-    
-        for server in servers:
-            for client in clients:
-                subprocess.run([f"{test_integration_path}/run.sh", f"run/{spec.name}/{server.lang}/{server.role}/run.sh", f"run/{spec.name}/{client.lang}/{client.role}/run.sh"], check=True)
+        for trust_file in os.listdir(trust_path):
+            subprocess.run(["cargo", "run", "generate", gen.lang, gen.role, f"{trust_path}/{trust_file}", out_path])
+
+        gen_path=f"{test_integration_path}/gens/{gen.lang}/{gen.role}"
+        subprocess.run(f"{gen_path }/build.sh")
+        shutil.copytree(gen_path, run_path, dirs_exist_ok=True)
+
+    for server in servers:
+        for client in clients:
+            subprocess.run([f"{test_integration_path}/run.sh", f"run/{spec.name}/{server.lang}/{server.role}/run.sh", f"run/{spec.name}/{client.lang}/{client.role}/run.sh"], check=True)
