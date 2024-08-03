@@ -24,5 +24,13 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: 'lts'
+
+      - name: Install pm2 globally
+        run: npm install -g pm2
+
       - name: Run tests
         run: bash test.sh
