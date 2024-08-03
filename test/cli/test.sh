@@ -8,9 +8,14 @@ cd "$SCRIPT_DIR" || exit
 python -m venv .venv
 source .venv/bin/activate
 
-cd ../../cli/py
+cd ../../plugin/py-binding
+bash install.sh
+
+cd $SCRIPT_DIR/../../cli/py
 bash build.sh
-pip install --force dist/trustspeccli-*-py3-none-any.whl
+
+pip uninstall -y trustspeccli
+pip install dist/trustspeccli-*-py3-none-any.whl
 
 cd $SCRIPT_DIR
 trust help
