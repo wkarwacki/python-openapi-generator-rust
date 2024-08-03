@@ -5,13 +5,15 @@ set -eox pipefail
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 cd "$SCRIPT_DIR" || exit
 
-rm -rf  test/default
-mkdir -p test/default/spec
+VERSION=$(cat VERSION)
 
-cargo test -- --nocapture
+trap "mv $SCRIPT_DIR/plugin/py-binding/Cargo.toml.bu $SCRIPT_DIR/plugin/py-binding/Cargo.toml; mv $SCRIPT_DIR/cli/py/pyproject.toml.bu $SCRIPT_DIR/cli/py/pyproject.toml" EXIT
 
-bash test/integration/test.sh
+cp $SCRIPT_DIR/plugin/py-binding/Cargo.toml $SCRIPT_DIR/plugin/py-binding/Cargo.toml.bu
+sed -i "s/{VERSION}/$VERSION/g" $SCRIPT_DIR/plugin/py-binding/Cargo.toml
 
-bash test/cli/test.sh
+cp $SCRIPT_DIR/cli/py/pyproject.toml $SCRIPT_DIR/cli/py/pyproject.toml.bu
+sed -i "s/{VERSION}/$VERSION/g" $SCRIPT_DIR/cli/py/pyproject.toml
 
-echo ok
+cd $SCRIPT_DIR
+bash do_test.sh

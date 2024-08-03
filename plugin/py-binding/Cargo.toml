@@ -1,6 +1,6 @@
 [package]
 name = "trustspecpy"
-version = "0.1.3"
+version = "{VERSION}"
 edition = "2021"
 
 [lib]
