@@ -1,3 +1,9 @@
+# Highlights:
+- **Python Server OpenAPI Generator**
+- **Python Client OpenAPI Generator**
+- **Kotlin Server OpenAPI Generator**
+
+---
 
 <p align="center">
   <b>Documentation, source code: <a href="https://github.com/wkarwacki/trust" target="_blank">https://github.com/wkarwacki/trust</a></b>
