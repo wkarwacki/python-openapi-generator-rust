@@ -1,7 +1,6 @@
-# Highlights:
-- **Python Server OpenAPI Generator**
-- **Python Client OpenAPI Generator**
-- **Kotlin Server OpenAPI Generator**
+<p>
+  <b>Python Server OpenAPI Generator, Python Client OpenAPI Generator, Kotlin Server OpenAPI Generator</b>
+</p>
 
 ---
 
