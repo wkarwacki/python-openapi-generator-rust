@@ -9,13 +9,4 @@ dev_service = DevService()
 print(dev_service.get_health())
 
 test_service = TestService()
-assert test_service.get_test_preview(TestPreviewRequestDto(
-    start_row=1,
-    end_row=3,
-    sort_masterpiece=[],
-    filter_masterpiece={}
-), "test_id") == TestPreviewResponseDto(
-    last_row=8,
-    row_circumference=17,
-    row_data=[{"a": 1, "b": "c", "d": True}]
-)
+assert test_service.get_test_preview(TestPreviewRequestDto.get(), "test_id") == TestPreviewResponseDto.get()

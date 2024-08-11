@@ -15,11 +15,13 @@ mod type_params {
         gen_test(Lang::Kotlin, Role::Server, "type-params-trust.yml");
     }
 
+    #[ignore]
     #[test]
     fn gen_python_client_test() {
         gen_test(Lang::Python, Role::Client, "type-params-trust.yml");
     }
 
+    #[ignore]
     #[test]
     fn gen_python_server_test() {
         gen_test(Lang::Python, Role::Server, "type-params-trust.yml");

@@ -64,10 +64,11 @@ for spec in specs:
         out_path = f"{run_path}/{gen.out_dir}"
         os.makedirs(out_path)
 
-        for trust_file in os.listdir(trust_path):
-            subprocess.run(["cargo", "run", "generate", gen.lang, gen.role, f"{trust_path}/{trust_file}", out_path])
-
         gen_path=f"{test_integration_path}/gens/{gen.lang}/{gen.role}"
+
+        for trust_file in os.listdir(trust_path):
+            subprocess.run(["cargo", "run", "generate", gen.lang, gen.role, f"{trust_path}/{trust_file}", out_path, "-c", f"{gen_path}/trust-cfg.yml"])
+
         subprocess.run(f"{gen_path }/build.sh")
         shutil.copytree(gen_path, run_path, dirs_exist_ok=True)
 
