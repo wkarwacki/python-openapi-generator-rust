@@ -48,7 +48,7 @@ pub(crate) struct Alias {
     pub r#ref: Ref,
 }
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub(crate) struct Bool {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
@@ -62,7 +62,7 @@ pub(crate) struct Const {
     pub desc: Option<Box<Desc>>,
 }
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub(crate) struct Dec {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
@@ -83,7 +83,7 @@ pub(crate) enum EnumVals {
     Str(Vec<String>),
 }
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub(crate) struct Int {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]
@@ -155,7 +155,7 @@ pub(crate) struct Seq {
     pub null: bool,
 }
 
-#[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[derive(Clone, Debug, Default, Deserialize, Eq, PartialEq, Serialize)]
 pub(crate) struct Str {
     #[serde(default)]
     #[serde(skip_serializing_if = "<&bool>::not")]

@@ -1,9 +1,11 @@
-{{#if val.item}}{{>dto key=(add key "Item") val=val.item tl=false}}
+{{#if val.item}}{{>dto key=(add key "Item") val=val.item tl=false prefix=prefix}}
 
-{{else if val.val}}{{>dto key=(add key "Value") val=val.val tl=false}}
+{{else if val.val}}{{>dto key=(add key "Value") val=val.val tl=false prefix=prefix}}
 
 {{/if}}{{#if val.adt}}class {{key}}Base(Dto):
-    {{indent}}{{#unless val.vars}}pass{{/unless}}{{#each val.vars}}{{#if (or (eq this.type "obj") this.item this.val)}}{{>dto key=(fmtClass @key) val=this indent=(add ../indent "    ")}}{{/if}}{{/each}}{{#each val.vars}}
+    {{indent}}    @classmethod
+    {{indent}}    def get(cls) -> '{{fmtClass key}}':
+    {{indent}}        return {{#with prefix}}{{this}}.{{/with}}{{#each val.adt.map}}{{#if @first}}{{../key}}{{fmtClass @key}}.get(){{/if}}{{/each}}{{#each val.vars}}{{#if (or (eq this.type "obj") this.item this.val)}}{{>dto key=(fmtClass @key) val=this indent=(add ../indent "    ")}}{{/if}}{{/each}}{{#each val.vars}}
     {{indent}}{{#if (eq @key ../val.adt.var)}}{{fmtName @key}}: {{#each../val.adt.map}}Literal[{{json @key}}]{{#unless @last}} | {{/unless}}{{/each}}
     {{else}}{{../indent}}{{>var}}{{/if}}{{/each}}
 {{#each val.adt.map}}
@@ -14,8 +16,11 @@
 
 {{/each}}
 
-{{key}} = {{>union}} {{else if (and (isAlias val) tl)}}{{key}} = {{fmtType val key}}{{else if (or val.vars adtParent)}}class {{adtParent}}{{fmtClass key}}({{#if (parents val)}}{{#each (parents val)}}{{fmtType this}}{{#unless @last}}, {{/unless}}{{/each}}{{else if adtParent}}{{adtParent}}Base{{else}}Dto{{/if}}){{>typeParams val=val}}:
-{{indent}}{{#unless val.vars}}    pass{{/unless}}{{#each val.vars}}{{#if (or (or (eq this.type "obj") (eq this.type "enum")) this.item this.val)}}    {{>dto key=(fmtClass @key) val=this dtoFormLike=(or ../formLike ../dtoFormLike) indent=(add ../indent "    ")}}{{/if}}{{/each}}{{#each val.vars}}{{#if (or (not ../this.formLike) (not (eq @key "file")))}}
+{{key}} ={{>union}}{{else if (and (isAlias val) tl)}}{{key}} = {{fmtType val key}}{{else if (or val.vars adtParent)}}class {{adtParent}}{{fmtClass key}}({{#if (parents val)}}{{#each (parents val)}}{{fmtType this}}{{#unless @last}}, {{/unless}}{{/each}}{{else if adtParent}}{{adtParent}}Base{{else}}Dto{{/if}}){{>typeParams val=val}}:
+{{indent}}    @classmethod
+{{indent}}    def get(cls) -> '{{adtParent}}{{key}}':
+{{indent}}        return {{#with prefix}}{{this}}.{{/with}}{{>stubImpl key=(add adtParent key) val=val indent=(add indent "    ")}}
+{{indent}}{{#each val.vars}}{{#if (or (or (eq this.type "obj") (eq this.type "enum")) this.item this.val)}}    {{>dto key=(fmtClass @key) val=this dtoFormLike=(or ../formLike ../dtoFormLike) indent=(add ../indent "    ") prefix=../key}}{{/if}}{{/each}}{{#each val.vars}}{{#if (or (not ../this.formLike) (not (eq @key "file")))}}
     {{../indent}}{{>var}}{{/if}}{{/each}}{{else if (eq val.type "enum")}}class {{key}}({{#with (valueDef val.vars.[0])}}{{#if (eq type "int")}}IntEnum{{else}}str, Enum{{/if}}{{/with}}):{{#each val.vals}}
     {{fmtEnum this}} = {{json this}}{{/each}}{{/if}}{{#if (and (and (hasKey this "tl") (not tl)) (and dtoFormLike (eq val.type "obj")))}}
 
@@ -24,4 +29,4 @@
         {{../indent}}return {{fmtName key}}.model_dump_json(exclude_none=True){{/if}}{{#if formLike}}
 
     def form(self) -> dict[str, Any]:
-        return self.model_dump(exclude_none=True){{/if}}
+        return self.model_dump(exclude_none=True){{/if}}{{#if (and (eq val.type "obj") (and (not val.adt) (not (typeParams val))))}}{{/if}}

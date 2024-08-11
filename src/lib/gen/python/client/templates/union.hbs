@@ -1,4 +1,4 @@
-Annotated[
+ Annotated[
     {{#each val.adt.map}}{{../key}}{{fmtClass @key}}{{#unless @last}} | {{/unless}}{{/each}},
     Field(discriminator="{{fmtName val.adt.var}}")
 ]

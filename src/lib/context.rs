@@ -61,28 +61,21 @@ impl Context {
         serde_yaml::from_value(value.clone()).unwrap()
     }
 
-    pub(crate) fn op_refs(&self, op: &Op) -> Vec<(Option<String>, Vec<String>)> {
+    pub(crate) fn op_refs(&self, op: &Op) -> HashMap<Option<String>, Vec<Ref>> {
         let refs = op.refs();
-        self.src_to_refs(&refs)
+        Self::src_to_refs(refs)
     }
 
-    pub(crate) fn def_refs(&self, def: &Def) -> Vec<(Option<String>, Vec<String>)> {
+    pub(crate) fn def_refs(&self, def: &Def) -> HashMap<Option<String>, Vec<Ref>> {
         let refs = def.refs();
-        self.src_to_refs(&refs)
+        Self::src_to_refs(refs)
     }
 
-    fn src_to_refs(&self, refs: &Vec<Ref>) -> Vec<(Option<String>, Vec<String>)> {
-        let grouped = refs.iter().into_group_map_by(|r#ref| r#ref.src.clone());
-        grouped
+    fn src_to_refs(refs: Vec<Ref>) -> HashMap<Option<String>, Vec<Ref>> {
+        refs.iter()
+            .into_group_map_by(|r#ref| r#ref.src.clone())
             .iter()
-            .map(|(src, refs)| {
-                (
-                    src.clone(),
-                    refs.iter()
-                        .map(|r#ref| r#ref.class_name())
-                        .collect::<Vec<_>>(),
-                )
-            })
+            .map(|(src, refs)| (src.clone(), refs.iter().cloned().cloned().collect()))
             .collect()
     }
 }

@@ -1,8 +1,11 @@
-use crate::lib::{
-    context::Context,
-    def::{Def, Int, Obj, Str},
-    desc::Desc,
-    ext::Ext,
+use crate::{
+    gen::{gen::Gen, lang::stub_impl},
+    lib::{
+        context::Context,
+        def::{Def, Int, Obj, Str},
+        desc::Desc,
+        ext::Ext,
+    },
 };
 use handlebars::{
     Handlebars, Helper, HelperDef, JsonRender, RenderContext, RenderError, ScopedJson,
@@ -53,6 +56,40 @@ impl HelperDef for Resolve {
         } else {
             Ok(ScopedJson::Missing)
         }
+    }
+}
+
+#[derive(Clone)]
+pub(crate) struct StubImpl {
+    pub gen: Box<dyn Gen>,
+    pub context: Context,
+}
+
+impl HelperDef for StubImpl {
+    fn call_inner<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper<'rc>,
+        _: &'reg Handlebars<'reg>,
+        _: &'rc handlebars::Context,
+        _: &mut RenderContext<'reg, 'rc>,
+    ) -> Result<ScopedJson<'rc>, RenderError> {
+        let desc: Desc = serde_json::from_value(h.param(0).unwrap().value().clone())
+            .unwrap_or_else(|_| {
+                let r#type: String =
+                    serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
+                Desc::Def(match r#type.as_str() {
+                    "bool" => Def::Bool(Default::default()),
+                    "dec" => Def::Dec(Default::default()),
+                    "int" => Def::Int(Default::default()),
+                    "str" => Def::Str(Default::default()),
+                    _ => unreachable!(),
+                })
+            });
+        Ok(
+            serde_json::to_value(stub_impl(&self.gen.lang(), &desc, &self.context))
+                .unwrap()
+                .into(),
+        )
     }
 }
 

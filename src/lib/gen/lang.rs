@@ -1,4 +1,4 @@
-use crate::lib::{def::Def, desc::Desc, r#ref::Ref};
+use crate::lib::{context::Context, def::Def, desc::Desc, r#ref::Ref};
 use handlebars::{Handlebars, JsonValue};
 use std::path::PathBuf;
 
@@ -15,6 +15,7 @@ pub(crate) trait Lang {
     fn fmt_src(&self, src: &str) -> String;
     fn fmt_type(&self, def: &Def, name: &Option<&str>) -> String;
     fn fmt_value(&self, json_value: &JsonValue) -> String;
+    fn stub_impl(&self, def: &Def, context: &Context) -> String;
 }
 
 pub static DTO_NAME_TEMPLATE_NAME: &str = "dtoName";
@@ -36,6 +37,14 @@ pub(crate) fn inner(
             lang.fmt_opt(&formatted_type_replaced)
         }
         Desc::Ref(r#ref) => lang.fmt_ref(r#ref),
+        Desc::TypeParam { .. } => unimplemented!("Type parameter not supported yet."),
+    }
+}
+
+pub(crate) fn stub_impl(lang: &Box<dyn Lang>, desc: &Desc, context: &Context) -> String {
+    match desc {
+        Desc::Def(def) => lang.stub_impl(def, context),
+        Desc::Ref(r#ref) => lang.stub_impl(&context.resolve(r#ref), context),
         Desc::TypeParam { .. } => unimplemented!("Type parameter not supported yet."),
     }
 }

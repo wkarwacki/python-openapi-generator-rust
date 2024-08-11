@@ -116,20 +116,42 @@ impl Gen for GenPythonHttpServer {
             let imports = context
                 .def_refs(def)
                 .iter()
-                .flat_map(|(src, names)| {
-                    names.iter().map(move |name| {
-                        "from ".to_string()
+                .flat_map(|(src, refs)| {
+                    refs.iter().flat_map(move |r#ref| {
+                        let mut names: Vec<String> = Default::default();
+                        names.push("from ".to_string()
                             + self.lang.module().as_str()
                             + "."
-                            + match src {
+                            + match &src {
                             None => self.lang.feature.clone().to_case(Case::Snake),
-                            Some(src) => self.lang.fmt_src(src),
+                            Some(src) => self.lang.fmt_src(src.as_str()),
                         }
                             .as_str()
                             + "."
-                            + name.to_case(Case::Snake).as_str()
+                            + r#ref.class_name().to_case(Case::Snake).as_str()
                             + " import "
-                            + dto_name(self.lang.fmt_class(name, &None).as_str(), &self.lang()).as_str()
+                            + dto_name(self.lang.fmt_class(r#ref.class_name().as_str(), &None).as_str(), &self.lang())
+                            .as_str());
+                        match context.resolve(r#ref) {
+                            Def::Obj(obj) => {
+                                obj.adt.iter().for_each(|_| names.push("from ".to_string()
+                                    + self.lang.module().as_str()
+                                    + "."
+                                    + match &src {
+                                    None => self.lang.feature.clone().to_case(Case::Snake),
+                                    Some(src) => self.lang.fmt_src(src.as_str()),
+                                }
+                                    .as_str()
+                                    + "."
+                                    + r#ref.class_name().to_case(Case::Snake).as_str()
+                                    + " import "
+                                    + dto_name(self.lang.fmt_class(r#ref.class_name().as_str(), &None).as_str(), &self.lang())
+                                    .as_str()
+                                + "Base"))
+                            }
+                            _ => {}
+                        }
+                        names
                     })
                 })
                 .unique()
@@ -177,23 +199,57 @@ impl Gen for GenPythonHttpServer {
         pkg.ops
             .iter()
             .flat_map(|(_, ops)| ops.iter().flat_map(|op| context.op_refs(op)))
-            .flat_map(|(src, names)| {
-                names
-                    .iter()
-                    .map(move |name| {
-                        "from ".to_string()
-                            + self.lang.module().as_str()
-                            + "."
-                            + match &src {
-                                None => self.lang.feature.clone().to_case(Case::Snake),
-                                Some(src) => self.lang.fmt_src(src.as_str()),
-                            }
-                            .as_str()
-                            + "."
-                            + name.to_case(Case::Snake).as_str()
-                            + " import "
-                            + dto_name(self.lang.fmt_class(name, &None).as_str(), &self.lang())
+            .flat_map(|(src, refs)| {
+                refs.iter()
+                    .flat_map(|r#ref| {
+                        let mut names: Vec<String> = Default::default();
+                        names.push(
+                            "from ".to_string()
+                                + self.lang.module().as_str()
+                                + "."
+                                + match &src {
+                                    None => self.lang.feature.clone().to_case(Case::Snake),
+                                    Some(src) => self.lang.fmt_src(src.as_str()),
+                                }
                                 .as_str()
+                                + "."
+                                + r#ref.class_name().to_case(Case::Snake).as_str()
+                                + " import "
+                                + dto_name(
+                                    self.lang
+                                        .fmt_class(r#ref.class_name().as_str(), &None)
+                                        .as_str(),
+                                    &self.lang(),
+                                )
+                                .as_str(),
+                        );
+                        match context.resolve(r#ref) {
+                            Def::Obj(obj) => obj.adt.iter().for_each(|_| {
+                                names.push(
+                                    "from ".to_string()
+                                        + self.lang.module().as_str()
+                                        + "."
+                                        + match &src {
+                                            None => self.lang.feature.clone().to_case(Case::Snake),
+                                            Some(src) => self.lang.fmt_src(src.as_str()),
+                                        }
+                                        .as_str()
+                                        + "."
+                                        + r#ref.class_name().to_case(Case::Snake).as_str()
+                                        + " import "
+                                        + dto_name(
+                                            self.lang
+                                                .fmt_class(r#ref.class_name().as_str(), &None)
+                                                .as_str(),
+                                            &self.lang(),
+                                        )
+                                        .as_str()
+                                        + "Base",
+                                )
+                            }),
+                            _ => {}
+                        }
+                        names
                     })
                     .collect::<Vec<_>>()
             })
@@ -254,7 +310,7 @@ impl Gen for GenPythonHttpServer {
             let service = handlebars
                 .render_template(
                     service_template.as_str(),
-                    &json!({"feature": self.lang.feature.clone(), "ops": &pkg.ops}),
+                    &json!({"feature": self.lang.feature.clone(), "ops": &pkg.ops, "autoImpl": self.lang.gen_cfg.auto_implement})
                 )
                 .unwrap();
             (

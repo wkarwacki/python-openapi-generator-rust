@@ -1,5 +1,5 @@
 use crate::{
-    gen::template::r#fn::ToFlatCase,
+    gen::template::{proc::StubImpl, r#fn::ToFlatCase},
     lib::{
         context::Context,
         gen::{
@@ -87,6 +87,16 @@ pub(crate) fn go(
     handlebars.register_helper("toFlatCase", Box::new(ToFlatCase {}));
     handlebars.register_helper("typeParams", Box::new(TypeParams {}.clone()));
     handlebars.register_helper("valueDef", Box::new(ValueDef {}.clone()));
+    handlebars.register_helper(
+        "stubImpl",
+        Box::new(
+            StubImpl {
+                gen: gen.clone(),
+                context: context.clone(),
+            }
+            .clone(),
+        ),
+    );
 
     handlebars_misc_helpers::setup_handlebars(&mut handlebars);
     handlebars.set_strict_mode(false);

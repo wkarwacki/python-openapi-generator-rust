@@ -136,13 +136,15 @@ pub enum Layout {
     Tag,
 }
 
-#[derive(Clone, Debug, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GenCfg {
     #[serde(default)]
     type_mapping: HashMap<String, String>,
     module: Option<PathBuf>,
     dto_name: Option<String>,
+    #[serde(default)]
+    auto_implement: bool,
 }
 
 #[derive(Clone, ValueEnum)]
@@ -189,11 +191,7 @@ pub fn do_main(cli: Cli) {
         } => {
             let generator_config = config
                 .map(|c| serde_yaml::from_reader::<File, GenCfg>(File::open(c).unwrap()).unwrap())
-                .unwrap_or(GenCfg {
-                    type_mapping: HashMap::new(),
-                    module: None,
-                    dto_name: None,
-                });
+                .unwrap_or(Default::default());
             gen(&input, &lang, &role, &generator_config, &templates_path)
                 .iter()
                 .for_each(|(path, content)| {

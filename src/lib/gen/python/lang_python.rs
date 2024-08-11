@@ -1,5 +1,6 @@
 use crate::{
     lib::{
+        context::Context,
         def::{Def, Enum, EnumVals},
         desc::Desc,
         gen::{
@@ -188,6 +189,23 @@ impl Lang for LangPython {
                 .collect::<Vec<String>>()
                 .join(", "),
             Value::Null => "None".to_string(),
+        }
+    }
+
+    fn stub_impl(&self, def: &Def, context: &Context) -> String {
+        match def {
+            Def::Alias(alias) => self.stub_impl(&context.resolve(&alias.r#ref), context),
+            Def::Bool(_) => "False".to_string(),
+            Def::Const(r#const) => serde_json::to_string(&r#const.clone().val).unwrap(),
+            Def::Dec(_) => "0.0".to_string(),
+            Def::Enum(Enum { vals, null: _ }) => match vals {
+                EnumVals::Int(vals) => vals.first().unwrap().to_string(),
+                EnumVals::Str(vals) => "\"".to_string() + vals.first().unwrap() + "\"",
+            },
+            Def::Int(_) => "0".to_string(),
+            Def::Str(_) => "\"\"".to_string(),
+            Def::Struct(_) => "{}".to_string(),
+            _ => unreachable!(),
         }
     }
 }
