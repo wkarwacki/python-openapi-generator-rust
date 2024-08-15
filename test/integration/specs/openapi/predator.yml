@@ -166,15 +166,12 @@ components:
           properties:
             id:
               $ref: '#/components/schemas/PredatorId'
-            name:
-              type: string
             masterpieceName:
               type: string
             targetTransformerName:
               type: string
           required:
             - id
-            - name
             - masterpieceName
             - targetTransformerName
     RunPredatorRequest:

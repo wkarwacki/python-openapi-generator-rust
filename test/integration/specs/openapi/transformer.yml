@@ -92,46 +92,46 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/TransformerPreviewResponse"
-  "/transformers/files":
-    post:
-      tags:
-        - transformer
-      operationId: uploadTransformerAsFile
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                id:
-                  $ref: '#/components/schemas/TransformerId'
-                file:
-                  type: string
-                  format: binary
-                transformerName:
-                  type: string
-                cacatoos:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      id:
-                        type: string
-                      name:
-                        type: string
-                    required:
-                      - id
-                      - name
-              required:
-                - file
-        required: true
-      responses:
-        200:
-          description: ok
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/TransformerId'
+#  "/transformers/files":
+#    post:
+#      tags:
+#        - transformer
+#      operationId: uploadTransformerAsFile
+#      requestBody:
+#        content:
+#          multipart/form-data:
+#            schema:
+#              type: object
+#              properties:
+#                id:
+#                  $ref: '#/components/schemas/TransformerId'
+#                file:
+#                  type: string
+#                  format: binary
+#                transformerName:
+#                  type: string
+#                cacatoos:
+#                  type: array
+#                  items:
+#                    type: object
+#                    properties:
+#                      id:
+#                        type: string
+#                      name:
+#                        type: string
+#                    required:
+#                      - id
+#                      - name
+#              required:
+#                - file
+#        required: true
+#      responses:
+#        200:
+#          description: ok
+#          content:
+#            application/json:
+#              schema:
+#                $ref: '#/components/schemas/TransformerId'
 components:
   schemas:
     CacatooId:

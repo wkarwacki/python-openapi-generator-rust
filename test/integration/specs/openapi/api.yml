@@ -77,8 +77,8 @@ paths:
     $ref: 'test.yml#/paths/~1tests~1{testId}~1preview'
   "/transformers/{transformerId}/preview":
     $ref: 'transformer.yml#/paths/~1transformers~1{transformerId}~1preview'
-  "/transformers/files":
-    $ref: 'transformer.yml#/paths/~1transformers~1files'
+#  "/transformers/files":
+#    $ref: 'transformer.yml#/paths/~1transformers~1files'
 components:
   schemas:
     Duration:
@@ -89,7 +89,16 @@ components:
           format: int64
           minimum: 1
         unit:
-          $ref: '#/components/schemas/TurbulenceUnit'
+          type: string
+          enum:
+            - millisecond
+            - second
+            - minute
+            - hour
+            - day
+            - week
+            - month
+            - year
       required:
         - value
         - unit
@@ -103,14 +112,3 @@ components:
       enum:
         - asc
         - desc
-    TurbulenceUnit:
-      type: string
-      enum:
-        - millisecond
-        - second
-        - minute
-        - hour
-        - day
-        - week
-        - month
-        - year
