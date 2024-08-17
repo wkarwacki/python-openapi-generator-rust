@@ -53,41 +53,41 @@ paths:
                 const:
                   - private
                   - immutransformer
-  /elephant/{elephantId}/scatter-plot:
-    get:
-      tags:
-        - ibis
-      summary: Get Scatterplot
-      operationId: getScatterPlot
-      parameters:
-        - name: elephantId
-          in: path
-          required: true
-          schema:
-            type: string
-            title: Elephant Id
-        - name: limit
-          in: query
-          required: false
-          schema:
-            type: integer
-            default: 100000
-            title: Limit
-      responses:
-        '200':
-          description: Successful Response
-          content:
-            text/csv:
-              schema:
-                type: string
-                format: binary
-          headers:
-            Cache-Control:
-              schema:
-                type: string
-                const:
-                  - private
-                  - immutransformer
+#  /elephant/{elephantId}/scatter-plot:
+#    get:
+#      tags:
+#        - ibis
+#      summary: Get Scatterplot
+#      operationId: getScatterPlot
+#      parameters:
+#        - name: elephantId
+#          in: path
+#          required: true
+#          schema:
+#            type: string
+#            title: Elephant Id
+#        - name: limit
+#          in: query
+#          required: false
+#          schema:
+#            type: integer
+#            default: 100000
+#            title: Limit
+#      responses:
+#        '200':
+#          description: Successful Response
+#          content:
+#            text/csv:
+#              schema:
+#                type: string
+#                format: binary
+#          headers:
+#            Cache-Control:
+#              schema:
+#                type: string
+#                const:
+#                  - private
+#                  - immutransformer
   /elephant/{elephantId}/turbulence-series-chart:
     get:
       tags:

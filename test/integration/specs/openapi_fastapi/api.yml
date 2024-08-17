@@ -46,6 +46,33 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ElephantSummary"
+  /external-module:
+    get:
+      tags:
+        - external-module
+      summary: Get external module
+      operationId: getExternalModule
+      responses:
+        '204':
+          description: Successful Response
+  /log:
+    get:
+      tags:
+        - log
+      summary: Get log
+      operationId: getLog
+      responses:
+        '204':
+          description: Successful Response
+  /masterpiece:
+    get:
+      tags:
+        - masterpiece
+      summary: Get masterpiece
+      operationId: getMasterpiece
+      responses:
+        '204':
+          description: Successful Response
   /health:
     get:
       tags:
@@ -58,7 +85,7 @@ paths:
   /flaming/{flaming_id}/distribution:
     get:
       tags:
-        - flaming-ibis
+        - flaming
       summary: Get Flaming Distribution
       operationId: getFlamingDistribution
       parameters:

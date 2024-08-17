@@ -22,14 +22,14 @@ paths:
     $ref: 'ibis.yml#/paths/~1elephant~1%7Belephant_id%7D~1lift'
   /elephant/{elephant_id}/confusion-hattrick:
     $ref: 'ibis.yml#/paths/~1elephant~1%7Belephant_id%7D~1confusion-hattrick'
-  /elephant/{elephant_id}/scatter-plot:
-    $ref: 'ibis.yml#/paths/~1elephant~1%7Belephant_id%7D~1scatter-plot'
+#  /elephant/{elephant_id}/scatter-plot:
+#    $ref: 'ibis.yml#/paths/~1elephant~1%7Belephant_id%7D~1scatter-plot'
   /elephant/{elephant_id}/turbulence-series-chart:
     $ref: 'ibis.yml#/paths/~1elephant~1%7Belephant_id%7D~1turbulence-series-chart'
   /elephants:
     $ref: 'elephant.yml#/paths/~1elephants'
-  /elephants/configs:
-    $ref: 'elephant.yml#/paths/~1elephants~1configs'
+  /elephants-configs:
+    $ref: 'elephant.yml#/paths/~1elephants-configs'
   /elephants/configs/{elephantConfigId}:
     $ref: 'elephant.yml#/paths/~1elephants~1configs~1{elephantConfigId}'
   /elephants/{elephantId}:
@@ -54,19 +54,19 @@ paths:
     $ref: 'log.yml#/paths/~1predators~1{predatorId}~1logs'
   /predators/{predatorId}/results:
     $ref: 'predator.yml#/paths/~1predators~1{predatorId}~1results'
-  /sse:
-    get:
-      tags:
-        - sse
-      operationId: subscribeToSse
-      responses:
-        200:
-          description: ok
-          content:
-            text/event-stream:
-              schema:
-                $ref: '#/components/schemas/ServerEvent'
-      x-dotdata-sse: true
+#  /sse:
+#    get:
+#      tags:
+#        - sse
+#      operationId: subscribeToSse
+#      responses:
+#        200:
+#          description: ok
+#          content:
+#            text/event-stream:
+#              schema:
+#                $ref: '#/components/schemas/ServerEvent'
+#      x-dotdata-sse: true
   "/transformers":
     $ref: 'transformer.yml#/paths/~1transformers'
   "/transformers/{transformerId}/cacatoos":

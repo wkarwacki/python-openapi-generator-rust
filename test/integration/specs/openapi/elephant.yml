@@ -13,7 +13,7 @@ paths:
                 type: array
                 items:
                   $ref: "#/components/schemas/ElephantSummary"
-  /elephants/configs:
+  /elephants-configs:
     post:
       tags:
         - elephant-config
