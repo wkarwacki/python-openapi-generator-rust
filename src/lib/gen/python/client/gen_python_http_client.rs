@@ -150,6 +150,28 @@ impl Gen for GenPythonHttpClient {
                                     .as_str()
                                 + "Base"))
                             }
+                            Def::Seq(_) =>
+                                names.push(
+                                    "from ".to_string()
+                                        + self.lang.module().as_str()
+                                        + "."
+                                        + match &src {
+                                        None => self.lang.feature.clone().to_case(Case::Snake),
+                                        Some(src) => self.lang.fmt_src(src.as_str()),
+                                    }
+                                        .as_str()
+                                        + "."
+                                        + r#ref.class_name().to_case(Case::Snake).as_str()
+                                        + " import "
+                                        + dto_name(
+                                        self.lang
+                                            .fmt_class(r#ref.class_name().as_str(), &None)
+                                            .as_str(),
+                                        &self.lang(),
+                                    )
+                                        .as_str()
+                                        + "Item",
+                                ),
                             _ => {}
                         }
                         names
@@ -248,6 +270,27 @@ impl Gen for GenPythonHttpClient {
                                         + "Base",
                                 )
                             }),
+                            Def::Seq(_) => names.push(
+                                "from ".to_string()
+                                    + self.lang.module().as_str()
+                                    + "."
+                                    + match &src {
+                                        None => self.lang.feature.clone().to_case(Case::Snake),
+                                        Some(src) => self.lang.fmt_src(src.as_str()),
+                                    }
+                                    .as_str()
+                                    + "."
+                                    + r#ref.class_name().to_case(Case::Snake).as_str()
+                                    + " import "
+                                    + dto_name(
+                                        self.lang
+                                            .fmt_class(r#ref.class_name().as_str(), &None)
+                                            .as_str(),
+                                        &self.lang(),
+                                    )
+                                    .as_str()
+                                    + "Item",
+                            ),
                             _ => {}
                         }
                         names
@@ -305,6 +348,27 @@ impl Gen for GenPythonHttpClient {
             )
         };
         result.insert(service.0, imports.clone() + "\n" + service.1.as_str());
+
+        if self.lang.gen_cfg.auto_implement {
+            let test = {
+                let test_template = templates.get("test").unwrap();
+                let test = handlebars
+                    .render_template(
+                        test_template.as_str(),
+                        &json!({"module": self.lang.module(), "feature": self.lang.feature.clone(), "ops": &pkg.ops}),
+                    )
+                    .unwrap();
+                (
+                    {
+                        let out_dir = self.lang.out_dir().to_string_lossy().to_string();
+                        let test_path = "test_trust.py".to_string();
+                        format!("{out_dir}/{test_path}").into()
+                    },
+                    test,
+                )
+            };
+            result.insert(test.0, imports.clone() + "\n" + test.1.as_str());
+        }
 
         result
     }

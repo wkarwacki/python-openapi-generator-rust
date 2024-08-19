@@ -1,21 +1,29 @@
 from fastapi import FastAPI
 
 from trust.dev.router import dev_router
+from trust.elephant.router import elephant_router
+from trust.external_module.router import external_module_router
+from trust.flaming.router import flaming_router
+from trust.ibis.router import ibis_router
+from trust.log.router import log_router
+from trust.masterpiece.router import masterpiece_router
+from trust.predator.router import predator_router
 from trust.test.router import test_router
+from trust.transformer.router import transformer_router
 import uvicorn
-
-from trust.dev.service import DevService
-from trust.test.service import TestService
-
-from app.dev.service import DevServiceImpl
-from app.test.service import TestServiceImpl
 
 app = FastAPI()
 
 app.include_router(dev_router)
+app.include_router(elephant_router)
+app.include_router(external_module_router)
+app.include_router(flaming_router)
+app.include_router(ibis_router)
+app.include_router(log_router)
+app.include_router(masterpiece_router)
+app.include_router(predator_router)
 app.include_router(test_router)
-app.dependency_overrides[DevService] = DevServiceImpl
-app.dependency_overrides[TestService] = TestServiceImpl
+app.include_router(transformer_router)
 
 def serve() -> None:
     uvicorn.run(

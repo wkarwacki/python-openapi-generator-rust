@@ -7,4 +7,4 @@ cd "$SCRIPT_DIR" || exit
 
 source .venv/bin/activate
 
-cd src && python -m app.main
+pytest src

@@ -203,7 +203,7 @@ impl Lang for LangPython {
                 EnumVals::Str(vals) => "\"".to_string() + vals.first().unwrap() + "\"",
             },
             Def::Int(_) => "0".to_string(),
-            Def::Str(_) => "\"\"".to_string(),
+            Def::Str(_) => "\"str\"".to_string(),
             Def::Struct(_) => "{}".to_string(),
             _ => unreachable!(),
         }

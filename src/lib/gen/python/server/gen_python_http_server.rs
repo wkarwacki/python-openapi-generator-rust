@@ -149,6 +149,28 @@ impl Gen for GenPythonHttpServer {
                                     .as_str()
                                 + "Base"))
                             }
+                            Def::Seq(_) =>
+                                names.push(
+                                    "from ".to_string()
+                                        + self.lang.module().as_str()
+                                        + "."
+                                        + match &src {
+                                        None => self.lang.feature.clone().to_case(Case::Snake),
+                                        Some(src) => self.lang.fmt_src(src.as_str()),
+                                    }
+                                        .as_str()
+                                        + "."
+                                        + r#ref.class_name().to_case(Case::Snake).as_str()
+                                        + " import "
+                                        + dto_name(
+                                        self.lang
+                                            .fmt_class(r#ref.class_name().as_str(), &None)
+                                            .as_str(),
+                                        &self.lang(),
+                                    )
+                                        .as_str()
+                                        + "Item",
+                                ),
                             _ => {}
                         }
                         names
@@ -247,6 +269,27 @@ impl Gen for GenPythonHttpServer {
                                         + "Base",
                                 )
                             }),
+                            Def::Seq(_) => names.push(
+                                "from ".to_string()
+                                    + self.lang.module().as_str()
+                                    + "."
+                                    + match &src {
+                                        None => self.lang.feature.clone().to_case(Case::Snake),
+                                        Some(src) => self.lang.fmt_src(src.as_str()),
+                                    }
+                                    .as_str()
+                                    + "."
+                                    + r#ref.class_name().to_case(Case::Snake).as_str()
+                                    + " import "
+                                    + dto_name(
+                                        self.lang
+                                            .fmt_class(r#ref.class_name().as_str(), &None)
+                                            .as_str(),
+                                        &self.lang(),
+                                    )
+                                    .as_str()
+                                    + "Item",
+                            ),
                             _ => {}
                         }
                         names

@@ -60,6 +60,26 @@ impl HelperDef for Resolve {
 }
 
 #[derive(Clone)]
+pub(crate) struct ResolveIfRef {
+    pub resolve: Resolve,
+}
+
+impl HelperDef for ResolveIfRef {
+    fn call_inner<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper<'rc>,
+        hb: &'reg Handlebars<'reg>,
+        c: &'rc handlebars::Context,
+        r: &mut RenderContext<'reg, 'rc>,
+    ) -> Result<ScopedJson<'rc>, RenderError> {
+        Ok(self
+            .resolve
+            .call_inner(h, hb, c, r)
+            .unwrap_or_else(|_| h.param(0).unwrap().value().clone().into()))
+    }
+}
+
+#[derive(Clone)]
 pub(crate) struct StubImpl {
     pub gen: Box<dyn Gen>,
     pub context: Context,

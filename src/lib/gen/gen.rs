@@ -14,7 +14,7 @@ use dyn_clone::DynClone;
 use filter::{FilterNonconst, FilterOpParamsByLoc};
 use fmt::{FmtClass, FmtEnum, FmtName, FmtOpt, FmtSrcIfPresent, FmtType, FmtValue};
 use handlebars::Handlebars;
-use proc::{Parents, Resolve, TypeArgs, TypeParams, ValueDef};
+use proc::{Parents, Resolve, ResolveIfRef, TypeArgs, TypeParams, ValueDef};
 use prop::{HasKey, IsAlias};
 use r#fn::{Add, Json};
 use serde_json::json;
@@ -73,15 +73,11 @@ pub(crate) fn go(
     handlebars.register_helper("hasKey", Box::new(HasKey {}.clone()));
 
     handlebars.register_helper("parents", Box::new(Parents {}.clone()));
-    handlebars.register_helper(
-        "resolve",
-        Box::new(
-            Resolve {
-                context: context.clone(),
-            }
-            .clone(),
-        ),
-    );
+    let resolve = Resolve {
+        context: context.clone(),
+    };
+    handlebars.register_helper("resolve", Box::new(resolve.clone()));
+    handlebars.register_helper("resolveIfRef", Box::new(ResolveIfRef { resolve }));
     handlebars.register_helper("sortOptionalsLast", Box::new(SortOptionalsLast {}.clone()));
     handlebars.register_helper("typeArgs", Box::new(TypeArgs {}.clone()));
     handlebars.register_helper("toFlatCase", Box::new(ToFlatCase {}));
