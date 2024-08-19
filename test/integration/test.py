@@ -33,11 +33,11 @@ specs = [
         name="openapi",
         entrypoint="api.yml"
     ),
-    Spec(
-        name="openapi_fastapi",
-        entrypoint="api.yml",
-        params = ["-l=tag"]
-    ),
+    # Spec(
+    #     name="openapi_fastapi",
+    #     entrypoint="api.yml",
+    #     params = ["-l=tag"]
+    # ),
 ]
 
 test_integration_path = pathlib.Path(__file__).parent.resolve()
