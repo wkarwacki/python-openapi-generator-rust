@@ -636,9 +636,6 @@ components:
               type: string
           required:
             - id
-    FlamingDistributionBase:
-      properties: { }
-      type: object
     FlamingDistributionBinBinary:
       properties:
         label:
@@ -687,7 +684,6 @@ components:
         - meanPredator
     FlamingDistributionBinaryHistogram:
       allOf:
-        - $ref: '#/components/schemas/FlamingDistributionBase'
         - properties:
             type:
               type: string
@@ -704,7 +700,6 @@ components:
             - bins
     FlamingDistributionNumericHistogram:
       allOf:
-        - $ref: '#/components/schemas/FlamingDistributionBase'
         - properties:
             type:
               type: string
