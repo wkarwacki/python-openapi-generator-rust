@@ -7,8 +7,11 @@ components:
           type: boolean
         dec:
           type: double
+        type:
+          type: string
       required:
         - bool
+        - type
       discriminator:
         propertyName: type
         mapping:

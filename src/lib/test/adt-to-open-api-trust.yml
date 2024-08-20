@@ -7,6 +7,8 @@ defs:
       dec:
         type: dec
         opt: true
+      type:
+        type: str
     adt:
       var: type
       map:
