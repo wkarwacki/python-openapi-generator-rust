@@ -25,6 +25,10 @@ defs:
     vars:
       var:
         type: str
+  ObjEmpty:
+    type: obj
+  Empty:
+    type: struct
   ObjWithSeq:
     type: obj
     vars:

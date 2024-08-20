@@ -290,43 +290,39 @@ impl Schema {
                         null: self.nullable,
                     }),
                     "object" => {
-                        if self.empty() {
-                            Def::Struct(Struct {})
-                        } else {
-                            self.additional_properties
-                                .clone()
-                                .map(|additional_properties| {
-                                    Def::Map(Box::new(Map {
-                                        key: Desc::Def(Def::Str(Str {
-                                            null: self.nullable,
-                                        })),
-                                        val: additional_properties.desc(name.clone(), context),
+                        self.additional_properties
+                            .clone()
+                            .map(|additional_properties| {
+                                Def::Map(Box::new(Map {
+                                    key: Desc::Def(Def::Str(Str {
                                         null: self.nullable,
-                                    }))
-                                })
-                                .unwrap_or({
-                                    let vars: HashMap<_, _> = self
-                                        .properties
-                                        .iter()
-                                        .map(|(n, schema)| {
-                                            (
-                                                n.clone(),
-                                                Box::new(Var {
-                                                    desc: schema.clone().desc(n.clone(), context),
-                                                    opt: !self.required.contains(n),
-                                                }),
-                                            )
-                                        })
-                                        .collect();
-                                    Def::Obj(Obj {
-                                        ext: None,
-                                        mix: Vec::new(),
-                                        vars: vars,
-                                        adt: self.adt(name.clone(), context),
-                                        null: self.nullable,
+                                    })),
+                                    val: additional_properties.desc(name.clone(), context),
+                                    null: self.nullable,
+                                }))
+                            })
+                            .unwrap_or({
+                                let vars: HashMap<_, _> = self
+                                    .properties
+                                    .iter()
+                                    .map(|(n, schema)| {
+                                        (
+                                            n.clone(),
+                                            Box::new(Var {
+                                                desc: schema.clone().desc(n.clone(), context),
+                                                opt: !self.required.contains(n),
+                                            }),
+                                        )
                                     })
+                                    .collect();
+                                Def::Obj(Obj {
+                                    ext: None,
+                                    mix: Vec::new(),
+                                    vars: vars,
+                                    adt: self.adt(name.clone(), context),
+                                    null: self.nullable,
                                 })
-                        }
+                            })
                     }
                     "string" => {
                         if self.r#enum.is_empty() {

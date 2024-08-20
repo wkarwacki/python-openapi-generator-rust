@@ -66,6 +66,9 @@ components:
           type: string
       required:
         - var
+    ObjEmpty:
+      type: object
+    Empty: {}
     SeqMapStrToDec:
       type: array
       items:
