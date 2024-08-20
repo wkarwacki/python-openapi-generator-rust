@@ -156,10 +156,13 @@ paths:
         '200':
           description: Successful Response
           content:
-            text/csv:
+            application/json:
               schema:
                 type: string
-                format: binary
+#            text/csv:
+#              schema:
+#                type: string
+#                format: binary
           headers:
             Content-Disposition:
               schema:
@@ -192,10 +195,13 @@ paths:
         '200':
           description: Successful Response
           content:
-            text/csv:
+            application/json:
               schema:
                 type: string
-                format: binary
+#            text/csv:
+#              schema:
+#                type: string
+#                format: binary
           headers:
             Cache-Control:
               schema:
