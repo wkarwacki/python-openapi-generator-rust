@@ -16,7 +16,7 @@
 
 {{/each}}
 
-{{key}} ={{>union}} {{else if (and (isAlias val) tl)}}{{key}} = {{fmtType val key}}{{else if (or val.vars adtParent)}}class {{adtParent}}{{fmtClass key}}({{#each (parents val)}}{{#with (resolveIfRef this)}}{{#unless (eq this.type "struct")}}{{>dtoName val=(fmtClass ../path)}}{{#if @last}}{{#if ../adtParent}}, {{/if}}{{else}}, {{/if}}{{else}}{{#if @last}}{{#if ../adtParent}}, {{/if}}{{/if}}{{/unless}}{{/with}}{{/each}}{{#if adtParent}}{{adtParent}}Base{{/if}}{{#unless (or (parents val) adtParent)}}Dto{{/unless}}){{>typeParams val=val}}:
+{{key}} ={{>union}} {{else if (and (isAlias val) tl)}}{{key}} = {{fmtType val key}}{{else if (or val.vars adtParent)}}class {{adtParent}}{{fmtClass key}}({{#each (parents val)}}{{#with (resolveIfRef this)}}{{>dtoName val=(fmtClass ../path)}}{{#if @last}}{{#if ../adtParent}}, {{/if}}{{else}}, {{/if}}{{/with}}{{/each}}{{#if adtParent}}{{adtParent}}Base{{/if}}{{#unless (or (parents val) adtParent)}}Dto{{/unless}}){{>typeParams val=val}}:
 {{indent}}    @classmethod
 {{indent}}    def get(cls) -> '{{adtParent}}{{key}}':
 {{indent}}        return {{#with prefix}}{{this}}.{{/with}}{{>stubImpl key=(add adtParent key) val=val adtVar=adtVar indent=(add indent "    ")}}
