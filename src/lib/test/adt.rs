@@ -21,14 +21,12 @@ mod adt {
         gen_test(Lang::Kotlin, Role::Server, "adt-to-open-api-trust.yml");
     }
 
-    #[ignore]
     #[test]
     fn gen_python_client_test() {
         gen_test(Lang::Python, Role::Client, "adt-from-open-api-trust.yml");
         gen_test(Lang::Python, Role::Client, "adt-to-open-api-trust.yml");
     }
 
-    #[ignore]
     #[test]
     fn gen_python_server_test() {
         gen_test(Lang::Python, Role::Server, "adt-from-open-api-trust.yml");

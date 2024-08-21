@@ -33,7 +33,7 @@ components:
     AnotherAdt:
       type: object
       discriminator:
-        propertyName: type
+        propertyName: anotherType
         mapping:
           typeToken0: '#/components/schemas/AnotherAdtTypeToken0'
           typeToken1: '#/components/schemas/AnotherAdtTypeToken1'

@@ -10,7 +10,6 @@ components:
         type:
           type: string
       required:
-        - bool
         - type
       discriminator:
         propertyName: type

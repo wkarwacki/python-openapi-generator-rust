@@ -1,6 +1,9 @@
 defs:
   Adt:
     type: obj
+    vars:
+      type:
+        type: str
     adt:
       var: type
       map:
@@ -40,8 +43,11 @@ defs:
       - path: "defs.Adt"
   AnotherAdt:
     type: obj
+    vars:
+      anotherType:
+        type: str
     adt:
-      var: type
+      var: anotherType
       map:
         typeToken0:
           mix:

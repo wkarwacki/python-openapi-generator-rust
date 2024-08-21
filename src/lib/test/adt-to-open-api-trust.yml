@@ -4,6 +4,7 @@ defs:
     vars:
       bool:
         type: bool
+        opt: true
       dec:
         type: dec
         opt: true

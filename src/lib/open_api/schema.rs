@@ -302,7 +302,7 @@ impl Schema {
                                 }))
                             })
                             .unwrap_or({
-                                let vars: HashMap<_, _> = self
+                                let mut vars: HashMap<_, _> = self
                                     .properties
                                     .iter()
                                     .map(|(n, schema)| {
@@ -315,6 +315,17 @@ impl Schema {
                                         )
                                     })
                                     .collect();
+                                self.discriminator.iter().for_each(|discriminator| {
+                                    vars.insert(
+                                        discriminator.property_name.clone(),
+                                        Box::new(Var {
+                                            desc: Desc::Def(Def::Str(Str {
+                                                null: self.nullable,
+                                            })),
+                                            opt: false,
+                                        }),
+                                    );
+                                });
                                 Def::Obj(Obj {
                                     ext: None,
                                     mix: Vec::new(),
