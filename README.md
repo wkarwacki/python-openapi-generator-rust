@@ -5,7 +5,7 @@
 ---
 
 <p align="center">
-  <b>Documentation, source code: <a href="https://github.com/wkarwacki/trust" target="_blank">https://github.com/wkarwacki/trust</a></b>
+  <b>Documentation, source code: <a href="https://github.com/wkarwacki/python-openapi-generator-rust" target="_blank">https://github.com/wkarwacki/python-openapi-generator-rust</a></b>
 </p>
 
 ---
@@ -72,7 +72,7 @@ It addresses inherent OpenAPI issues with:
 - **Enclosed Algebraic Data Types** - All subtypes of an ADT are grouped in a single `adt` node.
 
 ### Overview
-Examples and more usage details can be found in [tests](https://github.com/wkarwacki/trust/tree/master/src/lib/test).
+Examples and more usage details can be found in [tests](https://github.com/wkarwacki/python-openapi-generator-rust/tree/master/src/lib/test).
 
 **Data Types:**
 - **Simple Types:**
@@ -196,7 +196,7 @@ Equivalent to:
 
 ### OpenAPI Conversion
 
-* Control the layout of the generated Trust spec with the `-l` option. For instance, setting it to `tag` organizes the Trust spec by OpenAPI tags, as shown in this [example](https://github.com/wkarwacki/trust/blob/master/test/integration/specs/openapi_fastapi/api.yml#L9).
+* Control the layout of the generated Trust spec with the `-l` option. For instance, setting it to `tag` organizes the Trust spec by OpenAPI tags, as shown in this [example](https://github.com/wkarwacki/python-openapi-generator-rust/blob/master/test/integration/specs/openapi_fastapi/api.yml#L9).
 
 ## Code Generation
 

@@ -1,5 +1,5 @@
 <p align="center">
-  <b>Documentation, source code: <a href="https://github.com/wkarwacki/trust" target="_blank">https://github.com/wkarwacki/trust</a></b>
+  <b>Documentation, source code: <a href="https://github.com/wkarwacki/python-openapi-generator-rust" target="_blank">https://github.com/wkarwacki/python-openapi-generator-rust</a></b>
 </p>
 
 ---

@@ -2,9 +2,9 @@
 name = "trustspeccli"
 version = "{VERSION}"
 authors = ["Wojciech Karwacki <karwacki.wojciech@gmail.com>"]
-homepage = "https://github.com/wkarwacki/trust"
-repository = "https://github.com/wkarwacki/trust"
-documentation = "https://github.com/wkarwacki/trust"
+homepage = "https://github.com/wkarwacki/python-openapi-generator-rust"
+repository = "https://github.com/wkarwacki/python-openapi-generator-rust"
+documentation = "https://github.com/wkarwacki/python-openapi-generator-rust"
 packages = [{include = "trustspeccli", from="src"}]
 readme = "README.md"
 description = "Web Integration Specification, easy and lightweight alternative to OpenAPI"
