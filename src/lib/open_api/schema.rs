@@ -289,52 +289,51 @@ impl Schema {
                     "integer" => Def::Int(Int {
                         null: self.nullable,
                     }),
-                    "object" => {
-                        self.additional_properties
-                            .clone()
-                            .map(|additional_properties| {
-                                Def::Map(Box::new(Map {
-                                    key: Desc::Def(Def::Str(Str {
-                                        null: self.nullable,
-                                    })),
-                                    val: additional_properties.desc(name.clone(), context),
+                    "object" => self
+                        .additional_properties
+                        .clone()
+                        .map(|additional_properties| {
+                            Def::Map(Box::new(Map {
+                                key: Desc::Def(Def::Str(Str {
                                     null: self.nullable,
-                                }))
-                            })
-                            .unwrap_or({
-                                let mut vars: HashMap<_, _> = self
-                                    .properties
-                                    .iter()
-                                    .map(|(n, schema)| {
-                                        (
-                                            n.clone(),
-                                            Box::new(Var {
-                                                desc: schema.clone().desc(n.clone(), context),
-                                                opt: !self.required.contains(n),
-                                            }),
-                                        )
-                                    })
-                                    .collect();
-                                self.discriminator.iter().for_each(|discriminator| {
-                                    vars.insert(
-                                        discriminator.property_name.clone(),
+                                })),
+                                val: additional_properties.desc(name.clone(), context),
+                                null: self.nullable,
+                            }))
+                        })
+                        .unwrap_or({
+                            let mut vars: HashMap<_, _> = self
+                                .properties
+                                .iter()
+                                .map(|(n, schema)| {
+                                    (
+                                        n.clone(),
                                         Box::new(Var {
-                                            desc: Desc::Def(Def::Str(Str {
-                                                null: self.nullable,
-                                            })),
-                                            opt: false,
+                                            desc: schema.clone().desc(n.clone(), context),
+                                            opt: !self.required.contains(n),
                                         }),
-                                    );
-                                });
-                                Def::Obj(Obj {
-                                    ext: None,
-                                    mix: Vec::new(),
-                                    vars: vars,
-                                    adt: self.adt(name.clone(), context),
-                                    null: self.nullable,
+                                    )
                                 })
+                                .collect();
+                            self.discriminator.iter().for_each(|discriminator| {
+                                vars.insert(
+                                    discriminator.property_name.clone(),
+                                    Box::new(Var {
+                                        desc: Desc::Def(Def::Str(Str {
+                                            null: self.nullable,
+                                        })),
+                                        opt: false,
+                                    }),
+                                );
+                            });
+                            Def::Obj(Obj {
+                                ext: None,
+                                mix: Vec::new(),
+                                vars: vars,
+                                adt: self.adt(name.clone(), context),
+                                null: self.nullable,
                             })
-                    }
+                        }),
                     "string" => {
                         if self.r#enum.is_empty() {
                             Def::Str(Str {
