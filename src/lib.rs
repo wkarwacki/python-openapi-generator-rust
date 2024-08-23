@@ -101,24 +101,37 @@ pub struct Cli {
 
 #[derive(Clone, Subcommand)]
 pub enum Cmd {
+    /// Convert an OpenAPI specification to a Trust specification. Integrate this into your build process to utilize Trust's code generators.
     FromOpenApi {
+        /// Path to the OpenAPI specification file.
         input: PathBuf,
+        /// Directory where the output Trust specification will be saved.
         output: PathBuf,
+        /// Specify the structure of the converted Trust specification.
         #[clap(short, value_enum, default_value_t = Layout::Default)]
         layout: Layout,
     },
+    /// Convert a Trust specification back to an OpenAPI specification, useful when a Trust code generator is not available for your target language.
     ToOpenApi {
+        /// Path to the Trust specification file.
         input: PathBuf,
     },
+    /// Generate code based on a Trust specification.
     Generate {
+        /// Select the target programming language for the generated code.
         #[clap(value_enum)]
         lang: Lang,
+        /// Specify whether to generate server or client code.
         #[clap(value_enum)]
         role: Role,
+        /// Path to the Trust specification file.
         input: PathBuf,
+        /// Directory where the generated code will be saved.
         output: PathBuf,
         #[clap(short)]
+        /// Optional path to a generator configuration file. Refer to the Trust documentation for details.
         config: Option<PathBuf>,
+        /// Optional path to a custom templates directory. For instance, you can override any template found at https://github.com/wkarwacki/python-openapi-generator-rust/tree/master/src/lib/gen/python/server/templates, however this can be configured for all languages and roles.
         #[clap(short)]
         templates_path: Option<PathBuf>,
     },
@@ -132,7 +145,9 @@ pub enum Role {
 
 #[derive(Clone, PartialEq, ValueEnum)]
 pub enum Layout {
+    /// Each file in the Trust specification maps directly to a single file in the output.
     Default,
+    /// Organize output based on OpenAPI tags, where each tag generates a separate file with all related references included.
     Tag,
 }
 
