@@ -38,13 +38,13 @@ $ trust
 Usage: trust <COMMAND>
 
 Commands:
-from-open-api  
-to-open-api    
-generate       
-help           Print this message or the help of the given subcommand(s)
+  from-open-api  Convert an OpenAPI specification to a Trust specification. Integrate this into your build process to utilize Trust code generators
+  to-open-api    Convert a Trust specification back to an OpenAPI specification, useful when a Trust code generator is not available for your target language
+  generate       Generate code based on a Trust specification
+  help           Print this message or the help of the given subcommand(s)
 
 Options:
--h, --help  Print help
+  -h, --help  Print help
 ```
 
 - If you already have an OpenAPI spec:
