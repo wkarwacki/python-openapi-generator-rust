@@ -94,6 +94,7 @@ pub mod lib {
 }
 
 #[derive(Parser)]
+#[clap(version)]
 pub struct Cli {
     #[command(subcommand)]
     pub cmd: Cmd,
