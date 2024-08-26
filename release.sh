@@ -17,7 +17,6 @@ sed -i "s/{VERSION}/$VERSION/g" $SCRIPT_DIR/cli/py/pyproject.toml
 
 bash do_test.sh
 
-cp README.md plugin/py-binding/README.md
 cd plugin/py-binding
 maturin upload
 
