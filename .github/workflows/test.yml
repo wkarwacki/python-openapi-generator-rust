@@ -25,7 +25,9 @@ jobs:
           python-version: '3.x'
 
       - name: Install yq
-        run: pip install yq
+        run: |
+          wget https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -O /usr/local/bin/yq
+          chmod +x /usr/local/bin/yq
 
       - name: Set up Node.js
         uses: actions/setup-node@v2
