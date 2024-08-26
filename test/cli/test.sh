@@ -18,4 +18,4 @@ pip uninstall -y trustspeccli
 pip install dist/trustspeccli-*-py3-none-any.whl
 
 cd $SCRIPT_DIR
-trust help
+trust -V

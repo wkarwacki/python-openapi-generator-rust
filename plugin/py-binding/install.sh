@@ -7,4 +7,5 @@ cd "$SCRIPT_DIR" || exit
 
 pip install maturin
 
+rm -rf target
 maturin develop

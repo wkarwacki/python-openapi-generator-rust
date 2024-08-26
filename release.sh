@@ -7,7 +7,7 @@ cd "$SCRIPT_DIR" || exit
 
 VERSION=$(yq -oy '.package.version' Cargo.toml)
 
-trap "mv $SCRIPT_DIR/plugin/py-binding/Cargo.toml.bu $SCRIPT_DIR/plugin/py-binding/Cargo.toml; mv $SCRIPT_DIR/cli/py/pyproject.toml.bu $SCRIPT_DIR/cli/py/pyproject.toml" EXIT
+trap "mv $SCRIPT_DIR/plugin/py-binding/Cargo.toml.bu $SCRIPT_DIR/plugin/py-binding/Cargo.toml; mv $SCRIPT_DIR/cli/py/pyproject.toml.bu $SCRIPT_DIR/cli/py/pyproject.toml; rm plugin/py-binding/README.md" EXIT
 
 cp $SCRIPT_DIR/plugin/py-binding/Cargo.toml $SCRIPT_DIR/plugin/py-binding/Cargo.toml.bu
 sed -i "s/{VERSION}/$VERSION/g" $SCRIPT_DIR/plugin/py-binding/Cargo.toml
@@ -17,6 +17,7 @@ sed -i "s/{VERSION}/$VERSION/g" $SCRIPT_DIR/cli/py/pyproject.toml
 
 bash do_test.sh
 
+cp README.md plugin/py-binding/README.md
 cd plugin/py-binding
 maturin upload
 
