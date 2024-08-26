@@ -1,3 +1,9 @@
+<p>
+  <b>Python Server OpenAPI Generator, Python Client OpenAPI Generator, Kotlin Server OpenAPI Generator</b>
+</p>
+
+---
+
 <p align="center">
   <b>Documentation, source code: <a href="https://github.com/wkarwacki/python-openapi-generator-rust" target="_blank">https://github.com/wkarwacki/python-openapi-generator-rust</a></b>
 </p>
@@ -5,36 +11,36 @@
 ---
 # Trust Spec
 
-Web integration specification and a set of code generators.
+Trust Spec is a web integration specification and a set of code generators aiming to be a substitute for OpenAPI. It provides a unified way to describe data transfer interfaces and generates modern, type-safe code.
 
 ## Table of Contents
 - [**tldr; I just want to glue my services together**](#i-just-want-to-glue-my-services-together)
 - [Specification](#specification)
   - [Overview](#overview)
-  - [Common use cases](#common-use-cases)
-  - [OpenAPI conversion](#openapi-conversion)
-- [Server and Client code generation](#server-and-client-code-generation)
+  - [Common Use Cases](#common-use-cases)
+  - [OpenAPI Conversion](#openapi-conversion)
+- [Code Generation](#code-generation)
   - [Usage](#usage)
     - [With Docker](#with-docker)
-    - [Run from source](#run-from-source)
-  - [Currently supported generators](#currently-supported-generators)
-    - [Experimental generators](#experimental-generators)
+    - [From Source](#from-source)
+  - [Supported Generators](#supported-generators)
+    - [Experimental Generators](#experimental-generators)
 
 ## I just want to glue my services together
-Install Trust with
+Install Trust:
 ```shell
 $ pip install trustspeccli
 ```
-and then
+Then, run:
 ```shell
 $ trust
 
 Usage: trust <COMMAND>
 
 Commands:
-  from-open-api  
-  to-open-api    
-  generate       
+  from-open-api  Convert an OpenAPI specification to a Trust specification. Integrate this into your build process to utilize Trust code generators
+  to-open-api    Convert a Trust specification back to an OpenAPI specification, useful when a Trust code generator is not available for your target language
+  generate       Generate code based on a Trust specification
   help           Print this message or the help of the given subcommand(s)
 
 Options:
@@ -45,47 +51,48 @@ Options:
   1. first convert it to Trust spec with `from-open-api` command
   2. and then generate the glue code with `generate` command.
 
-  > :exclamation: Note that you may easily automate the whole process combining the two steps above, however it is recommended to make a migration once and benefit from Trust spec expressiveness in the future.
+  > :exclamation: Note that you may easily automate the whole process combining the two steps above, however it is recommended to make a migration once and leverage Trust spec's expressiveness in long-term.
 
-- If you don't have OpenAPI spec yet, you may start with Trust spec directly.
+- **Without an OpenAPI spec:**
+  - Start directly with Trust spec.
 
-- Alternatively, if you wish to keep generating code from OpenAPI spec, you may use Trust spec as an intermediate format. In this case, the `to-open-api` command will be useful.
-
+- **To continue using OpenAPI for code generation:**
+  - Use Trust spec as an intermediate format with the `to-open-api` command.
 
 ## Specification
-Trust specification aims to be an improvement of the current integration standards, [OpenAPI](https://github.com/OAI/OpenAPI-Specification) mostly. The main advantages of Trust spec include:
-- **Unambiguity of notation** - meaning that there is most likely only one way to model a given API and only way to interpret the spec
-- **It supports generic types** - you may give your own types their own parameters and reuse them in different contexts with different arguments
-- **It is minimalistic** - not bloated with redundant useless features, keeps the language as simple as possible
-- **It is focused on integration of web systems** - if you need to seamlessly integrate two systems in a typesafe way, you will find Trust spec more useful than OpenAPI
-- **It is widely customizable** - by providing a broad set of [handlebars](https://github.com/sunng87/handlebars-rust) helpers you may modify the templates upon which the code is generated to suit your needs
-- **It is protocol-agnostic** - although it is designed with HTTP in mind, it can be used to describe any kind of API
+Trust specification enhances current integration standards like [OpenAPI](https://github.com/OAI/OpenAPI-Specification). Key benefits include:
+- **Clear Notation** - Single way to model and interpret an API.
+- **Generic Types** - Customizable types with parameters for different contexts.
+- **Minimalistic** - Simple, efficient language without redundant features.
+- **Web System Integration Focused** - Ideal for type-safe system integration.
+- **Highly Customizable** - Extensive [handlebars](https://github.com/sunng87/handlebars-rust) helpers for template modification.
+- **Protocol-Agnostic** - Designed for HTTP but applicable to any API type.
 
-Moreover it addresses particular issues existing inherently in OpenAPI with:
-- **enclosed Algebraic Data Types** - by design all subtypes of an ADT are kept together, in a single `adt` node
+It addresses inherent OpenAPI issues with:
+- **Enclosed Algebraic Data Types** - All subtypes of an ADT are grouped in a single `adt` node.
 
 ### Overview
-(Usage of all below examples and more may be found in [tests](https://github.com/ramencloud/trust/tree/master/src/lib/test))
+Examples and more usage details can be found in [tests](https://github.com/wkarwacki/python-openapi-generator-rust/tree/master/src/lib/test).
 
-When it comes to describing API schemas, Trust spec offers the following data types:
-* simple types:
-  * `type: bool`, equivalent of `type: boolean` in OpenAPI
-  * `type: int`, equivalent of `type: integer` with `format: int64` in OpenAPI
-  * `type: dec`, equivalent of `type: number` in OpenAPI
-  * `type: str`, equivalent of `type: string` in OpenAPI
-  * `type: enum`, equivalent of `type: string` with `enum` in OpenAPI
-* complex types:
-  * `type: obj`, equivalent of `type: object` in OpenAPI
-  * `type: seq`, equivalent of `type: array` in OpenAPI
-  * `type: map`, equivalent of `type: object` with `additionalProperties` in OpenAPI
-* special types:
-  * `type: alias`, equivalent of `$ref` in OpenAPI
-  * `type: struct`, equivalent of OpenAPI empty schema i.e. `{}`
-  * `type: const`, equivalent of OpenAPI `const` feature
+**Data Types:**
+- **Simple Types:**
+  - `type: bool` - equivalent to OpenAPI `type: boolean`
+  - `type: int` - equivalent to OpenAPI `type: integer` with `format: int64`
+  - `type: dec` - equivalent to OpenAPI `type: number`
+  - `type: str` - equivalent to OpenAPI `type: string`
+  - `type: enum` - equivalent to OpenAPI `type: string` with `enum`
+- **Complex Types:**
+  - `type: obj` - equivalent to OpenAPI `type: object`
+  - `type: seq` - equivalent to OpenAPI `type: array`
+  - `type: map` - equivalent to OpenAPI `type: object` with `additionalProperties`
+- **Special Types:**
+  - `type: alias` - equivalent to OpenAPI `$ref`
+  - `type: struct` - equivalent to OpenAPI empty schema (`{}`)
+  - `type: const` - equivalent to OpenAPI `const`
 
-### Common use cases
+### Common Use Cases
 
-* Including vars from other types:
+**Including Variables from Other Types:**
   ```yaml
   Parent:
     type: obj
@@ -106,15 +113,16 @@ When it comes to describing API schemas, Trust spec offers the following data ty
       ownVar:
         type: int
   ```
-  will produce a schema matching:
-    ```json
-    {
-        "parentVar": 1.0,
-        "anotherParentVar": true,
-        "ownVar": 1
-    }
-    ```
-* Algebraic data type aka "union type"
+Results in:
+  ```json
+  {
+    "parentVar": 1.0,
+    "anotherParentVar": true,
+    "ownVar": 1
+  }
+  ```
+
+**Algebraic Data Types (Union Types):**
   ```yaml
   AdtType:
     type: obj
@@ -135,7 +143,7 @@ When it comes to describing API schemas, Trust spec offers the following data ty
             secondSubtypeVar:
               type: bool
   ```
-  is interpreted as schema matching:
+Interpreted as:
   ```json
   {
     "discriminatorVar": "firstSubtype",
@@ -150,27 +158,9 @@ When it comes to describing API schemas, Trust spec offers the following data ty
     "secondSubtypeVar": true
   }
   ```
-  but not matching:
-  ```json
-  {
-    "discriminatorVar": "firstSubtype",
-    "someOtherVar": 1.0,
-  }
-  ```
-  ```json
-  {
-    "discriminatorVar": "nonExistentSubtype",
-    "someOtherVar": 1.0,
-    "secondSubtypeVar": true
-  }
-  ```
-  ```json
-  {
-    "discriminatorVar": "secondSubtype",
-    "secondSubtypeVar": true
-  }
-  ```
-* Generic types
+
+
+**Generic Types:**
   ```yaml
   defs:
     SomeNamedString:
@@ -194,7 +184,7 @@ When it comes to describing API schemas, Trust spec offers the following data ty
           ParamXyz:
             path: 'defs.SomeType'
   ```
-  The above is interpreted as
+Equivalent to:
   ```java
   interface ParameterizedType<ParamAbc, ParamXyz> { 
     ParamAbc varOfParamAbcType; 
@@ -203,31 +193,36 @@ When it comes to describing API schemas, Trust spec offers the following data ty
   }
   interface SubtypeOfParameterizedType extends ParameterizedType<Boolean, SomeType> { }
   ```
-  in Java-like languages.
-## Server and Client code generation
+
+### OpenAPI Conversion
+
+* Control the layout of the generated Trust spec with the `-l` option. For instance, setting it to `tag` organizes the Trust spec by OpenAPI tags, as shown in this [example](https://github.com/wkarwacki/python-openapi-generator-rust/blob/master/test/integration/specs/openapi_fastapi/api.yml#L9).
+
+## Code Generation
 
 ### Usage
 
 #### With Docker
 Prerequisites:
 - [Docker](https://docs.docker.com/engine/install/)
-```shell
-$ ./docker/build.sh
-$ docker run trust
-```
-#### Run from source
+  ```shell
+  $ ./docker/build.sh
+  $ docker run trust
+  ```
+
+#### From Source
 Prerequisites:
 - [Rust](https://www.rust-lang.org/tools/install)
-```shell
-$ cargo run trust
-```
+  ```shell
+  $ cargo run trust
+  ```
 
-### Currently supported generators:
-- Python Http Server ([fastapi](https://github.com/tiangolo/fastapi))
-- Python Http Client ([httpx](https://github.com/encode/httpx))
+### Supported Generators:
+- Python HTTP Server ([fastapi](https://github.com/tiangolo/fastapi))
+- Python HTTP Client ([httpx](https://github.com/encode/httpx))
 
-#### Experimental generators:
-> :exclamation:  not fully implemented, use at your own risk
+#### Experimental Generators:
+> :exclamation: Not fully implemented. Use at your own risk.
 
-- Kotlin Http Server ([spring](https://github.com/spring-projects/spring-framework))
-- Scala Http Server ([cask](https://github.com/com-lihaoyi/cask))
+- Kotlin HTTP Server ([spring](https://github.com/spring-projects/spring-framework))
+- Scala HTTP Server ([cask](https://github.com/com-lihaoyi/cask))
