@@ -14,17 +14,19 @@
 Trust Spec is a web integration specification and a set of code generators aiming to be a substitute for OpenAPI. It provides a unified way to describe data transfer interfaces and generates modern, type-safe code.
 
 ## Table of Contents
-- [**tldr; I just want to glue my services together**](#i-just-want-to-glue-my-services-together)
+- [I just want to glue my services together](#i-just-want-to-glue-my-services-together)
 - [Specification](#specification)
   - [Overview](#overview)
   - [Common Use Cases](#common-use-cases)
-  - [OpenAPI Conversion](#openapi-conversion)
 - [Code Generation](#code-generation)
-  - [Usage](#usage)
-    - [With Docker](#with-docker)
-    - [From Source](#from-source)
+  - [Generator Options](#generator-options)
   - [Supported Generators](#supported-generators)
     - [Experimental Generators](#experimental-generators)
+- [Conversion from OpenAPI](#conversion-from-openapi)
+- [Conversion to OpenAPI](#conversion-to-openapi)
+- [Building Trust CLI](#building-trust-cli)
+  - [With Docker](#with-docker)
+  - [From Source](#from-source)
 
 ## I just want to glue my services together
 Install Trust:
@@ -194,15 +196,77 @@ Equivalent to:
   interface SubtypeOfParameterizedType extends ParameterizedType<Boolean, SomeType> { }
   ```
 
-### OpenAPI Conversion
-
-* Control the layout of the generated Trust spec with the `-l` option. For instance, setting it to `tag` organizes the Trust spec by OpenAPI tags, as shown in this [example](https://github.com/wkarwacki/python-openapi-generator-rust/blob/master/test/integration/specs/openapi_fastapi/api.yml#L9).
-
 ## Code Generation
 
-### Usage
+```shell
+$ trust generate -h
+Generate code based on a Trust specification
 
-#### With Docker
+Usage: trust generate [OPTIONS] <LANG> <ROLE> <INPUT> <OUTPUT>
+
+Arguments:
+  <LANG>    Select the target programming language for the generated code [possible values: kotlin, python, scala, type-script]
+  <ROLE>    Specify whether to generate server or client code [possible values: client, server]
+  <INPUT>   Path to the Trust specification file
+  <OUTPUT>  Directory where the generated code will be saved
+
+Options:
+  -c <CONFIG>              Optional path to a generator configuration file. Refer to the Trust documentation for details
+  -t <TEMPLATES_PATH>      Optional path to a custom templates directory. For instance, you can override any template found at https://github.com/wkarwacki/python-openapi-generator-rust/tree/master/src/lib/gen/python/server/templates, however this can be configured for all languages and roles
+  -h, --help               Print help
+```
+
+### Generator Options
+You can customize the generator behavior by passing a relevant `yml` configuration file. The following options are available:
+
+
+### Supported Generators:
+
+- <b>Python HTTP Server ([fastapi](https://github.com/tiangolo/fastapi))</b>
+- <b>Python HTTP Client ([httpx](https://github.com/encode/httpx))</b>
+
+#### Experimental Generators:
+> :exclamation: Not fully implemented. Use at your own risk.
+
+- Kotlin HTTP Server ([spring](https://github.com/spring-projects/spring-framework))
+- Scala HTTP Server ([cask](https://github.com/com-lihaoyi/cask))
+
+## Conversion from OpenAPI
+```shell
+$ trust from-open-api -h
+Convert an OpenAPI specification to a Trust specification. Integrate this into your build process to utilize Trust's code generators
+
+Usage: trust from-open-api [OPTIONS] <INPUT> <OUTPUT>
+
+Arguments:
+  <INPUT>   Path to the OpenAPI specification file
+  <OUTPUT>  Directory where the output Trust specification will be saved
+
+Options:
+  -l <LAYOUT>      Specify the structure of the converted Trust specification [default: default] [possible values: default, tag]
+  -h, --help       Print help (see more with '--help')
+
+```
+* Control the layout of the generated Trust spec with the `-l` option. For instance, setting it to `tag` organizes the Trust spec by OpenAPI tags, as shown in this [example](https://github.com/wkarwacki/python-openapi-generator-rust/blob/master/test/integration/specs/openapi_fastapi/api.yml#L9).
+
+## Conversion to OpenAPI
+
+```shell
+$ trust to-open-api -h
+Convert a Trust specification back to an OpenAPI specification, useful when a Trust code generator is not available for your target language
+
+Usage: trust to-open-api <INPUT>
+
+Arguments:
+  <INPUT>  Path to the Trust specification file
+
+Options:
+  -h, --help  Print help
+```
+
+## Building Trust Cli
+
+### With Docker
 Prerequisites:
 - [Docker](https://docs.docker.com/engine/install/)
   ```shell
@@ -210,19 +274,9 @@ Prerequisites:
   $ docker run trust
   ```
 
-#### From Source
+### From Source
 Prerequisites:
 - [Rust](https://www.rust-lang.org/tools/install)
   ```shell
   $ cargo run trust
   ```
-
-### Supported Generators:
-- Python HTTP Server ([fastapi](https://github.com/tiangolo/fastapi))
-- Python HTTP Client ([httpx](https://github.com/encode/httpx))
-
-#### Experimental Generators:
-> :exclamation: Not fully implemented. Use at your own risk.
-
-- Kotlin HTTP Server ([spring](https://github.com/spring-projects/spring-framework))
-- Scala HTTP Server ([cask](https://github.com/com-lihaoyi/cask))
