@@ -89,16 +89,7 @@ components:
           format: int64
           minimum: 1
         unit:
-          type: string
-          enum:
-            - millisecond
-            - second
-            - minute
-            - hour
-            - day
-            - week
-            - month
-            - year
+          $ref: '#/components/schemas/TurbulenceUnit'
       required:
         - value
         - unit
@@ -112,3 +103,14 @@ components:
       enum:
         - asc
         - desc
+    TurbulenceUnit:
+      type: string
+      enum:
+        - millisecond
+        - second
+        - minute
+        - hour
+        - day
+        - week
+        - month
+        - year
