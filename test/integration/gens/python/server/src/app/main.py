@@ -1,9 +1,12 @@
 from fastapi import FastAPI
 
+from app.ibis.service import IbisServiceImpl
+
 from trust.dev.router import dev_router
 from trust.elephant.router import elephant_router
 from trust.external_module.router import external_module_router
 from trust.flaming.router import flaming_router
+from trust.ibis.service import IbisService
 from trust.ibis.router import ibis_router
 from trust.log.router import log_router
 from trust.masterpiece.router import masterpiece_router
@@ -18,7 +21,10 @@ app.include_router(dev_router)
 app.include_router(elephant_router)
 app.include_router(external_module_router)
 app.include_router(flaming_router)
+
 app.include_router(ibis_router)
+app.dependency_overrides[IbisService] = IbisServiceImpl
+
 app.include_router(log_router)
 app.include_router(masterpiece_router)
 app.include_router(predator_router)

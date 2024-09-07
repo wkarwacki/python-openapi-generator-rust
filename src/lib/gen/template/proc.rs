@@ -11,7 +11,7 @@ use handlebars::{
     Handlebars, Helper, HelperDef, JsonRender, RenderContext, RenderError, ScopedJson,
 };
 use serde_json::Value;
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 #[derive(Clone)]
 pub(crate) struct Parents;
@@ -56,6 +56,27 @@ impl HelperDef for Resolve {
         } else {
             Ok(ScopedJson::Missing)
         }
+    }
+}
+
+#[derive(Clone)]
+pub(crate) struct ResolveIfMappedType {
+    pub type_mapping: HashMap<String, String>,
+}
+
+impl HelperDef for ResolveIfMappedType {
+    fn call_inner<'reg: 'rc, 'rc>(
+        &self,
+        h: &Helper<'rc>,
+        hb: &'reg Handlebars<'reg>,
+        c: &'rc handlebars::Context,
+        r: &mut RenderContext<'reg, 'rc>,
+    ) -> Result<ScopedJson<'rc>, RenderError> {
+        let dto: Option<String> = serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
+        Ok(dto.and_then(|d| self
+            .type_mapping.get(&d)
+            .map(|mapped| ScopedJson::from(serde_json::to_value(mapped).unwrap()))
+            ).unwrap_or(ScopedJson::from(serde_json::Value::Null)))
     }
 }
 

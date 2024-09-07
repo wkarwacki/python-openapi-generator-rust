@@ -1,1 +1,3 @@
 autoImplement: true
+typeMapping:
+  LiftResponse: app.ibis.app_lift_response.AppLiftResponse

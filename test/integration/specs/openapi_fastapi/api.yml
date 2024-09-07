@@ -130,10 +130,6 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/LiftResponse'
-          headers:
-            Cache-Control:
-              schema:
-                type: string
         '422':
           description: Validation Error
           content:

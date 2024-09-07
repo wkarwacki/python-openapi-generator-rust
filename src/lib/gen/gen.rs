@@ -14,7 +14,7 @@ use dyn_clone::DynClone;
 use filter::{FilterNonconst, FilterOpParamsByLoc};
 use fmt::{FmtClass, FmtEnum, FmtName, FmtOpt, FmtSrcIfPresent, FmtType, FmtValue};
 use handlebars::Handlebars;
-use proc::{Parents, Resolve, ResolveIfRef, TypeArgs, TypeParams, ValueDef};
+use proc::{Parents, Resolve, ResolveIfMappedType, ResolveIfRef, TypeArgs, TypeParams, ValueDef};
 use prop::{HasKey, IsAlias};
 use r#fn::{Add, Json};
 use serde_json::json;
@@ -46,6 +46,7 @@ pub(crate) fn go(
     pkg: &Pkg,
     gen: &Box<dyn Gen>,
     templates_path: &Option<PathBuf>,
+    type_mapping: &HashMap<String, String>,
     context: &Context,
 ) -> HashMap<PathBuf, String> {
     let mut handlebars = Handlebars::new();
@@ -77,6 +78,7 @@ pub(crate) fn go(
         context: context.clone(),
     };
     handlebars.register_helper("resolve", Box::new(resolve.clone()));
+    handlebars.register_helper("resolveIfMappedType", Box::new(ResolveIfMappedType { type_mapping: type_mapping.clone() }));
     handlebars.register_helper("resolveIfRef", Box::new(ResolveIfRef { resolve }));
     handlebars.register_helper("sortOptionalsLast", Box::new(SortOptionalsLast {}.clone()));
     handlebars.register_helper("typeArgs", Box::new(TypeArgs {}.clone()));

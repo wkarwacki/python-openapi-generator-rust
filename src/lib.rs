@@ -333,7 +333,7 @@ fn gen(
 
     let gen = get_gen(lang, gen_cfg, input, role);
 
-    gen::gen::go(&pkg, &gen, templates_path, &context)
+    gen::gen::go(&pkg, &gen, templates_path, &gen_cfg.type_mapping, &context)
 }
 
 fn get_gen(lang: &Lang, gen_cfg: &GenCfg, input: &PathBuf, role: &Role) -> Box<dyn Gen> {

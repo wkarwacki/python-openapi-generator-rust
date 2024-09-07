@@ -1,9 +1,23 @@
+from abc import abstractmethod, ABC
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
-
+from typing import Any, TypeVar, Generic
 
 class Dto(BaseModel):
     model_config = ConfigDict(
         alias_generator=to_camel,
         populate_by_name=True,
-)
+    )
+
+DtoType = TypeVar("DtoType", bound=Dto)
+AppType = TypeVar("AppType")
+
+class TypeMapping(Generic[DtoType, AppType], ABC):
+    @classmethod
+    @abstractmethod
+    def of(cls, dto: DtoType) -> AppType:
+        raise NotImplementedError
+
+    @abstractmethod
+    def to(self) -> DtoType:
+        raise NotImplementedError

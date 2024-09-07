@@ -1,0 +1,7 @@
+{{imports}}
+
+{{#each typeMapping}}def {{fmtName @key}}_to_{{fmtName this}}({{fmtName @key}}: {{>dtoName val=(fmtClass @key)}}) -> {{fmtClass this}}:
+    return {{fmtClass this}}.of({{fmtName @key}})
+def {{fmtName this}}_to_{{fmtName @key}}({{fmtName this}}: {{fmtClass this}}) -> {{>dtoName val=(fmtClass @key)}}:
+    return {{fmtName this}}.to()
+{{/each}}
