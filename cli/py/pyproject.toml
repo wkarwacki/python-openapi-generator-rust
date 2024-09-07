@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "trustspeccli"
-version = "{{VERSION}}"
+version = "{VERSION}"
 authors = ["Wojciech Karwacki <karwacki.wojciech@gmail.com>"]
 homepage = "https://github.com/wkarwacki/python-openapi-generator-rust"
 repository = "https://github.com/wkarwacki/python-openapi-generator-rust"
@@ -32,7 +32,7 @@ classifiers = [
 
 [tool.poetry.dependencies]
 python = "^3.10"
-trustspecpy = "{{VERSION}}"
+trustspecpy = "{VERSION}"
 
 [tool.poetry.scripts]
 trust = "trustspeccli.main:run"
