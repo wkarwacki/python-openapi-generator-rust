@@ -1,3 +1,4 @@
 autoImplement: true
 typeMapping:
   LiftResponse: app.ibis.app_lift_response.AppLiftResponse
+  TransformerPreviewRequest: app.transformer.app_transformer_preview_request.AppTransformerPreviewRequest
