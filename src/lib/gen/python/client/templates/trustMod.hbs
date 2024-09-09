@@ -4,7 +4,7 @@ import httpx
 from abc import abstractmethod, ABC
 from pydantic import BaseModel, ConfigDict
 from pydantic.alias_generators import to_camel
-from typing import TypeVar, Generic
+from typing import Any, TypeVar, Generic
 
 client = httpx.Client(base_url = os.environ["SERVER_BASE_URL"])
 
@@ -14,14 +14,15 @@ class Dto(BaseModel):
         populate_by_name=True,
 )
 
-T = TypeVar("T")
+DtoType = TypeVar("DtoType", bound=Dto)
+AppType = TypeVar("AppType")
 
-class TypeMapping(Generic[T], ABC):
+class TypeMapping(Generic[DtoType, AppType], ABC):
     @classmethod
     @abstractmethod
-    def of(cls, t: T) -> 'TypeMapping':
+    def of(cls, dto: DtoType) -> AppType:
         raise NotImplementedError
 
     @abstractmethod
-    def to(self) -> T:
+    def to(self) -> DtoType:
         raise NotImplementedError
