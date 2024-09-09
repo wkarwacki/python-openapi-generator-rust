@@ -186,16 +186,37 @@ impl Gen for GenPythonHttpServer {
              }, dto)
         }).collect();
         dtos.insert((out_dir.clone() + "/__init__.py").into(), "".into());
-        let type_mapping = self.lang.gen_cfg.type_mapping.iter().filter(|(from, _)| defs.iter().find(|(name, _, _)| &name == from).is_some()).collect::<HashMap<_, _>>();
-        let type_mapping_imports = type_mapping.iter().flat_map(|(from, to)| {
-            let split = to.split_at(to.rfind('.').unwrap());
-            vec![
-                "from ".to_string() + split.0 + " import " + &split.1[1..],
-                "from ".to_string() + self.lang.module().as_str() + "." + self.lang.feature.clone().to_case(Case::Snake).as_str() + "." + self.lang.fmt_name(from).as_str() + " import " + dto_name(from, &self.lang()).as_str(),
-            ]
-        }).join("\n");
+        let type_mapping = self
+            .lang
+            .gen_cfg
+            .type_mapping
+            .iter()
+            .filter(|(from, _)| defs.iter().find(|(name, _, _)| &name == from).is_some())
+            .collect::<HashMap<_, _>>();
+        let type_mapping_imports = type_mapping
+            .iter()
+            .flat_map(|(from, to)| {
+                let split = to.split_at(to.rfind('.').unwrap());
+                vec![
+                    "from ".to_string() + split.0 + " import " + &split.1[1..],
+                    "from ".to_string()
+                        + self.lang.module().as_str()
+                        + "."
+                        + self.lang.feature.clone().to_case(Case::Snake).as_str()
+                        + "."
+                        + self.lang.fmt_name(from).as_str()
+                        + " import "
+                        + dto_name(from, &self.lang()).as_str(),
+                ]
+            })
+            .join("\n");
         let type_mapping_template = templates.get("typeMapping").unwrap();
-        let type_mapping = handlebars.render_template(type_mapping_template.as_str(), &json!({"typeMapping": type_mapping, "imports": type_mapping_imports.as_str()})).unwrap();
+        let type_mapping = handlebars
+            .render_template(
+                type_mapping_template.as_str(),
+                &json!({"typeMapping": type_mapping, "imports": type_mapping_imports.as_str()}),
+            )
+            .unwrap();
         dtos.insert((out_dir.clone() + "/type_mapping.py").into(), type_mapping);
         let trust_mod_template = templates.get("trustMod").unwrap();
         dtos.insert(
@@ -241,19 +262,19 @@ impl Gen for GenPythonHttpServer {
                                 + self.lang.module().as_str()
                                 + "."
                                 + match &src {
-                                None => self.lang.feature.clone().to_case(Case::Snake),
-                                Some(src) => self.lang.fmt_src(src.as_str()),
-                            }
+                                    None => self.lang.feature.clone().to_case(Case::Snake),
+                                    Some(src) => self.lang.fmt_src(src.as_str()),
+                                }
                                 .as_str()
                                 + "."
                                 + r#ref.class_name().to_case(Case::Snake).as_str()
                                 + " import "
                                 + dto_name(
-                                self.lang
-                                    .fmt_class(r#ref.class_name().as_str(), &None)
-                                    .as_str(),
-                                &self.lang(),
-                            )
+                                    self.lang
+                                        .fmt_class(r#ref.class_name().as_str(), &None)
+                                        .as_str(),
+                                    &self.lang(),
+                                )
                                 .as_str(),
                         );
                         match context.resolve(r#ref) {
@@ -263,19 +284,19 @@ impl Gen for GenPythonHttpServer {
                                         + self.lang.module().as_str()
                                         + "."
                                         + match &src {
-                                        None => self.lang.feature.clone().to_case(Case::Snake),
-                                        Some(src) => self.lang.fmt_src(src.as_str()),
-                                    }
+                                            None => self.lang.feature.clone().to_case(Case::Snake),
+                                            Some(src) => self.lang.fmt_src(src.as_str()),
+                                        }
                                         .as_str()
                                         + "."
                                         + r#ref.class_name().to_case(Case::Snake).as_str()
                                         + " import "
                                         + dto_name(
-                                        self.lang
-                                            .fmt_class(r#ref.class_name().as_str(), &None)
-                                            .as_str(),
-                                        &self.lang(),
-                                    )
+                                            self.lang
+                                                .fmt_class(r#ref.class_name().as_str(), &None)
+                                                .as_str(),
+                                            &self.lang(),
+                                        )
                                         .as_str()
                                         + "Base",
                                 )
@@ -285,19 +306,19 @@ impl Gen for GenPythonHttpServer {
                                     + self.lang.module().as_str()
                                     + "."
                                     + match &src {
-                                    None => self.lang.feature.clone().to_case(Case::Snake),
-                                    Some(src) => self.lang.fmt_src(src.as_str()),
-                                }
+                                        None => self.lang.feature.clone().to_case(Case::Snake),
+                                        Some(src) => self.lang.fmt_src(src.as_str()),
+                                    }
                                     .as_str()
                                     + "."
                                     + r#ref.class_name().to_case(Case::Snake).as_str()
                                     + " import "
                                     + dto_name(
-                                    self.lang
-                                        .fmt_class(r#ref.class_name().as_str(), &None)
-                                        .as_str(),
-                                    &self.lang(),
-                                )
+                                        self.lang
+                                            .fmt_class(r#ref.class_name().as_str(), &None)
+                                            .as_str(),
+                                        &self.lang(),
+                                    )
                                     .as_str()
                                     + "Item",
                             ),
@@ -326,9 +347,9 @@ impl Gen for GenPythonHttpServer {
                     + name.to_case(Case::Snake).as_str()
                     + " import "
                     + dto_name(
-                    self.lang.fmt_class(name.as_str(), &None).as_str(),
-                    &self.lang(),
-                )
+                        self.lang.fmt_class(name.as_str(), &None).as_str(),
+                        &self.lang(),
+                    )
                     .as_str()
             })
             .for_each(|import| imports_vec.push(import));
@@ -357,16 +378,51 @@ impl Gen for GenPythonHttpServer {
                 router,
             )
         };
-        result.insert(router.0, imports.clone() + "\nfrom .type_mapping import *\n" + router.1.as_str());
+        result.insert(
+            router.0,
+            imports.clone() + "\nfrom .type_mapping import *\n" + router.1.as_str(),
+        );
 
-        let type_mapping = self.lang.gen_cfg.type_mapping.iter().filter(|(from, _)| pkg.ops.iter().flat_map(|(_, ops)| ops.iter().flat_map(|op| op.req.iter().flat_map(|req| req.desc.r#ref()).chain(op.res.iter().flat_map(|res| res.desc.r#ref())).collect::<Vec<_>>()).collect::<Vec<_>>()).find(|r#ref| &&self.lang.fmt_class(&r#ref.path, &None) == from).is_some()).collect::<HashMap<_, _>>();
-        let type_mapping_imports = type_mapping.iter().flat_map(|(from, to)| {
-            let split = to.split_at(to.rfind('.').unwrap());
-            vec![
-                "from ".to_string() + split.0 + " import " + &split.1[1..],
-                "from ".to_string() + self.lang.module().as_str() + "." + self.lang.feature.clone().to_case(Case::Snake).as_str() + "." + self.lang.fmt_name(from).as_str() + " import " + dto_name(from, &self.lang()).as_str(),
-            ]
-        }).join("\n");
+        let type_mapping = self
+            .lang
+            .gen_cfg
+            .type_mapping
+            .iter()
+            .filter(|(from, _)| {
+                pkg.ops
+                    .iter()
+                    .flat_map(|(_, ops)| {
+                        ops.iter()
+                            .flat_map(|op| {
+                                op.req
+                                    .iter()
+                                    .flat_map(|req| req.desc.r#ref())
+                                    .chain(op.res.iter().flat_map(|res| res.desc.r#ref()))
+                                    .collect::<Vec<_>>()
+                            })
+                            .collect::<Vec<_>>()
+                    })
+                    .find(|r#ref| &&self.lang.fmt_class(&r#ref.path, &None) == from)
+                    .is_some()
+            })
+            .collect::<HashMap<_, _>>();
+        let type_mapping_imports = type_mapping
+            .iter()
+            .flat_map(|(from, to)| {
+                let split = to.split_at(to.rfind('.').unwrap());
+                vec![
+                    "from ".to_string() + split.0 + " import " + &split.1[1..],
+                    "from ".to_string()
+                        + self.lang.module().as_str()
+                        + "."
+                        + self.lang.feature.clone().to_case(Case::Snake).as_str()
+                        + "."
+                        + self.lang.fmt_name(from).as_str()
+                        + " import "
+                        + dto_name(from, &self.lang()).as_str(),
+                ]
+            })
+            .join("\n");
 
         let service = {
             let service_template = templates.get("service").unwrap();
@@ -385,7 +441,10 @@ impl Gen for GenPythonHttpServer {
                 service,
             )
         };
-        result.insert(service.0, imports.clone() + "\n" + type_mapping_imports.as_str() + "\n" + service.1.as_str());
+        result.insert(
+            service.0,
+            imports.clone() + "\n" + type_mapping_imports.as_str() + "\n" + service.1.as_str(),
+        );
 
         result
     }

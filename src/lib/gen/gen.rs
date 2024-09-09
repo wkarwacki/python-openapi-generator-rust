@@ -78,7 +78,12 @@ pub(crate) fn go(
         context: context.clone(),
     };
     handlebars.register_helper("resolve", Box::new(resolve.clone()));
-    handlebars.register_helper("resolveIfMappedType", Box::new(ResolveIfMappedType { type_mapping: type_mapping.clone() }));
+    handlebars.register_helper(
+        "resolveIfMappedType",
+        Box::new(ResolveIfMappedType {
+            type_mapping: type_mapping.clone(),
+        }),
+    );
     handlebars.register_helper("resolveIfRef", Box::new(ResolveIfRef { resolve }));
     handlebars.register_helper("sortOptionalsLast", Box::new(SortOptionalsLast {}.clone()));
     handlebars.register_helper("typeArgs", Box::new(TypeArgs {}.clone()));

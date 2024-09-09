@@ -68,15 +68,19 @@ impl HelperDef for ResolveIfMappedType {
     fn call_inner<'reg: 'rc, 'rc>(
         &self,
         h: &Helper<'rc>,
-        hb: &'reg Handlebars<'reg>,
-        c: &'rc handlebars::Context,
-        r: &mut RenderContext<'reg, 'rc>,
+        _hb: &'reg Handlebars<'reg>,
+        _c: &'rc handlebars::Context,
+        _r: &mut RenderContext<'reg, 'rc>,
     ) -> Result<ScopedJson<'rc>, RenderError> {
-        let dto: Option<String> = serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
-        Ok(dto.and_then(|d| self
-            .type_mapping.get(&d)
-            .map(|mapped| ScopedJson::from(serde_json::to_value(mapped).unwrap()))
-            ).unwrap_or(ScopedJson::from(serde_json::Value::Null)))
+        let dto: Option<String> =
+            serde_json::from_value(h.param(0).unwrap().value().clone()).unwrap();
+        Ok(dto
+            .and_then(|d| {
+                self.type_mapping
+                    .get(&d)
+                    .map(|mapped| ScopedJson::from(serde_json::to_value(mapped).unwrap()))
+            })
+            .unwrap_or(ScopedJson::from(serde_json::Value::Null)))
     }
 }
 
