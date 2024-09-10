@@ -218,10 +218,10 @@ Options:
 
 ### Generator Options
 You can customize the generator behavior by passing a relevant `yml` configuration file. The following options are available:
-* `type_mapping: dict[str, str]` - Map Trust Spec type to any provided type automatically
+* `typeMapping: dict[str, str]` - Map Trust Spec type to any provided type automatically
 * `module: str` - Specify the module name for the generated code
-* `dto_name: str` - Provide the custom Handlebars template for naming DTO classes, by default it is `{{val}}Dto`
-* `auto_implement: bool` This option is a fundamental part of the [Trust Spec integration tests suite](https://github.com/wkarwacki/python-openapi-generator-rust/blob/master/do_test.sh#L13).
+* `dtoName: str` - Provide the custom Handlebars template for naming DTO classes, by default it is `{{val}}Dto`
+* `autoImplement: bool` This option is a fundamental part of the [Trust Spec integration tests suite](https://github.com/wkarwacki/python-openapi-generator-rust/blob/master/do_test.sh#L13).
   * For server generators - Provides default implementation for all the operations
   * For client generators - Generates tests with all required params that verify server's correctness 
   
