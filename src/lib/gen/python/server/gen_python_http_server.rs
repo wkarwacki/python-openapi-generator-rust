@@ -179,11 +179,11 @@ impl Gen for GenPythonHttpServer {
                 .unique()
                 .collect::<Vec<_>>()
                 .join("\n");
-            let dto = handlebars.render_template(dto_template.as_str(), &json!({"key": dto_name(def_name, &self.lang()), "val": def, "formLike": form_like, "imports": imports})).unwrap();
+            let dto = handlebars.render_template(dto_template.as_str(), &json!({"key": dto_name(def_name, &self.lang()), "val": def, "formLike": form_like})).unwrap();
             ({
                  let dto_path_str = dto_path.as_str();
                  format!("{out_dir}/{dto_path_str}").into()
-             }, dto)
+             }, imports + "\n" + dto.as_str())
         }).collect();
         dtos.insert((out_dir.clone() + "/__init__.py").into(), "".into());
         let type_mapping = self
@@ -214,10 +214,13 @@ impl Gen for GenPythonHttpServer {
         let type_mapping = handlebars
             .render_template(
                 type_mapping_template.as_str(),
-                &json!({"typeMapping": type_mapping, "imports": type_mapping_imports.as_str()}),
+                &json!({ "typeMapping": type_mapping }),
             )
             .unwrap();
-        dtos.insert((out_dir.clone() + "/type_mapping.py").into(), type_mapping);
+        dtos.insert(
+            (out_dir.clone() + "/type_mapping.py").into(),
+            type_mapping_imports + "\n" + &type_mapping,
+        );
         let trust_mod_template = templates.get("trustMod").unwrap();
         dtos.insert(
             (self.lang.module() + "/__init__.py").into(),
