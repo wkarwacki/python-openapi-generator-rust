@@ -22,6 +22,7 @@ Trust Spec is a web integration specification and a set of code generators aimin
   - [Generator Options](#generator-options)
   - [Supported Generators](#supported-generators)
     - [Experimental Generators](#experimental-generators)
+  - [Generators Documentation](#generators-documentation)
 - [Conversion from OpenAPI](#conversion-from-openapi)
 - [Conversion to OpenAPI](#conversion-to-openapi)
 - [Building Trust CLI](#building-trust-cli)
@@ -225,10 +226,6 @@ You can customize the generator behavior by passing a relevant `yml` configurati
   * For server generators - Provides default implementation for all the operations
   * For client generators - Generates tests with all required params that verify server's correctness 
 
-#### Limitations
-- Both Python Server Generator and Python Client Generator support `typeMapping` only at top-level of requests and responses.
-  
-
 ### Supported Generators:
 
 - <b>Python HTTP Server ([fastapi](https://github.com/tiangolo/fastapi))</b>
@@ -239,6 +236,12 @@ You can customize the generator behavior by passing a relevant `yml` configurati
 
 - Kotlin HTTP Server ([spring](https://github.com/spring-projects/spring-framework))
 - Scala HTTP Server ([cask](https://github.com/com-lihaoyi/cask))
+
+### Generators Documentation
+For detailed documentation, features and limitations on the supported code generators, refer to:
+- [Python Http Client Generator Documentation](https://github.com/wkarwacki/python-openapi-generator-rust/blob/master/src/lib/gen/python/client/Readme.md)
+- [Python Http Server Generator Documentation](https://github.com/wkarwacki/python-openapi-generator-rust/blob/master/src/lib/gen/python/server/Readme.md)
+
 
 ## Conversion from OpenAPI
 ```shell
