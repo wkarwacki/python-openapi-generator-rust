@@ -17,7 +17,6 @@ use handlebars::Handlebars;
 use proc::{Parents, Resolve, ResolveIfMappedType, ResolveIfRef, TypeArgs, TypeParams, ValueDef};
 use prop::{HasKey, IsAlias};
 use r#fn::{Add, Json};
-use rust_embed::RustEmbed;
 use serde_json::json;
 use sort::SortOptionalsLast;
 use std::{collections::HashMap, fs, path::PathBuf};
@@ -163,11 +162,4 @@ fn templates(path: &PathBuf) -> HashMap<String, String> {
 
 fn template(path: &PathBuf) -> String {
     read(path)
-}
-
-fn default_templates_path(gen: &Box<dyn Gen>) -> PathBuf {
-    ("src/lib/gen/".to_string()
-        + gen.src_dir().to_string_lossy().to_string().as_str()
-        + "/templates")
-        .into()
 }

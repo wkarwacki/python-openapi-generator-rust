@@ -1,5 +1,5 @@
 use crate::{HashMap, Path};
-use rust_embed::{Embed, RustEmbed};
+use rust_embed::RustEmbed;
 
 pub trait Templates: RustEmbed {
     fn default(&self) -> HashMap<String, String> {
