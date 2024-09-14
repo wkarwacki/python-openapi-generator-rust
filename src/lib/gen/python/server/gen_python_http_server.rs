@@ -5,7 +5,8 @@ use crate::lib::{
     gen::{
         gen::{dto_name, Gen},
         lang::Lang,
-        python::lang_python::LangPython,
+        python::{lang_python::LangPython, server::templates::Templates},
+        templates::Templates as GenTemplates,
     },
     pkg::Pkg,
 };
@@ -65,6 +66,9 @@ impl GenPythonHttpServer {
 impl Gen for GenPythonHttpServer {
     fn lang(&self) -> Box<dyn Lang> {
         Box::new(self.lang.clone())
+    }
+    fn templates(&self) -> HashMap<String, String> {
+        Templates {}.default()
     }
     fn src_dir(&self) -> PathBuf {
         "python/server".into()

@@ -4,4 +4,5 @@ pub mod lang;
 pub mod python;
 pub mod scala;
 pub mod template;
+mod templates;
 pub mod type_script;

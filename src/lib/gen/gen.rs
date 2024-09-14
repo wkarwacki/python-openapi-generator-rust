@@ -17,12 +17,14 @@ use handlebars::Handlebars;
 use proc::{Parents, Resolve, ResolveIfMappedType, ResolveIfRef, TypeArgs, TypeParams, ValueDef};
 use prop::{HasKey, IsAlias};
 use r#fn::{Add, Json};
+use rust_embed::RustEmbed;
 use serde_json::json;
 use sort::SortOptionalsLast;
 use std::{collections::HashMap, fs, path::PathBuf};
 
 pub(crate) trait Gen: DynClone + Send + Sync {
     fn lang(&self) -> Box<dyn Lang>;
+    fn templates(&self) -> HashMap<String, String>;
     fn dtos(
         &self,
         handlebars: &Handlebars,
@@ -104,7 +106,7 @@ pub(crate) fn go(
     handlebars_misc_helpers::setup_handlebars(&mut handlebars);
     handlebars.set_strict_mode(false);
 
-    let mut merged_templates: HashMap<_, _> = templates(&default_templates_path(gen));
+    let mut merged_templates: HashMap<_, _> = gen.templates();
     let templates: HashMap<String, String> = templates_path
         .as_ref()
         .map(templates)

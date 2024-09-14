@@ -1,13 +1,17 @@
-use crate::lib::{
-    context::Context,
-    def::Def,
-    desc::Desc,
-    gen::{
-        gen::{dto_name, Gen},
-        lang::Lang,
-        python::lang_python::LangPython,
+use crate::{
+    gen::python::client::templates::Templates,
+    lib::{
+        context::Context,
+        def::Def,
+        desc::Desc,
+        gen::{
+            gen::{dto_name, Gen},
+            lang::Lang,
+            python::lang_python::LangPython,
+            templates::Templates as GenTemplates,
+        },
+        pkg::Pkg,
     },
-    pkg::Pkg,
 };
 use convert_case::{Case, Casing};
 use handlebars::Handlebars;
@@ -65,6 +69,9 @@ impl GenPythonHttpClient {
 impl Gen for GenPythonHttpClient {
     fn lang(&self) -> Box<dyn Lang> {
         Box::new(self.lang.clone())
+    }
+    fn templates(&self) -> HashMap<String, String> {
+        Templates {}.default()
     }
     fn src_dir(&self) -> PathBuf {
         "python/client".into()
