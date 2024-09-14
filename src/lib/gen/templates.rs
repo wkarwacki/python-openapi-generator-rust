@@ -1,7 +1,6 @@
 use crate::{HashMap, Path};
 use rust_embed::{Embed, RustEmbed};
 
-
 pub trait Templates: RustEmbed {
     fn default(&self) -> HashMap<String, String> {
         Self::iter()
