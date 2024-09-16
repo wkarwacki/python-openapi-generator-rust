@@ -24,6 +24,7 @@ use std::{
     path::{Path, PathBuf},
     str::FromStr,
 };
+use std::fs::{create_dir_all, metadata, read_dir};
 use strum_macros::IntoStaticStr;
 use typetag::serde;
 
@@ -208,26 +209,23 @@ pub fn do_main(cli: Cli) {
             let generator_config = config
                 .map(|c| serde_yaml::from_reader::<File, GenCfg>(File::open(c).unwrap()).unwrap())
                 .unwrap_or(Default::default());
-            gen(&input, &lang, &role, &generator_config, &templates_path)
-                .iter()
-                .for_each(|(path, content)| {
-                    let full_path = output.to_string_lossy().to_string()
-                        + "/"
-                        + path.to_string_lossy().to_string().as_str();
-                    fs::create_dir_all(
-                        PathBuf::from_str(full_path.as_str())
-                            .unwrap()
-                            .parent()
-                            .unwrap(),
-                    )
-                    .unwrap();
-                    let mut out = fs::OpenOptions::new()
-                        .write(true)
-                        .create(true)
-                        .open(full_path)
-                        .unwrap();
-                    out.write_all(content.as_bytes()).unwrap()
-                })
+            let md = metadata(&input).map_err(|_| {
+                create_dir_all(&input).unwrap();
+                metadata(&input)
+            });
+            let dir = md.unwrap().is_dir();
+            if dir {
+                let read_dir = read_dir(input).unwrap();
+                for entry in read_dir {
+                    let entry = entry.unwrap();
+                    let path = entry.path();
+                    if path.is_file() {
+                        gen_write(&path, &lang, &role, &generator_config, &templates_path, &output)
+                    }
+                }
+            } else {
+                gen_write(&input, &lang, &role, &generator_config, &templates_path, &output)
+            }
         }
     }
 }
@@ -319,6 +317,36 @@ fn from_open_api(input: &PathBuf, layout: &Layout) -> HashMap<Option<String>, Pk
 fn to_open_api(input: &PathBuf) -> OpenApi {
     let pkg: Pkg = read_t(input);
     OpenApi::of(pkg, &Context::of(input))
+}
+
+fn gen_write(
+    input: &PathBuf,
+    lang: &Lang,
+    role: &Role,
+    gen_cfg: &GenCfg,
+    templates_path: &Option<PathBuf>,
+    output: &PathBuf,
+) {
+    gen(&input, &lang, &role, &gen_cfg, &templates_path)
+        .iter()
+        .for_each(|(path, content)| {
+            let full_path = output.to_string_lossy().to_string()
+                + "/"
+                + path.to_string_lossy().to_string().as_str();
+            fs::create_dir_all(
+                PathBuf::from_str(full_path.as_str())
+                    .unwrap()
+                    .parent()
+                    .unwrap(),
+            )
+                .unwrap();
+            let mut out = fs::OpenOptions::new()
+                .write(true)
+                .create(true)
+                .open(full_path)
+                .unwrap();
+            out.write_all(content.as_bytes()).unwrap()
+        })
 }
 
 fn gen(
