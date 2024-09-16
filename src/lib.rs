@@ -19,12 +19,11 @@ use serde::Deserialize;
 use std::{
     collections::HashMap,
     fs,
-    fs::File,
+    fs::{create_dir_all, metadata, read_dir, File},
     io::Write,
     path::{Path, PathBuf},
     str::FromStr,
 };
-use std::fs::{create_dir_all, metadata, read_dir};
 use strum_macros::IntoStaticStr;
 use typetag::serde;
 
@@ -220,11 +219,25 @@ pub fn do_main(cli: Cli) {
                     let entry = entry.unwrap();
                     let path = entry.path();
                     if path.is_file() {
-                        gen_write(&path, &lang, &role, &generator_config, &templates_path, &output)
+                        gen_write(
+                            &path,
+                            &lang,
+                            &role,
+                            &generator_config,
+                            &templates_path,
+                            &output,
+                        )
                     }
                 }
             } else {
-                gen_write(&input, &lang, &role, &generator_config, &templates_path, &output)
+                gen_write(
+                    &input,
+                    &lang,
+                    &role,
+                    &generator_config,
+                    &templates_path,
+                    &output,
+                )
             }
         }
     }
@@ -339,7 +352,7 @@ fn gen_write(
                     .parent()
                     .unwrap(),
             )
-                .unwrap();
+            .unwrap();
             let mut out = fs::OpenOptions::new()
                 .write(true)
                 .create(true)
