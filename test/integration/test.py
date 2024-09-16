@@ -10,9 +10,10 @@ class Gen(BaseModel):
     role: str
     out_dir: str
 
-class Spec(BaseModel):
+class Test(BaseModel):
     name: str
     entrypoint: str
+    dir_input: bool
     params: list[str] = []
     
 gens = [
@@ -28,14 +29,16 @@ gens = [
     ),
 ]
 
-specs = [
-    Spec(
+tests = [
+    Test(
         name="openapi",
-        entrypoint="api.yml"
+        entrypoint="api.yml",
+        dir_input=True
     ),
-    Spec(
+    Test(
         name="openapi_fastapi",
         entrypoint="api.yml",
+        dir_input=False,
         params = ["-l=tag"]
     ),
 ]
@@ -55,23 +58,26 @@ for gen in gens:
         servers.append(gen)
         
 
-for spec in specs:
-    trust_path = f"{test_integration_path}/run/{spec.name}/trust"
-    subprocess.run(["cargo", "run", "from-open-api", f"{test_integration_path}/specs/{spec.name}/{spec.entrypoint}", trust_path, *spec.params])
+for test in tests:
+    trust_path = f"{test_integration_path}/run/{test.name}/trust"
+    subprocess.run(["cargo", "run", "from-open-api", f"{test_integration_path}/tests/{test.name}/{test.entrypoint}", trust_path, *test.params])
     for gen in gens:
-        run_path = f"{test_integration_path}/run/{spec.name}/{gen.lang}/{gen.role}"
+        run_path = f"{test_integration_path}/run/{test.name}/{gen.lang}/{gen.role}"
 
         out_path = f"{run_path}/{gen.out_dir}"
         os.makedirs(out_path)
 
         gen_path=f"{test_integration_path}/gens/{gen.lang}/{gen.role}"
 
-        for trust_file in os.listdir(trust_path):
-            subprocess.run(["cargo", "run", "generate", gen.lang, gen.role, f"{trust_path}/{trust_file}", out_path, "-c", f"{gen_path}/trust-cfg.yml"])
+        if test.dir_input:
+            subprocess.run(["cargo", "run", "generate", gen.lang, gen.role, trust_path, out_path, "-c", f"{gen_path}/trust-cfg.yml"])
+        else:
+            for trust_file in os.listdir(trust_path):
+                subprocess.run(["cargo", "run", "generate", gen.lang, gen.role, f"{trust_path}/{trust_file}", out_path, "-c", f"{gen_path}/trust-cfg.yml"])
 
         subprocess.run(f"{gen_path }/build.sh")
         shutil.copytree(gen_path, run_path, dirs_exist_ok=True)
 
     for server in servers:
         for client in clients:
-            subprocess.run([f"{test_integration_path}/run.sh", f"run/{spec.name}/{server.lang}/{server.role}/run.sh", f"run/{spec.name}/{client.lang}/{client.role}/run.sh"], check=True)
+            subprocess.run([f"{test_integration_path}/run.sh", f"run/{test.name}/{server.lang}/{server.role}/run.sh", f"run/{test.name}/{client.lang}/{client.role}/run.sh"], check=True)

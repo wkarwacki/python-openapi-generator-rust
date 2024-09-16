@@ -36,8 +36,8 @@ paths:
     $ref: 'elephant.yml#/paths/~1elephants~1{elephantId}'
   /elephants/{elephantId}/best-masterpiece:
     $ref: 'elephant.yml#/paths/~1elephants~1{elephantId}~1best-masterpiece'
-  /elephants/{elephantId}/logs:
-    $ref: 'log.yml#/paths/~1elephants~1{elephantId}~1logs'
+#  /elephants/{elephantId}/logs:
+#    $ref: 'log.yml#/paths/~1elephants~1{elephantId}~1logs'
   /flamings:
     $ref: 'flaming.yml#/paths/~1flamings'
   /flamings/{flamingId}/ibiss:
@@ -50,8 +50,8 @@ paths:
     $ref: 'predator.yml#/paths/~1predators'
   /predators/{predatorId}:
     $ref: 'predator.yml#/paths/~1predators~1{predatorId}'
-  /predators/{predatorId}/logs:
-    $ref: 'log.yml#/paths/~1predators~1{predatorId}~1logs'
+#  /predators/{predatorId}/logs:
+#    $ref: 'log.yml#/paths/~1predators~1{predatorId}~1logs'
   /predators/{predatorId}/results:
     $ref: 'predator.yml#/paths/~1predators~1{predatorId}~1results'
 #  /sse:

@@ -55,15 +55,15 @@ paths:
       responses:
         '204':
           description: Successful Response
-  /log:
-    get:
-      tags:
-        - log
-      summary: Get log
-      operationId: getLog
-      responses:
-        '204':
-          description: Successful Response
+#  /log:
+#    get:
+#      tags:
+#        - log
+#      summary: Get log
+#      operationId: getLog
+#      responses:
+#        '204':
+#          description: Successful Response
   /masterpiece:
     get:
       tags:
