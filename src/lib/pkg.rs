@@ -1,8 +1,10 @@
 use crate::lib::{def::Def, op::Op};
 use serde::{Deserialize, Serialize};
 use std::{collections::HashMap, fmt::Debug, ops::Not};
+use typetag::serde;
 
 #[derive(Debug, Deserialize, Eq, PartialEq, Serialize)]
+#[serde(rename_all = "camelCase")]
 pub(crate) struct Pkg {
     #[serde(default)]
     #[serde(skip_serializing_if = "HashMap::is_empty")]
