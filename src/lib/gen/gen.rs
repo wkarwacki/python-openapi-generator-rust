@@ -36,7 +36,7 @@ pub(crate) trait Gen: DynClone + Send + Sync {
         handlebars: &Handlebars,
         pkg: &Pkg,
         context: &Context,
-        templates: &HashMap<String, String>
+        templates: &HashMap<String, String>,
     ) -> HashMap<PathBuf, String>;
     fn src_dir(&self) -> PathBuf;
 }

@@ -68,7 +68,7 @@ impl OpenApi {
                 .iter()
                 .map(|(name, schema)| (name.clone().clone(), schema.def(name.clone(), context)))
                 .collect(),
-            use_namespace: Default::default()
+            use_namespace: Default::default(),
         }
     }
 
