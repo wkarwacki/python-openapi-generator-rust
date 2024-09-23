@@ -373,7 +373,7 @@ impl Gen for GenPythonHttpServer {
             let router = handlebars
                 .render_template(
                     router_template.as_str(),
-                    &json!({"feature": self.lang.feature.clone(), "ops": &pkg.ops}),
+                    &json!({"feature": self.lang.feature.clone(), "ops": &pkg.ops, "useNamespace": &pkg.use_namespace}),
                 )
                 .unwrap();
             (

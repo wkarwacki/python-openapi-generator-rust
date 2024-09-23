@@ -418,7 +418,7 @@ impl Gen for GenPythonHttpClient {
             let service = handlebars
                 .render_template(
                     service_template.as_str(),
-                    &json!({"feature": self.lang.feature.clone(), "ops": &pkg.ops}),
+                    &json!({"feature": self.lang.feature.clone(), "ops": &pkg.ops, "useNamespace": &pkg.use_namespace}),
                 )
                 .unwrap();
             (
