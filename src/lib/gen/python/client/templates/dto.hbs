@@ -11,7 +11,8 @@
 {{#each val.adt.map}}
 {{>dto key=(fmtClass @key) val=this adtParent=../key adtVar=../val.adt.var}}
 
-    {{fmtName ../val.adt.var}}: Literal[{{json @key}}] = {{json @key}}
+    {{fmtName ../val.adt.var}}_val: ClassVar[str] = {{json @key}}
+    {{fmtName ../val.adt.var}}: Literal[{{json @key}}] = {{fmtName ../val.adt.var}}_val
 
 
 {{/each}}
