@@ -34,7 +34,11 @@ pub(crate) fn inner(
             let formatted_type = lang.fmt_type(def, &Some(name_with_suffix.as_str()));
             let formatted_type_replaced =
                 formatted_type.replace(&(suffix.to_string() + suffix), suffix);
-            lang.fmt_opt(&formatted_type_replaced)
+            if def.null() {
+                lang.fmt_opt(&formatted_type_replaced)
+            } else {
+                formatted_type_replaced
+            }
         }
         Desc::Ref(r#ref) => lang.fmt_ref(r#ref),
         Desc::TypeParam { .. } => unimplemented!("Type parameter not supported yet."),

@@ -40,6 +40,20 @@ impl Def {
             _ => Default::default(),
         }
     }
+
+    pub(crate) fn null(&self) -> bool {
+        match self {
+            Def::Bool(Bool { null }) => *null,
+            Def::Dec(Dec { null }) => *null,
+            Def::Enum(Enum { null, .. }) => *null,
+            Def::Int(Int { null }) => *null,
+            Def::Map(map) => map.null,
+            Def::Obj(Obj { null, .. }) => *null,
+            Def::Seq(seq) => seq.null,
+            Def::Str(Str { null }) => *null,
+            _ => false,
+        }
+    }
 }
 
 #[derive(Clone, Debug, Deserialize, Eq, PartialEq, Serialize)]

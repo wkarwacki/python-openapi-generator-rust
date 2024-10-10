@@ -24,9 +24,9 @@ paths:
                   - value0
                   - value1
                   - value2
-  inlineSeqReqRes:
+  inlineSeqObjReqRes:
     get:
-      operationId: inlineSeqReqResName
+      operationId: inlineSeqObjReqResName
       requestBody:
         content:
           application/json:
@@ -53,3 +53,22 @@ paths:
                       type: string
                   required:
                     - str
+  inlineSeqStrReqRes:
+    get:
+      operationId: inlineSeqStrReqResName
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                type: string
+      responses:
+        200:
+          description: 200 OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: string
