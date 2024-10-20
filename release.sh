@@ -24,6 +24,7 @@ maturin upload target/wheels/*
 cd $SCRIPT_DIR/cli/py
 twine upload dist/*
 
+cd $SCRIPT_DIR
 git add .
 git commit -m "release TrustSpecCli $VERSION"
 git push origin master
