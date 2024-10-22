@@ -9,4 +9,8 @@ pip install maturin
 
 cp ../../README.md README.md
 
+export PYENV_VERSION=3.10
+maturin build
+
+export PYENV_VERSION=3.11
 maturin build
