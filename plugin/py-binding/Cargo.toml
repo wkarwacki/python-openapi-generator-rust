@@ -1,6 +1,6 @@
 [package]
 name = "trustspecpy"
-version = "0.1.24"
+version = "{VERSION}"
 edition = "2021"
 
 [lib]
@@ -17,3 +17,6 @@ version = "0.22.2"
 [features]
 extension-module = ["pyo3/extension-module"]
 default = ["extension-module"]
+
+[tool.maturin]
+include = [{ path = "../../src/lib/gen/python/**/templates", format = "sdist" }]
