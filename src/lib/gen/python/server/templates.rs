@@ -1,8 +1,8 @@
 use crate::lib::gen::templates::Templates as GenTemplates;
-use rust_embed::Embed;
+use rust_embed::{Embed, RustEmbed};
 
 #[derive(Embed)]
-#[folder = "src/lib/gen/python/server/templates"]
+#[folder = "$CARGO_MANIFEST_DIR/src/lib/gen/python/server/templates"]
 pub struct Templates;
 
 impl GenTemplates for Templates {}

@@ -1,6 +1,6 @@
 [package]
 name = "trust"
-version = "0.1.26"
+version = "0.1.27"
 readme="README.md"
 edition = "2021"
 
@@ -14,7 +14,7 @@ http = { version = "1.1.0" }
 indexmap = { version = "2.2.6", features = ["serde"] }
 itertools = { version = "0.13.0" }
 mime = {version = "0.3.17"}
-rust-embed = "8.5.0"
+rust-embed = {  version = "8.5.0", features = ["interpolate-folder-path"] }
 serde = { version = "1.0.197", features = ["derive"] }
 serde_yaml = { version = "0.9.32" }
 serde_json = { version = "1.0.116", features = ["preserve_order"]  }
