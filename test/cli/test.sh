@@ -5,6 +5,7 @@ set -eox pipefail
 SCRIPT_DIR=$(dirname "$(readlink -f "$0")")
 cd "$SCRIPT_DIR" || exit
 
+rm -rf .venv
 python -m venv .venv
 source .venv/bin/activate
 
