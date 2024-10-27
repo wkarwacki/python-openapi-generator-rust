@@ -10,4 +10,4 @@ pip install maturin
 cp ../../README.md README.md
 
 rm -rf target
-maturin build
+maturin build --release
