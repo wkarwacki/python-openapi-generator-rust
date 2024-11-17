@@ -8,9 +8,9 @@ cd "$SCRIPT_DIR" || exit
 rm -rf  test/default
 mkdir -p test/default/spec
 
-#cargo test -- --nocapture
-#
-#bash test/integration/test.sh
+cargo test -- --nocapture
+
+bash test/integration/test.sh
 
 bash test/cli/test.sh
 
