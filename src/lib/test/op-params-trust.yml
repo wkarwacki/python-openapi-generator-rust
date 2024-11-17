@@ -30,6 +30,10 @@ ops:
           loc: query
           type: str
           default: default
+        - name: optQueryParam5
+          loc: query
+          type: bool
+          default: true
       type: GET
     - name: op1Postt
       params:

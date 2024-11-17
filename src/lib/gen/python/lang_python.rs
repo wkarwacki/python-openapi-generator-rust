@@ -170,7 +170,7 @@ impl Lang for LangPython {
 
     fn fmt_value(&self, json_value: &Value) -> String {
         match json_value {
-            Value::Bool(val) => val.to_string(),
+            Value::Bool(val) => if val.clone() { "True" } else { "False" }.to_string(),
             Value::Number(val) => val.to_string(),
             Value::String(val) => val.clone(),
             Value::Array(val) => {

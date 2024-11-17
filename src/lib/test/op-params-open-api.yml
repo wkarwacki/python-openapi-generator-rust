@@ -23,6 +23,11 @@ paths:
           schema:
             type: string
             default: default
+        - in: query
+          name: optQueryParam5
+          schema:
+            type: boolean
+            default: true
       operationId: op0Gett
     post:
       parameters:
