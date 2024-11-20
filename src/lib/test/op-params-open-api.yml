@@ -61,7 +61,8 @@ paths:
       - in: header
         name: commonHeaderParam2
         schema:
-          type: string
+          type: integer
+          format: int64
         required: true
       - in: path
         name: commonPathParam1

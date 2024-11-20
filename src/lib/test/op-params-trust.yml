@@ -7,7 +7,7 @@ ops:
           type: str
         - name: commonHeaderParam2
           loc: header
-          type: str
+          type: int
         - name: commonPathParam1
           loc: path
           type: str
@@ -42,7 +42,7 @@ ops:
           type: str
         - name: commonHeaderParam2
           loc: header
-          type: str
+          type: int
         - name: commonPathParam1
           loc: path
           type: str
