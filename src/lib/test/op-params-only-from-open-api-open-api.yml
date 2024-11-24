@@ -1,0 +1,17 @@
+paths:
+  /op0/path:
+    get:
+      parameters:
+        - in: query
+          name: optQueryParamEnumWithDefault
+          schema:
+            $ref: '#/components/schemas/SomeEnum'
+            default: second-val
+      operationId: op0Gett
+components:
+  schemas:
+    SomeEnum:
+      type: string
+      enum:
+        - first-val
+        - second-val

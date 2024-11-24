@@ -1,0 +1,15 @@
+ops:
+  /op0/path:
+    - name: op0Gett
+      params:
+        - loc: query
+          name: optQueryParamEnumWithDefault
+          path: defs.SomeEnum
+          default: second-val
+      type: GET
+defs:
+  SomeEnum:
+    type: enum
+    vals:
+      - first-val
+      - second-val

@@ -34,6 +34,9 @@ ops:
           loc: query
           type: bool
           default: true
+        - name: optQueryParamEnum
+          loc: query
+          path: defs.SomeEnum
       type: GET
     - name: op1Postt
       params:
@@ -62,3 +65,9 @@ ops:
           loc: query
           type: str
       type: POST
+defs:
+  SomeEnum:
+    type: enum
+    vals:
+      - first-val
+      - second-val
