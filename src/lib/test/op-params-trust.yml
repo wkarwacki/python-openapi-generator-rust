@@ -34,9 +34,13 @@ ops:
           loc: query
           type: bool
           default: true
+        - name: queryParamEnum
+          loc: query
+          path: defs.SomeEnum
         - name: optQueryParamEnum
           loc: query
           path: defs.SomeEnum
+          default: null
       type: GET
     - name: op1Postt
       params:
