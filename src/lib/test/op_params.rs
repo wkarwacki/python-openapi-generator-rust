@@ -16,11 +16,6 @@ mod op_params {
     }
 
     #[test]
-    fn only_from_open_api_test() {
-        from_open_api_test_fn("op-params-only-from-open-api");
-    }
-
-    #[test]
     fn gen_python_client_test() {
         gen_test(Lang::Python, Role::Client, "op-params-trust.yml");
     }

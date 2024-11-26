@@ -41,6 +41,20 @@ ops:
           loc: query
           path: defs.SomeEnum
           default: null
+        - name: queryParamEnumWithDefault
+          loc: query
+          path: defs.SomeEnum
+          default:
+            - second-val
+        - name: queryParamSeqEnum
+          loc: query
+          type: seq
+          item:
+            path: defs.SomeEnum
+        - name: optQueryParamEnumWithDefault
+          loc: query
+          path: defs.SomeEnum
+          default: second-val
       type: GET
     - name: op1Postt
       params:

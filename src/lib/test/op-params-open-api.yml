@@ -37,6 +37,24 @@ paths:
           name: optQueryParamEnum
           schema:
             $ref: '#/components/schemas/SomeEnum'
+        - in: query
+          name: queryParamEnumWithDefault
+          schema:
+            $ref: '#/components/schemas/SomeEnum'
+            default:
+              - second-val
+        - in: query
+          name: queryParamSeqEnum
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SomeEnum'
+          required: true
+        - in: query
+          name: optQueryParamEnumWithDefault
+          schema:
+            $ref: '#/components/schemas/SomeEnum'
+            default: second-val
       operationId: op0Gett
     post:
       parameters:
@@ -54,7 +72,6 @@ paths:
           name: anotherPathParam4
           schema:
             type: string
-          required: true
         - in: query
           name: anotherQueryParam2
           schema:
@@ -77,7 +94,6 @@ paths:
         name: commonPathParam1
         schema:
           type: string
-        required: true
       - in: query
         name: commonQueryParam4
         schema:

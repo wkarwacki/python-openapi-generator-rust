@@ -230,7 +230,7 @@ impl Schema {
         desc.r#ref()
             .as_ref()
             .cloned()
-            .map(Schema::of_ref)
+            .map(|r#ref| Schema::of_ref_and_default(r#ref, default.clone()))
             .or_else(|| {
                 desc.def()
                     .as_ref()
@@ -241,6 +241,14 @@ impl Schema {
 
     fn of_ref(r#ref: &Ref) -> Schema {
         Schema {
+            _ref: Some(Schema::openapi_path(r#ref)),
+            ..Default::default()
+        }
+    }
+
+    fn of_ref_and_default(r#ref: &Ref, default: Option<Value>) -> Schema {
+        Schema {
+            default: default.map(|d|  if d.is_null() { None } else { Some(d) }).flatten(),
             _ref: Some(Schema::openapi_path(r#ref)),
             ..Default::default()
         }
