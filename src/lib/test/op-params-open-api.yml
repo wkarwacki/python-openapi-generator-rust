@@ -41,8 +41,7 @@ paths:
           name: queryParamEnumWithDefault
           schema:
             $ref: '#/components/schemas/SomeEnum'
-            default:
-              - second-val
+            default: second-val
         - in: query
           name: queryParamSeqEnum
           schema:
@@ -55,6 +54,13 @@ paths:
           schema:
             $ref: '#/components/schemas/SomeEnum'
             default: second-val
+        - in: query
+          name: queryParamSeqEnumWithDefault
+          schema:
+            type: array
+            items:
+              $ref: '#/components/schemas/SomeEnum'
+            default: [first-val]
       operationId: op0Gett
     post:
       parameters:
