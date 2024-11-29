@@ -248,7 +248,9 @@ impl Schema {
 
     fn of_ref_and_default(r#ref: &Ref, default: Option<Value>) -> Schema {
         Schema {
-            default: default.map(|d|  if d.is_null() { None } else { Some(d) }).flatten(),
+            default: default
+                .map(|d| if d.is_null() { None } else { Some(d) })
+                .flatten(),
             _ref: Some(Schema::openapi_path(r#ref)),
             ..Default::default()
         }

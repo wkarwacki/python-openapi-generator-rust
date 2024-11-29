@@ -1,10 +1,12 @@
-use crate::{gen::gen::Gen, lib::desc::Desc};
+use crate::{
+    gen::gen::Gen,
+    lib::{context::Context, desc::Desc},
+};
 use handlebars::{
     Context as HbContext, Handlebars, Helper, HelperDef, HelperResult, JsonRender, JsonValue,
     Output, RenderContext, RenderError, ScopedJson,
 };
 use serde_json::Value;
-use crate::lib::context::Context;
 
 #[derive(Clone)]
 pub(crate) struct FmtClass {
@@ -162,7 +164,7 @@ impl HelperDef for FmtType {
 #[derive(Clone)]
 pub(crate) struct FmtValue {
     pub gen: Box<dyn Gen>,
-    pub context: Context
+    pub context: Context,
 }
 
 impl HelperDef for FmtValue {
@@ -175,10 +177,15 @@ impl HelperDef for FmtValue {
         out: &mut dyn Output,
     ) -> HelperResult {
         let json_value: &JsonValue = h.param(0).unwrap().value();
-        let desc: Result<Desc, _> =  serde_json::from_value(h.param(1).unwrap().value().clone());
-        let name: Result<String, _> =  serde_json::from_value(h.param(2).unwrap().value().clone());
+        let desc: Result<Desc, _> = serde_json::from_value(h.param(1).unwrap().value().clone());
+        let name: Result<String, _> = serde_json::from_value(h.param(2).unwrap().value().clone());
         Ok(out
-            .write(self.gen.lang().fmt_value(json_value, &desc.ok(), &name.ok().as_deref(), &self.context).as_str())
+            .write(
+                self.gen
+                    .lang()
+                    .fmt_value(json_value, &desc.ok(), &name.ok().as_deref(), &self.context)
+                    .as_str(),
+            )
             .unwrap())
     }
 }

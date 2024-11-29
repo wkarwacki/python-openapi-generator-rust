@@ -64,7 +64,16 @@ pub(crate) fn go(
         Box::new(FmtSrcIfPresent { gen: gen.clone() }.clone()),
     );
     handlebars.register_helper("fmtType", Box::new(FmtType { gen: gen.clone() }.clone()));
-    handlebars.register_helper("fmtValue", Box::new(FmtValue { gen: gen.clone(), context: context.clone() }.clone()));
+    handlebars.register_helper(
+        "fmtValue",
+        Box::new(
+            FmtValue {
+                gen: gen.clone(),
+                context: context.clone(),
+            }
+            .clone(),
+        ),
+    );
 
     handlebars.register_helper("filterNonconst", Box::new(FilterNonconst {}.clone()));
     handlebars.register_helper(

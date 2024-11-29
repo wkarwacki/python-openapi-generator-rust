@@ -14,7 +14,13 @@ pub(crate) trait Lang {
     fn fmt_ref(&self, r#ref: &Ref) -> String;
     fn fmt_src(&self, src: &str) -> String;
     fn fmt_type(&self, def: &Def, name: &Option<&str>) -> String;
-    fn fmt_value(&self, json_value: &JsonValue, desc: &Option<Desc>, name: &Option<&str>, context: &Context) -> String;
+    fn fmt_value(
+        &self,
+        json_value: &JsonValue,
+        desc: &Option<Desc>,
+        name: &Option<&str>,
+        context: &Context,
+    ) -> String;
     fn stub_impl(&self, def: &Def, context: &Context) -> String;
 }
 

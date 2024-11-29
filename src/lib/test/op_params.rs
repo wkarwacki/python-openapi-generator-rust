@@ -22,7 +22,11 @@ mod op_params {
 
     #[test]
     fn gen_python_extended_client_test() {
-        gen_test(Lang::Python, Role::Client, "op-params-only-from-open-api-trust.yml");
+        gen_test(
+            Lang::Python,
+            Role::Client,
+            "op-params-only-from-open-api-trust.yml",
+        );
     }
 
     #[test]
