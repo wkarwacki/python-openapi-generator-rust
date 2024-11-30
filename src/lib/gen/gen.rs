@@ -121,8 +121,6 @@ pub(crate) fn go(
         .unwrap_or(Default::default());
     merged_templates.extend(templates);
 
-    println!("Got {:?} templates.", merged_templates.len());
-
     merged_templates.iter().for_each(|(name, template)| {
         handlebars
             .register_template_string(name, template.clone())

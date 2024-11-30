@@ -15,7 +15,7 @@ use clap::{Parser, Subcommand, ValueEnum};
 use gen::{gen::Gen, lang::DTO_NAME_TEMPLATE_NAME};
 use handlebars::Handlebars;
 use itertools::Itertools;
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use std::{
     collections::HashMap,
     fs,
@@ -152,7 +152,7 @@ pub enum Layout {
     Tag,
 }
 
-#[derive(Clone, Debug, Default, Deserialize)]
+#[derive(Clone, Debug, Default, Deserialize, Serialize)]
 #[serde(rename_all = "camelCase")]
 pub struct GenCfg {
     #[serde(default)]
@@ -163,7 +163,7 @@ pub struct GenCfg {
     auto_implement: bool,
 }
 
-#[derive(Clone, ValueEnum)]
+#[derive(Clone, ValueEnum, Debug)]
 pub enum Lang {
     Kotlin,
     Python,
@@ -208,6 +208,10 @@ pub fn do_main(cli: Cli) {
             let generator_config = config
                 .map(|c| serde_yaml::from_reader::<File, GenCfg>(File::open(c).unwrap()).unwrap())
                 .unwrap_or(Default::default());
+
+            println!("Running generator for lang: {:?}, role: {:?}, input: {:?}, output: {:?}, templates_path: {:?}", lang, role, input, output, templates_path);
+            println!("Generator config:\n{}", serde_json::to_string(&generator_config).unwrap());
+
             let md = metadata(&input).map_err(|_| {
                 create_dir_all(&input).unwrap();
                 metadata(&input)
