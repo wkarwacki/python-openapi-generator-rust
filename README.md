@@ -15,6 +15,7 @@ Trust Spec is a web integration specification and a set of code generators aimin
 
 ## Table of Contents
 - [I just want to glue my services together](#i-just-want-to-glue-my-services-together)
+- [Requirements](#requirements)
 - [Specification](#specification)
   - [Overview](#overview)
   - [Common Use Cases](#common-use-cases)
@@ -61,6 +62,9 @@ Options:
 
 - **To continue using OpenAPI for code generation:**
   - Use Trust spec as an intermediate format with the `to-open-api` command.
+
+## Requirements
+- Python 3.10 - currently the only supported version
 
 ## Specification
 Trust specification enhances current integration standards like [OpenAPI](https://github.com/OAI/OpenAPI-Specification). Key benefits include:
