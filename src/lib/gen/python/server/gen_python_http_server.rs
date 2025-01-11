@@ -183,7 +183,7 @@ impl Gen for GenPythonHttpServer {
                 .unique()
                 .collect::<Vec<_>>()
                 .join("\n");
-            let dto = handlebars.render_template(dto_template.as_str(), &json!({"key": dto_name(def_name, &self.lang()), "val": def, "formLike": form_like})).unwrap();
+            let dto = handlebars.render_template(dto_template.as_str(), &json!({"key": dto_name(def_name, &self.lang()), "val": def, "formLike": form_like, "mod": &self.lang().module()})).unwrap();
             ({
                  let dto_path_str = dto_path.as_str();
                  format!("{out_dir}/{dto_path_str}").into()

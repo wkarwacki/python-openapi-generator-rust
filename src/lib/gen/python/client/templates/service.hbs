@@ -1,7 +1,8 @@
 from io import BufferedReader
 from pydantic import TypeAdapter
-from trust import client
 from typing import Any, Generator
+
+from {{mod}} import client
 
 class {{to_pascal_case feature}}Service:
 {{#each ops}}{{#each this}}
