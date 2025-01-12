@@ -60,7 +60,6 @@ impl Lang for LangPython {
                     .map(|os_str| os_str.to_string_lossy().to_string())
                     .reduce(|string0, string1| string0 + "." + string1.as_str())
                     .unwrap()
-                    + "."
             })
             .unwrap_or("trust".to_string())
     }
