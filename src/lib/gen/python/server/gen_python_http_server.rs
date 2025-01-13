@@ -225,11 +225,17 @@ impl Gen for GenPythonHttpServer {
             (out_dir.clone() + "/type_mapping.py").into(),
             type_mapping_imports + "\n" + &type_mapping,
         );
+
         let trust_mod_template = templates.get("trustMod").unwrap();
         let trust_mod_path = self.lang.clone().gen_cfg.module.unwrap_or("trust".into());
         dtos.insert(
             (trust_mod_path.to_string_lossy().to_string() + "/__init__.py").into(),
             trust_mod_template.clone(),
+        );
+
+        dtos.insert(
+            (trust_mod_path.to_string_lossy().to_string() + "/py.typed").into(),
+            "".into(),
         );
 
         dtos
