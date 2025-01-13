@@ -230,8 +230,9 @@ impl Gen for GenPythonHttpClient {
         );
         dtos.insert((out_dir.clone() + "/__init__.py").into(), "".into());
         let trust_mod_template = templates.get("trustMod").unwrap();
+        let trust_mod_path = self.lang.clone().gen_cfg.module.unwrap_or("trust".into());
         dtos.insert(
-            (self.lang.module() + "/__init__.py").into(),
+            (trust_mod_path.to_string_lossy().to_string() + "/__init__.py").into(),
             trust_mod_template.clone(),
         );
 
