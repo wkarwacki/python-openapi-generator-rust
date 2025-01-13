@@ -231,19 +231,6 @@ impl Gen for GenPythonHttpServer {
             trust_mod_template.clone(),
         );
 
-        self.lang.gen_cfg.module.iter().for_each(|path| {
-            path.iter().fold(None, |path: Option<String>, os_str| {
-                let p = match path {
-                    None => os_str.to_string_lossy().to_string(),
-                    Some(str) => {
-                        str.to_string() + "/" + os_str.to_string_lossy().to_string().as_str()
-                    }
-                };
-                dtos.insert((p.clone() + "/__init__.py").into(), "".into());
-                Some(p)
-            });
-        });
-
         dtos
     }
 
