@@ -1048,7 +1048,7 @@ dependencies = [
 
 [[package]]
 name = "trust"
-version = "0.1.39"
+version = "0.1.40"
 dependencies = [
  "clap",
  "convert_case",
@@ -1071,7 +1071,7 @@ dependencies = [
 
 [[package]]
 name = "trustspecpy"
-version = "0.1.39"
+version = "0.1.40"
 dependencies = [
  "clap",
  "pyo3",
