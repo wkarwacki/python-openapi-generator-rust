@@ -193,9 +193,27 @@ pub fn do_main(cli: Cli) {
             });
         }
         Cmd::ToOpenApi { input } => {
-            let open_api = to_open_api(&input);
-
-            write(open_api, &"out.yml".into())
+            let md = metadata(&input).map_err(|_| {
+                create_dir_all(&input).unwrap();
+                metadata(&input)
+            });
+            let dir = md.unwrap().is_dir();
+            if dir {
+                let read_dir = read_dir(input).unwrap();
+                for entry in read_dir {
+                    let entry = entry.unwrap();
+                    let path = entry.path();
+                    if path.is_file() {
+                        to_open_api_write(
+                            &path,
+                        )
+                    }
+                }
+            } else {
+                to_open_api_write(
+                    &input,
+                )
+            }
         }
         Cmd::Generate {
             lang,
@@ -330,10 +348,18 @@ fn from_open_api(input: &PathBuf, layout: &Layout) -> HashMap<Option<String>, Pk
         .collect()
 }
 
-// TODO_LATER: make it work for multiple files
+fn to_open_api_write(input: &PathBuf) {
+    let open_api = to_open_api(input);
+    write(open_api, &("out/".to_string() + input.file_name().unwrap().to_str().unwrap()).into())
+}
+
 fn to_open_api(input: &PathBuf) -> OpenApi {
     let pkg: Pkg = read_t(input);
-    OpenApi::of(pkg, &Context::of(input))
+    let context = &Context::of(input);
+
+    let open_api = OpenApi::of(pkg, context);
+
+    open_api
 }
 
 fn gen_write(
