@@ -204,15 +204,11 @@ pub fn do_main(cli: Cli) {
                     let entry = entry.unwrap();
                     let path = entry.path();
                     if path.is_file() {
-                        to_open_api_write(
-                            &path,
-                        )
+                        to_open_api_write(&path)
                     }
                 }
             } else {
-                to_open_api_write(
-                    &input,
-                )
+                to_open_api_write(&input)
             }
         }
         Cmd::Generate {
@@ -228,7 +224,10 @@ pub fn do_main(cli: Cli) {
                 .unwrap_or(Default::default());
 
             println!("Running generator for lang: {:?}, role: {:?}, input: {:?}, output: {:?}, templates_path: {:?}", lang, role, input, output, templates_path);
-            println!("Generator config:\n{}", serde_json::to_string(&generator_config).unwrap());
+            println!(
+                "Generator config:\n{}",
+                serde_json::to_string(&generator_config).unwrap()
+            );
 
             let md = metadata(&input).map_err(|_| {
                 create_dir_all(&input).unwrap();
@@ -350,7 +349,10 @@ fn from_open_api(input: &PathBuf, layout: &Layout) -> HashMap<Option<String>, Pk
 
 fn to_open_api_write(input: &PathBuf) {
     let open_api = to_open_api(input);
-    write(open_api, &("out/".to_string() + input.file_name().unwrap().to_str().unwrap()).into())
+    write(
+        open_api,
+        &("out/".to_string() + input.file_name().unwrap().to_str().unwrap()).into(),
+    )
 }
 
 fn to_open_api(input: &PathBuf) -> OpenApi {
