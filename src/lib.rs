@@ -116,6 +116,9 @@ pub enum Cmd {
     ToOpenApi {
         /// Path to the Trust specification file.
         input: PathBuf,
+
+        /// Directory where the output OpenApi specification will be saved.
+        output: PathBuf,
     },
     /// Generate code based on a Trust specification.
     Generate {
@@ -192,7 +195,7 @@ pub fn do_main(cli: Cli) {
                 write(pkg, &path.into());
             });
         }
-        Cmd::ToOpenApi { input } => {
+        Cmd::ToOpenApi { input, output } => {
             let md = metadata(&input).map_err(|_| {
                 create_dir_all(&input).unwrap();
                 metadata(&input)
@@ -204,11 +207,11 @@ pub fn do_main(cli: Cli) {
                     let entry = entry.unwrap();
                     let path = entry.path();
                     if path.is_file() {
-                        to_open_api_write(&path)
+                        to_open_api_write(&path, &output)
                     }
                 }
             } else {
-                to_open_api_write(&input)
+                to_open_api_write(&input, &output)
             }
         }
         Cmd::Generate {
@@ -347,11 +350,14 @@ fn from_open_api(input: &PathBuf, layout: &Layout) -> HashMap<Option<String>, Pk
         .collect()
 }
 
-fn to_open_api_write(input: &PathBuf) {
+fn to_open_api_write(input: &PathBuf, output: &PathBuf) {
     let open_api = to_open_api(input);
     write(
         open_api,
-        &("out/".to_string() + input.file_name().unwrap().to_str().unwrap()).into(),
+        &(output.as_os_str().to_str().unwrap().to_string()
+            + "/"
+            + input.file_name().unwrap().to_str().unwrap())
+        .into(),
     )
 }
 
