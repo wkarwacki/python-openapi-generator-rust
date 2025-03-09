@@ -190,7 +190,7 @@ impl Schema {
                                 (n.clone(), {
                                     let subname = n.to_case(Case::UpperCamel);
                                     let schemas_path = schemas_path();
-                                    format!("#{schemas_path}/{name}{subname}") // FIXME_LATER: src is not taken
+                                    format!("#{schemas_path}/{subname}{name}") // FIXME_LATER: src is not taken
                                 })
                             })
                             .collect(),
