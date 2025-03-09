@@ -24,12 +24,17 @@ pub(crate) struct OpenApi {
 }
 
 impl OpenApi {
-    pub(crate) fn of(pkg: Pkg, path_prefix: Option<&str>, context: &Context) -> OpenApi {
+    pub(crate) fn of(pkg: Pkg, context: &Context) -> OpenApi {
         OpenApi {
             paths: pkg
                 .ops
                 .iter()
                 .map(|(id, ops)| {
+                    let path_prefix = if pkg.use_namespace {
+                        Some(context._base.file_stem().unwrap().to_str().unwrap())
+                    } else {
+                        None
+                    };
                     (
                         Self::path_id(id, path_prefix),
                         RefOr::Item(Path::of(ops, context)),
