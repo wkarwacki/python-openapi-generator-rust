@@ -42,7 +42,7 @@ impl OpenApi {
 
     fn path_id(id: &String, path_prefix: Option<&str>) -> String {
         match path_prefix {
-            Some(prefix) => format!("{}/{}", prefix, id),
+            Some(prefix) => format!("/{}{}", prefix, id),
             None => id.clone(),
         }
     }
