@@ -39,7 +39,13 @@ impl Operation {
                 let mut op_params: Vec<OpParam> = op.params.clone();
                 op_params.retain(|op_param| !common_op_params.contains(op_param));
                 Operation {
-                    tags: vec![],
+                    tags: vec![context
+                        ._base
+                        .file_stem()
+                        .unwrap()
+                        .to_str()
+                        .unwrap()
+                        .to_string()],
                     operation_id: op.name.clone(),
                     parameters: op_params
                         .iter()
