@@ -1,6 +1,8 @@
 paths:
   /op0/path:
     get:
+      tags:
+        - test
       parameters:
         - in: cookie
           name: optCookieParam0
@@ -63,6 +65,8 @@ paths:
             default: [first-val]
       operationId: op0Gett
     post:
+      tags:
+        - test
       parameters:
         - in: cookie
           name: anotherCookieParam3

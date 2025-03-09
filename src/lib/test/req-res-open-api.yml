@@ -1,6 +1,8 @@
 paths:
   op0:
     put:
+      tags:
+        - test
       operationId: op0Name
       requestBody:
         content:
@@ -26,6 +28,8 @@ paths:
                   - value2
   inlineSeqObjReqRes:
     get:
+      tags:
+        - test
       operationId: inlineSeqObjReqResName
       requestBody:
         content:
@@ -55,6 +59,8 @@ paths:
                     - str
   inlineSeqStrReqRes:
     get:
+      tags:
+        - test
       operationId: inlineSeqStrReqResName
       requestBody:
         content:
