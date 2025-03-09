@@ -31,6 +31,7 @@ impl Operation {
         ops: &Vec<Op>,
         method: Method,
         common_op_params: &Vec<OpParam>,
+        tag: &str,
         context: &Context,
     ) -> Option<Operation> {
         ops.iter()
@@ -39,13 +40,7 @@ impl Operation {
                 let mut op_params: Vec<OpParam> = op.params.clone();
                 op_params.retain(|op_param| !common_op_params.contains(op_param));
                 Operation {
-                    tags: vec![context
-                        ._base
-                        .file_stem()
-                        .unwrap()
-                        .to_str()
-                        .unwrap()
-                        .to_string()],
+                    tags: vec![tag.to_string()],
                     operation_id: op.name.clone(),
                     parameters: op_params
                         .iter()

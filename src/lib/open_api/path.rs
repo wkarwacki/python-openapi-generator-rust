@@ -44,7 +44,7 @@ impl Path {
         .filter_map(identity)
         .collect()
     }
-    pub(crate) fn of(ops: &Vec<Op>, context: &Context) -> Path {
+    pub(crate) fn of(ops: &Vec<Op>, tag: &str, context: &Context) -> Path {
         let common_op_params: Vec<_> = ops
             .iter()
             .fold(None as Option<Vec<OpParam>>, |vec, op| match vec {
@@ -63,11 +63,11 @@ impl Path {
         Path {
             summary: None,
             description: None,
-            get: Operation::of(ops, Method::GET, &common_op_params, context),
-            put: Operation::of(ops, Method::PUT, &common_op_params, context),
-            post: Operation::of(ops, Method::POST, &common_op_params, context),
-            delete: Operation::of(ops, Method::DELETE, &common_op_params, context),
-            patch: Operation::of(ops, Method::PATCH, &common_op_params, context),
+            get: Operation::of(ops, Method::GET, &common_op_params, tag, context),
+            put: Operation::of(ops, Method::PUT, &common_op_params, tag, context),
+            post: Operation::of(ops, Method::POST, &common_op_params, tag, context),
+            delete: Operation::of(ops, Method::DELETE, &common_op_params, tag, context),
+            patch: Operation::of(ops, Method::PATCH, &common_op_params, tag, context),
             parameters: common_op_params
                 .iter()
                 .map(|op_param| RefOr::Item(Parameter::of(op_param, context)))

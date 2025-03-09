@@ -24,20 +24,15 @@ pub(crate) struct OpenApi {
 }
 
 impl OpenApi {
-    pub(crate) fn of(pkg: Pkg, context: &Context) -> OpenApi {
+    pub(crate) fn of(pkg: Pkg, tag: &str, context: &Context) -> OpenApi {
         OpenApi {
             paths: pkg
                 .ops
                 .iter()
                 .map(|(id, ops)| {
-                    let path_prefix = if pkg.use_namespace {
-                        Some(context._base.file_stem().unwrap().to_str().unwrap())
-                    } else {
-                        None
-                    };
                     (
-                        Self::path_id(id, path_prefix),
-                        RefOr::Item(Path::of(ops, context)),
+                        Self::path_id(id, tag, &pkg),
+                        RefOr::Item(Path::of(ops, tag, context)),
                     )
                 })
                 .collect(),
@@ -45,10 +40,11 @@ impl OpenApi {
         }
     }
 
-    fn path_id(id: &String, path_prefix: Option<&str>) -> String {
-        match path_prefix {
-            Some(prefix) => format!("/{}{}", prefix, id),
-            None => id.clone(),
+    fn path_id(id: &String, tag: &str, pkg: &Pkg) -> String {
+        if pkg.use_namespace {
+            format!("/{}{}", tag.to_string(), id)
+        } else {
+            id.clone()
         }
     }
 

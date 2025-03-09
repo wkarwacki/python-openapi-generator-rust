@@ -2,7 +2,7 @@ paths:
   op0:
     put:
       tags:
-        - test
+        - req-res-trust
       operationId: op0Name
       requestBody:
         content:
@@ -29,7 +29,7 @@ paths:
   inlineSeqObjReqRes:
     get:
       tags:
-        - test
+        - req-res-trust
       operationId: inlineSeqObjReqResName
       requestBody:
         content:
@@ -60,7 +60,7 @@ paths:
   inlineSeqStrReqRes:
     get:
       tags:
-        - test
+        - req-res-trust
       operationId: inlineSeqStrReqResName
       requestBody:
         content:
