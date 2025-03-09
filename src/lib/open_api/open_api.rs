@@ -24,14 +24,26 @@ pub(crate) struct OpenApi {
 }
 
 impl OpenApi {
-    pub(crate) fn of(pkg: Pkg, context: &Context) -> OpenApi {
+    pub(crate) fn of(pkg: Pkg, path_prefix: Option<&str>, context: &Context) -> OpenApi {
         OpenApi {
             paths: pkg
                 .ops
                 .iter()
-                .map(|(id, ops)| (id.clone(), RefOr::Item(Path::of(ops, context))))
+                .map(|(id, ops)| {
+                    (
+                        Self::path_id(id, path_prefix),
+                        RefOr::Item(Path::of(ops, context)),
+                    )
+                })
                 .collect(),
             components: Components::of(pkg.defs, context),
+        }
+    }
+
+    fn path_id(id: &String, path_prefix: Option<&str>) -> String {
+        match path_prefix {
+            Some(prefix) => format!("{}/{}", prefix, id),
+            None => id.clone(),
         }
     }
 

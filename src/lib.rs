@@ -363,9 +363,14 @@ fn to_open_api_write(input: &PathBuf, output: &PathBuf) {
 
 fn to_open_api(input: &PathBuf) -> OpenApi {
     let pkg: Pkg = read_t(input);
+    let path_prefix = if pkg.use_namespace {
+        Some(input.file_stem().unwrap().to_str().unwrap())
+    } else {
+        None
+    };
     let context = &Context::of(input);
 
-    let open_api = OpenApi::of(pkg, context);
+    let open_api = OpenApi::of(pkg, path_prefix, context);
 
     open_api
 }
