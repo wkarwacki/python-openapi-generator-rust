@@ -27,7 +27,18 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/RunPredatorRequest'
+              type: object
+              properties:
+                name:
+                  type: string
+                transformers:
+                  type: object
+                  additionalProperties:
+                    type: string
+              required:
+                - name
+                - masterpieceId
+                - transformers
         required: true
       responses:
         200:
@@ -174,18 +185,3 @@ components:
             - id
             - masterpieceName
             - targetTransformerName
-    RunPredatorRequest:
-      type: object
-      properties:
-        name:
-          type: string
-        masterpieceId:
-          $ref: 'masterpiece.yml#/components/schemas/MasterpieceId'
-        transformers:
-          type: object
-          additionalProperties:
-            type: string
-      required:
-        - name
-        - masterpieceId
-        - transformers
