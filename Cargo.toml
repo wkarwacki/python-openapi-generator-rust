@@ -1,6 +1,6 @@
 [package]
 name = "trust"
-version = "0.1.48"
+version = "0.1.49"
 readme="README.md"
 edition = "2021"
 
